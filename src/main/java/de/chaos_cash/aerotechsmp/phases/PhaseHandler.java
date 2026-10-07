@@ -7,7 +7,6 @@ import net.creeperhost.ftbbackups.BackupHandler;
 import net.creeperhost.ftbbackups.FTBBackups;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
-import org.jetbrains.annotations.Async;
 
 public class PhaseHandler {
 
