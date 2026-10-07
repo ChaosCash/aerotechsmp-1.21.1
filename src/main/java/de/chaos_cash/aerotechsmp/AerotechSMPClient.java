@@ -1,6 +1,14 @@
 package de.chaos_cash.aerotechsmp;
 
+import dev.ftb.mods.ftbteams.FTBTeams;
+import dev.ftb.mods.ftbteams.FTBTeamsAPIImpl;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.ChatComponent;
+import net.minecraft.network.chat.ChatType;
+import net.minecraft.network.chat.OutgoingChatMessage;
+import net.minecraft.network.chat.PlayerChatMessage;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -9,6 +17,11 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+
+import java.io.Console;
+
+import static org.openjdk.nashorn.internal.objects.Global.print;
 
 // This class will not load on dedicated servers. Accessing client side code from here is safe.
 @Mod(value = AerotechSMP.MODID, dist = Dist.CLIENT)
@@ -27,5 +40,12 @@ public class AerotechSMPClient {
         // Some client setup code
         AerotechSMP.LOGGER.info("HELLO FROM CLIENT SETUP");
         AerotechSMP.LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
+    }
+
+    @SubscribeEvent
+    static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event)
+    {
+        Player player = event.getEntity();
+
     }
 }

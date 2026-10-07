@@ -1,5 +1,12 @@
 package de.chaos_cash.aerotechsmp;
 
+import com.mojang.brigadier.Command;
+import de.chaos_cash.aerotechsmp.block.ModBlocks;
+import de.chaos_cash.aerotechsmp.item.ModItems;
+import dev.ftb.mods.ftbteams.FTBTeamsAPIImpl;
+import net.minecraft.server.MinecraftServer;
+import net.neoforged.bus.EventBus;
+import net.neoforged.neoforge.event.CommandEvent;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -39,6 +46,13 @@ public class AerotechSMP {
     // Directly reference a slf4j logger
     public static final Logger LOGGER = LogUtils.getLogger();
 
+    static MinecraftServer Server;
+
+
+    public static MinecraftServer getServer() {return Server;}
+
+
+
     // The constructor for the mod class is the first code that is run when your mod is loaded.
     // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
     public AerotechSMP(IEventBus modEventBus, ModContainer modContainer) {
@@ -50,11 +64,19 @@ public class AerotechSMP {
         // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
         NeoForge.EVENT_BUS.register(this);
 
+
+        ModItems.register(modEventBus);
+        ModBlocks.register(modEventBus);
+
         // Register the item to a creative tab
         modEventBus.addListener(this::addCreative);
 
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+
+
+
+        FTBTeamsAPIImpl.INSTANCE.setPartyCreationFromAPIOnly(true);
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
@@ -67,5 +89,6 @@ public class AerotechSMP {
     // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
+        Server = event.getServer();
     }
 }
