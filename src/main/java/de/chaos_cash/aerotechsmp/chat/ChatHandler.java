@@ -2,6 +2,7 @@ package de.chaos_cash.aerotechsmp.chat;
 
 import com.mojang.brigadier.CommandDispatcher;
 import de.chaos_cash.aerotechsmp.AerotechSMP;
+import de.chaos_cash.aerotechsmp.EventHandler;
 import de.chaos_cash.aerotechsmp.phases.PhaseHandler;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -14,6 +15,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 
+import java.util.ArrayList;
 
 
 @EventBusSubscriber(modid = AerotechSMP.MODID)
@@ -35,9 +37,54 @@ public class ChatHandler {
 
 
 
-    public static void Broadcast(Component message)
+    public static void broadcast(Component message)
     {
         AerotechSMP.getServer().getPlayerList().broadcastSystemMessage(message, false);
+    }
+
+
+
+    public static void broadcastCountdown(int ticks, String prefix, String suffix, Component countDownOverMessage)
+    {
+        int hours = Math.floorDiv(ticks, 720000);
+        ticks -= hours * 720000;
+        int minutes = Math.floorDiv(ticks, 1200);
+        ticks -= minutes * 1200;
+        int seconds = Math.floorDiv(ticks, 20);
+
+        var messages = new ArrayList<Component>();
+
+        for (int hour = 1; hour <= hours; hour++)
+        {
+
+        }
+    }
+
+
+    static Component createCountdownMessage(String prefix, String suffix, int seconds, int minutes, int hours)
+    {
+        String message = prefix;
+        if (minutes > 0)
+            message += minutes + "m ";
+        if (hours > 0)
+            message += minutes + "m ";
+        message += seconds + "s " + suffix;
+
+        return Component.literal(message);
+    }
+
+
+
+    static int timeToTick(int seconds, int minutes, int hours)
+    {
+        return seconds * 20 + minutes * 1200 + hours * 720000;
+    }
+
+
+
+    public static void broadcast(Component message, int tickDelay)
+    {
+        EventHandler.scheduleTask(tickDelay,() -> {broadcast(message);});
     }
 
 

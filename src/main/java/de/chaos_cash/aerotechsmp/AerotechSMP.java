@@ -2,6 +2,8 @@ package de.chaos_cash.aerotechsmp;
 
 import de.chaos_cash.aerotechsmp.block.ModBlocks;
 import de.chaos_cash.aerotechsmp.item.ModItems;
+import de.chaos_cash.aerotechsmp.phases.PhaseHandler;
+import dev.ftb.mods.ftbchunks.api.event.ClaimedChunkEvent;
 import dev.ftb.mods.ftbteams.FTBTeamsAPIImpl;
 import net.minecraft.server.MinecraftServer;
 
@@ -59,6 +61,8 @@ public class AerotechSMP {
 
 
         FTBTeamsAPIImpl.INSTANCE.setPartyCreationFromAPIOnly(true);
+
+        ClaimedChunkEvent.AFTER_CLAIM.register(PhaseHandler::onChunkClaim);
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
