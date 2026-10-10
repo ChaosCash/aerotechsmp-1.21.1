@@ -1,6 +1,7 @@
 package de.chaos_cash.aerotechsmp.block;
 
 import de.chaos_cash.aerotechsmp.AerotechSMP;
+import de.chaos_cash.aerotechsmp.block.custom.TeamCoreBlock;
 import de.chaos_cash.aerotechsmp.item.ModItems;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -15,7 +16,7 @@ import java.util.function.Supplier;
 public class ModBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(AerotechSMP.MODID);
 
-    public static final DeferredBlock<Block> TEST_BLOCK = registerBlock("test_block", () -> new Block(BlockBehaviour.Properties.of()));
+    public static final DeferredBlock<TeamCoreBlock> TEAM_CORE_BLOCK = registerBlock("team_core", () -> new TeamCoreBlock(BlockBehaviour.Properties.of()));
 
 
     public static void register(IEventBus eventBus)
