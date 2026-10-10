@@ -10,7 +10,6 @@ import dev.ftb.mods.ftbchunks.api.event.ClaimedChunkEvent;
 import dev.ftb.mods.ftbteams.FTBTeamsAPIImpl;
 import net.minecraft.server.MinecraftServer;
 
-import net.zwachinabottle.cannoncompressedarmor.block.ArmoredBlock;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
