@@ -1,6 +1,7 @@
-package de.chaos_cash.aerotechsmp;
+package de.chaos_cash.aerotechsmp.util;
 
 
+import de.chaos_cash.aerotechsmp.AerotechSMP;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
