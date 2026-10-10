@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "aerotechsmp:block/hardened_patton_armor_block"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "aerotechsmp:block/basic_panzergrau_armor_block"
+  }
+}

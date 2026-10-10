@@ -128,6 +128,10 @@ dependencies {
     implementation "curse.maven:Sable-1312371:9043865"
     implementation "curse.maven:FTBBackups-622737:5501351"
     implementation "curse.maven:PolyLib-576589:7140477"
+    implementation "curse.maven:CBCEnhancedShellArmor-1548357:8572432"
+    implementation "curse.maven:Create-328085:7963363"
+    implementation "curse.maven:CreateBigCannons-646668:8303106"
+    implementation "curse.maven:RPLib-1279407:7587771"
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

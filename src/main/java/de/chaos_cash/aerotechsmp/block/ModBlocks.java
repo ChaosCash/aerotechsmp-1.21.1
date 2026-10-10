@@ -1,6 +1,7 @@
 package de.chaos_cash.aerotechsmp.block;
 
 import de.chaos_cash.aerotechsmp.AerotechSMP;
+import de.chaos_cash.aerotechsmp.block.custom.ArmorBlock;
 import de.chaos_cash.aerotechsmp.block.custom.TeamCoreBlock;
 import de.chaos_cash.aerotechsmp.item.ModItems;
 import net.minecraft.world.item.BlockItem;
@@ -11,13 +12,14 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+import java.util.Map;
 import java.util.function.Supplier;
 
 public class ModBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(AerotechSMP.MODID);
 
     public static final DeferredBlock<TeamCoreBlock> TEAM_CORE_BLOCK = registerBlock("team_core", () -> new TeamCoreBlock(BlockBehaviour.Properties.of()));
-
+    public static final Map<ArmorBlock.Tier, Map<ArmorBlock.Color, DeferredBlock<ArmorBlock>>> ARMOR_BLOCKS = ArmorBlock.register();
 
     public static void register(IEventBus eventBus)
     {
@@ -26,7 +28,7 @@ public class ModBlocks {
 
 
 
-    private static <T extends Block> DeferredBlock<T> registerBlock(String name, Supplier<T> block)
+    public static <T extends Block> DeferredBlock<T> registerBlock(String name, Supplier<T> block)
     {
         var registeredBlock = BLOCKS.register(name, block);
         registerBlockItem(name, registeredBlock);
