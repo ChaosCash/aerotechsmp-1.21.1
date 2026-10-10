@@ -1,19 +1,15 @@
 package de.chaos_cash.aerotechsmp.block.custom;
 
 import de.chaos_cash.aerotechsmp.block.ModBlocks;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.data.recipes.RecipeProvider;
+
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.neoforged.neoforge.registries.DeferredBlock;
-import net.neoforged.neoforge.registries.DeferredRegister;
-import net.zwachinabottle.cannoncompressedarmor.ModMaterials;
+
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
+
 
 public class ArmorBlock extends Block {
 
@@ -21,6 +17,26 @@ public class ArmorBlock extends Block {
     private ArmorBlock(Tier tier) {
         super(getProperties(tier));
     }
+
+
+
+    public static String getDisplayName(Tier tier, Color color)
+    {
+        String displayName = tier.toString() + " ";
+
+        displayName += switch (color) {
+            case Color.Default -> "";
+            case Color.Type10 -> "Type 10 ";
+            case Color.IVBO -> "4BO ";
+            default -> color.name() + " ";
+        };
+
+        displayName += "Armor Block";
+
+        return displayName;
+    }
+
+
 
     private static Properties getProperties(Tier tier) {
         Properties properties = Properties.of().requiresCorrectToolForDrops();
@@ -35,7 +51,7 @@ public class ArmorBlock extends Block {
     }
 
 
-    private static String getName(Tier tier, Color color)
+    public static String getName(Tier tier, Color color)
     {
         String name = tier.name().toLowerCase();
 
@@ -78,40 +94,40 @@ public class ArmorBlock extends Block {
 
     public enum Color
     {
-        Default,
-        IVBO,
-        Algae,
-        Ardenne,
-        Azure,
-        Blush,
-        Cactus,
-        Camel,
         Charcoal,
+        Default,
+        Hide,
+        Grizzly,
+        Gink,
+        Ley,
+        Rota,
+        Olive,
+        Cactus,
+        Pine,
+        IVBO,
+        Scale,
+        Gorge,
+        Ardenne,
+        Parade,
+        Type10,
+        Algae,
+        Azure,
+        Horizon,
         Cherenkov,
-        Coral,
-        Desert,
-        Dust,
+        Kampfgrau,
+        Gravel,
+        Slate,
+        Panzergrau,
+        Sensha,
+        Kat,
         Garupan,
         Gelb,
-        Gink,
-        Gorge,
-        Gravel,
-        Grizzly,
-        Hide,
-        Horizon,
-        Kampfgrau,
-        Kat,
-        Ley,
-        Olive,
-        Panzergrau,
-        Parade,
         Patton,
-        Pine,
-        Rota,
-        Scale,
-        Sensha,
-        Slate,
+        Camel,
+        Desert,
+        Dust,
         Snow,
-        Type10
+        Blush,
+        Coral,
     }
 }
