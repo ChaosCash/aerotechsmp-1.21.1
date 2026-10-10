@@ -3,6 +3,7 @@ package de.chaos_cash.aerotechsmp;
 import de.chaos_cash.aerotechsmp.block.ModBlocks;
 import de.chaos_cash.aerotechsmp.block.entity.ModBlockEntities;
 import de.chaos_cash.aerotechsmp.item.ModItems;
+import de.chaos_cash.aerotechsmp.item.custom.CreativeModeTabs;
 import de.chaos_cash.aerotechsmp.phases.PhaseHandler;
 import de.chaos_cash.aerotechsmp.screen.ModMenuTypes;
 import dev.ftb.mods.ftbchunks.api.event.ClaimedChunkEvent;
@@ -52,10 +53,14 @@ public class AerotechSMP {
         NeoForge.EVENT_BUS.register(this);
 
 
+        CreativeModeTabs.register(modEventBus);
+
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
         ModBlockEntities.register(modEventBus);
+
         ModMenuTypes.register(modEventBus);
+
 
         // Register the item to a creative tab
         modEventBus.addListener(this::addCreative);
