@@ -2,7 +2,7 @@ package de.chaos_cash.aerotechsmp.chat;
 
 import com.mojang.brigadier.CommandDispatcher;
 import de.chaos_cash.aerotechsmp.AerotechSMP;
-import de.chaos_cash.aerotechsmp.EventHandler;
+import de.chaos_cash.aerotechsmp.util.EventHandler;
 import de.chaos_cash.aerotechsmp.phases.PhaseHandler;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
