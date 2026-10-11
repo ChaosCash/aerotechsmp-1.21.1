@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "aerotechsmp:block/compressed_gravel_armor_block"
+  }
+}

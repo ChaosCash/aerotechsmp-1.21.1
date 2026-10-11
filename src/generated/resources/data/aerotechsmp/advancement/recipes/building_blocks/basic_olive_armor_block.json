@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_basic_armor_block": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#aerotechsmp:armor_basic"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "aerotechsmp:basic_olive_armor_block"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_basic_armor_block"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "aerotechsmp:basic_olive_armor_block"
+    ]
+  }
+}
