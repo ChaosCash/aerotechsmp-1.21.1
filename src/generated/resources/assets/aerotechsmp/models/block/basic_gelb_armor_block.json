@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:block/cube_all",
-  "textures": {
-    "all": "aerotechsmp:block/basic_gelb_armor_block"
-  }
-}

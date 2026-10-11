@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/inner_stairs",
-  "textures": {
-    "bottom": "aerotechsmp:block/hardened_charcoal_armor_block",
-    "side": "aerotechsmp:block/hardened_charcoal_armor_block",
-    "top": "aerotechsmp:block/hardened_charcoal_armor_block"
-  }
-}

@@ -26,12 +26,16 @@ public class ModBlockStateProvider extends BlockStateProvider {
         {
             for (ArmorBlocks.Tier tier : ArmorBlocks.Tier.values())
             {
-                var armorBlock = ModBlocks.ARMOR_BLOCKS.get(tier).get(color);
+                var armorBlock = ArmorBlocks.getBlock(tier, color);
                 blockWithItem(armorBlock);
 
-                var armorStairs = ModBlocks.ARMOR_STAIRS.get(tier).get(color);
-                stairsBlock(armorStairs.get(), blockTexture(armorBlock.get()));
-                blockItem(armorStairs);
+                var armorStair = ArmorBlocks.getStair(tier, color);
+                stairsBlock(armorStair.get(), blockTexture(armorBlock.get()));
+                blockItem(armorStair);
+
+                var armorSlab = ArmorBlocks.getSlab(tier, color);
+                slabBlock(armorSlab.get(), blockTexture(armorBlock.get()), blockTexture(armorBlock.get()));
+                blockItem(armorSlab);
             }
         }
     }

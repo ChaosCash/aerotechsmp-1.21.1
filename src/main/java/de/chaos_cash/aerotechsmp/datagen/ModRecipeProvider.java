@@ -23,27 +23,27 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
         int i = 0;
         for (ArmorBlocks.Color color : ArmorBlocks.Color.values()) {
             SingleItemRecipeBuilder.stonecutting(
-                    Ingredient.of(ModTags.Items.ARMOR_BASIC),
+                    Ingredient.of(ModTags.Items.ARMOR_BLOCK_BASIC),
                     RecipeCategory.BUILDING_BLOCKS,
                     ModBlocks.ARMOR_BLOCKS.get(ArmorBlocks.Tier.Basic).get(color),
                     1
-            ).unlockedBy("has_basic_armor_block", has(ModTags.Items.ARMOR_BASIC))
+            ).unlockedBy("has_basic_armor_block", has(ModTags.Items.ARMOR_BLOCK_BASIC))
             .save(recipeOutput);
 
             SingleItemRecipeBuilder.stonecutting(
-                    Ingredient.of(ModTags.Items.ARMOR_HARDENED),
+                    Ingredient.of(ModTags.Items.ARMOR_BLOCK_HARDENED),
                     RecipeCategory.BUILDING_BLOCKS,
                     ModBlocks.ARMOR_BLOCKS.get(ArmorBlocks.Tier.Hardened).get(color),
                     1
-            ).unlockedBy("has_hardened_armor_block", has(ModTags.Items.ARMOR_HARDENED))
+            ).unlockedBy("has_hardened_armor_block", has(ModTags.Items.ARMOR_BLOCK_HARDENED))
             .save(recipeOutput);
 
             SingleItemRecipeBuilder.stonecutting(
-                    Ingredient.of(ModTags.Items.ARMOR_COMPRESSED),
+                    Ingredient.of(ModTags.Items.ARMOR_BLOCK_COMPRESSED),
                     RecipeCategory.BUILDING_BLOCKS,
                     ModBlocks.ARMOR_BLOCKS.get(ArmorBlocks.Tier.Compressed).get(color),
                     1
-            ).unlockedBy("has_compressed_armor_block", has(ModTags.Items.ARMOR_COMPRESSED))
+            ).unlockedBy("has_compressed_armor_block", has(ModTags.Items.ARMOR_BLOCK_COMPRESSED))
             .save(recipeOutput);
 
             i++;

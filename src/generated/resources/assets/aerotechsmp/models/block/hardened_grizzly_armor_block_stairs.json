@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/stairs",
-  "textures": {
-    "bottom": "aerotechsmp:block/hardened_grizzly_armor_block",
-    "side": "aerotechsmp:block/hardened_grizzly_armor_block",
-    "top": "aerotechsmp:block/hardened_grizzly_armor_block"
-  }
-}

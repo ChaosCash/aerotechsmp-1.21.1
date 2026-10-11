@@ -27,6 +27,7 @@ public class CreativeModeTabs {
                             {
                                 output.accept(ModBlocks.ARMOR_BLOCKS.get(tier).get(color).get());
                                 output.accept(ModBlocks.ARMOR_STAIRS.get(tier).get(color).get());
+                                output.accept(ModBlocks.ARMOR_SLABS.get(tier).get(color).get());
                             }
                         }
                     }).build()

@@ -6,7 +6,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -22,8 +21,14 @@ public class ModBlockLootTableProvider extends BlockLootSubProvider {
         {
             for (ArmorBlocks.Tier tier : ArmorBlocks.Tier.values())
             {
-                dropSelf(ModBlocks.ARMOR_BLOCKS.get(tier).get(color).get());
-                dropSelf(ModBlocks.ARMOR_STAIRS.get(tier).get(color).get());
+                dropSelf(ArmorBlocks.getBlock(tier, color).get());
+                dropSelf(ArmorBlocks.getStair(tier, color).get());
+
+                var armorSlab = ArmorBlocks.getSlab(tier, color).get();
+                this.add(
+                        armorSlab,
+                        block -> createSlabItemTable(armorSlab)
+                );
             }
         }
 

@@ -17,7 +17,9 @@ public class ModLanguageProvider extends LanguageProvider {
         {
             for (ArmorBlocks.Tier tier : ArmorBlocks.Tier.values())
             {
-                add(ModBlocks.ARMOR_BLOCKS.get(tier).get(color).get(), ArmorBlocks.getDisplayName(tier, color));
+                add(ModBlocks.ARMOR_BLOCKS.get(tier).get(color).get(), ArmorBlocks.getDisplayName(tier, color, ArmorBlocks.BlockType.Block));
+                add(ModBlocks.ARMOR_STAIRS.get(tier).get(color).get(), ArmorBlocks.getDisplayName(tier, color, ArmorBlocks.BlockType.Stairs));
+                add(ModBlocks.ARMOR_SLABS.get(tier).get(color).get(), ArmorBlocks.getDisplayName(tier, color, ArmorBlocks.BlockType.Slab));
             }
         }
     }

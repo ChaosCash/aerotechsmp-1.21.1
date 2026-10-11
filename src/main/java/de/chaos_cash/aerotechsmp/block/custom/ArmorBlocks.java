@@ -2,20 +2,24 @@ package de.chaos_cash.aerotechsmp.block.custom;
 
 import de.chaos_cash.aerotechsmp.block.ModBlocks;
 
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.neoforge.registries.DeferredBlock;
 
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 
 public class ArmorBlocks {
-    public static String getDisplayName(Tier tier, Color color)
-    {
+
+    public static DeferredBlock<Block> getBlock(Tier tier, Color color) {return ModBlocks.ARMOR_BLOCKS.get(tier).get(color);}
+    public static DeferredBlock<StairBlock> getStair(Tier tier, Color color) {return ModBlocks.ARMOR_STAIRS.get(tier).get(color);}
+    public static DeferredBlock<SlabBlock> getSlab(Tier tier, Color color) {return ModBlocks.ARMOR_SLABS.get(tier).get(color);}
+
+    public static String getDisplayName(Tier tier, Color color, BlockType type) {
         String displayName = tier.toString() + " ";
 
         displayName += switch (color) {
@@ -25,29 +29,46 @@ public class ArmorBlocks {
             default -> color.name() + " ";
         };
 
-        displayName += "Armor Block";
+        displayName += "Armor";
+
+        displayName += switch (type){
+            case Block -> " Block";
+            case Stairs -> " Stairs";
+            case Slab -> " Slab";
+        };
 
         return displayName;
     }
 
 
-
-    private static BlockBehaviour.Properties getProperties(Tier tier) {
-        BlockBehaviour.Properties properties = BlockBehaviour.Properties.of().requiresCorrectToolForDrops();
-
-        properties = switch (tier) {
-            case Tier.Basic -> properties.strength(24).destroyTime(2.5f).sound(SoundType.COPPER);
-            case Tier.Hardened -> properties.strength(28).destroyTime(3f).sound(SoundType.NETHERITE_BLOCK);
-            case Tier.Compressed -> properties.strength(32).destroyTime(3.5f).sound(SoundType.NETHERITE_BLOCK);
+    private static BlockBehaviour.Properties getProperties(Tier tier, BlockType type) {
+        int strength = switch (tier){
+            case Basic -> 24;
+            case Hardened -> 28;
+            case Compressed -> 32;
         };
 
+        strength += switch (type){
+            case Slab -> -4;
+            case Stairs -> -2;
+            default -> 0;
+        };
+
+        BlockBehaviour.Properties properties = BlockBehaviour.Properties.of()
+                .requiresCorrectToolForDrops()
+                .strength(strength);
+
+        properties = switch (tier) {
+            case Basic -> properties.destroyTime(2.5f).sound(SoundType.COPPER);
+            case Hardened -> properties.destroyTime(3f).sound(SoundType.NETHERITE_BLOCK);
+            case Compressed -> properties.destroyTime(3.5f).sound(SoundType.NETHERITE_BLOCK);
+        };
 
         return properties;
     }
 
 
-    public static String getName(Tier tier, Color color)
-    {
+    public static String getName(Tier tier, Color color, BlockType type) {
         String name = tier.name().toLowerCase();
 
         name += switch (color) {
@@ -56,21 +77,27 @@ public class ArmorBlocks {
             default -> "_" + color.name().toLowerCase();
         };
 
-        name += "_armor_block";
+        name += "_armor";
+
+        name += switch (type)
+        {
+            case BlockType.Block -> "_block";
+            case BlockType.Slab -> "_slab";
+            case BlockType.Stairs -> "_stairs";
+        };
 
         return name;
     }
 
 
-    public static Map<Tier, Map<Color, DeferredBlock<Block>>> registerBlocks()
-    {
-        Map<Tier, Map<Color, DeferredBlock<Block>>> blocks = new HashMap<>();
+    static <T extends Block> Map<Tier, Map<Color, DeferredBlock<T>>> registerBlocksOfType(BlockType type, BiFunction<Tier, Color, T> newBlockFunction){
+        Map<Tier, Map<Color, DeferredBlock<T>>> blocks = new HashMap<>();
         for (Tier tier : Tier.values()) {
             blocks.put(tier, new HashMap<>());
             for (Color color : Color.values()) {
                 blocks.get(tier).put(
                     color,
-                    ModBlocks.registerBlock(getName(tier, color), () -> new Block(getProperties(tier)))
+                    ModBlocks.registerBlock(getName(tier, color, type), () -> newBlockFunction.apply(tier, color))
                 );
             }
         }
@@ -79,24 +106,27 @@ public class ArmorBlocks {
     }
 
 
+    public static Map<Tier, Map<Color, DeferredBlock<Block>>> registerBlocks() {
+        return registerBlocksOfType(BlockType.Block, (tier, color) -> new Block(getProperties(tier, BlockType.Block)));
+    }
 
-    public static Map<Tier, Map<Color, DeferredBlock<StairBlock>>> registerStairs()
-    {
-        Map<Tier, Map<Color, DeferredBlock<StairBlock>>> stairBlocks = new HashMap<>();
-        for (Tier tier : Tier.values()) {
-            stairBlocks.put(tier, new HashMap<>());
-            for (Color color : Color.values()) {
-                stairBlocks.get(tier).put(
-                        color,
-                        ModBlocks.registerBlock(getName(tier, color) + "_stairs", () -> new StairBlock(ModBlocks.ARMOR_BLOCKS.get(tier).get(color).get().defaultBlockState() ,getProperties(tier)))
-                );
-            }
-        }
+    public static Map<Tier, Map<Color, DeferredBlock<StairBlock>>> registerStairs() {
+        return registerBlocksOfType(BlockType.Stairs, (tier, color) -> new StairBlock(getBlock(tier, color).get().defaultBlockState() ,getProperties(tier, BlockType.Stairs)));
+    }
 
-        return stairBlocks;
+    public static Map<Tier, Map<Color, DeferredBlock<SlabBlock>>> registerSlabs() {
+        return registerBlocksOfType(BlockType.Slab, (tier, color) -> new SlabBlock(getProperties(tier, BlockType.Slab)));
     }
 
 
+
+
+    public enum BlockType
+    {
+        Block,
+        Stairs,
+        Slab,
+    }
 
     public enum Tier
     {

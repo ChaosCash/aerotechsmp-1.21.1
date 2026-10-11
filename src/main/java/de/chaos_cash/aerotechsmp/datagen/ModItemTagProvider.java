@@ -2,7 +2,6 @@ package de.chaos_cash.aerotechsmp.datagen;
 
 import de.chaos_cash.aerotechsmp.AerotechSMP;
 
-import de.chaos_cash.aerotechsmp.block.ModBlocks;
 import de.chaos_cash.aerotechsmp.block.custom.ArmorBlocks;
 import de.chaos_cash.aerotechsmp.util.ModTags;
 import net.minecraft.core.HolderLookup;
@@ -25,14 +24,14 @@ public class ModItemTagProvider extends ItemTagsProvider {
     protected void addTags(HolderLookup.@NotNull Provider pProvider) {
         for (ArmorBlocks.Color color : ArmorBlocks.Color.values())
         {
-            tag(ModTags.Items.ARMOR_BASIC)
-                    .add(ModBlocks.ARMOR_BLOCKS.get(ArmorBlocks.Tier.Basic).get(color).asItem());
+            tag(ModTags.Items.ARMOR_BLOCK_BASIC)
+                    .add(ArmorBlocks.getBlock(ArmorBlocks.Tier.Basic, color).asItem());
 
-            tag(ModTags.Items.ARMOR_HARDENED)
-                    .add(ModBlocks.ARMOR_BLOCKS.get(ArmorBlocks.Tier.Hardened).get(color).asItem());
+            tag(ModTags.Items.ARMOR_BLOCK_HARDENED)
+                    .add(ArmorBlocks.getBlock(ArmorBlocks.Tier.Hardened, color).asItem());
 
-            tag(ModTags.Items.ARMOR_COMPRESSED)
-                    .add(ModBlocks.ARMOR_BLOCKS.get(ArmorBlocks.Tier.Compressed).get(color).asItem());
+            tag(ModTags.Items.ARMOR_BLOCK_COMPRESSED)
+                    .add(ArmorBlocks.getBlock(ArmorBlocks.Tier.Compressed, color).asItem());
         }
     }
 }

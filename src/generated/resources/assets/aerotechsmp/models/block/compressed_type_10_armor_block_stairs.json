@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/stairs",
-  "textures": {
-    "bottom": "aerotechsmp:block/compressed_type_10_armor_block",
-    "side": "aerotechsmp:block/compressed_type_10_armor_block",
-    "top": "aerotechsmp:block/compressed_type_10_armor_block"
-  }
-}
