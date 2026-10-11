@@ -2,11 +2,10 @@ package de.chaos_cash.aerotechsmp.block.custom;
 
 import de.chaos_cash.aerotechsmp.block.ModBlocks;
 
-import dev.ryanhcode.sable.Sable;
-import dev.ryanhcode.sable.SableServerConfig;
-import dev.ryanhcode.sable.index.SableAttributes;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.neoforge.registries.DeferredBlock;
 
 
@@ -14,15 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class ArmorBlock extends Block {
-
-
-    private ArmorBlock(Tier tier) {
-        super(getProperties(tier));
-    }
-
-
-
+public class ArmorBlocks {
     public static String getDisplayName(Tier tier, Color color)
     {
         String displayName = tier.toString() + " ";
@@ -41,8 +32,8 @@ public class ArmorBlock extends Block {
 
 
 
-    private static Properties getProperties(Tier tier) {
-        Properties properties = Properties.of().requiresCorrectToolForDrops();
+    private static BlockBehaviour.Properties getProperties(Tier tier) {
+        BlockBehaviour.Properties properties = BlockBehaviour.Properties.of().requiresCorrectToolForDrops();
 
         properties = switch (tier) {
             case Tier.Basic -> properties.strength(24).destroyTime(2.5f).sound(SoundType.COPPER);
@@ -71,20 +62,38 @@ public class ArmorBlock extends Block {
     }
 
 
-    public static Map<Tier, Map<Color, DeferredBlock<ArmorBlock>>> register()
+    public static Map<Tier, Map<Color, DeferredBlock<Block>>> registerBlocks()
     {
-        Map<Tier, Map<Color, DeferredBlock<ArmorBlock>>> blocks = new HashMap<>();
+        Map<Tier, Map<Color, DeferredBlock<Block>>> blocks = new HashMap<>();
         for (Tier tier : Tier.values()) {
             blocks.put(tier, new HashMap<>());
             for (Color color : Color.values()) {
                 blocks.get(tier).put(
                     color,
-                    ModBlocks.registerBlock(getName(tier, color), () -> new ArmorBlock(tier))
+                    ModBlocks.registerBlock(getName(tier, color), () -> new Block(getProperties(tier)))
                 );
             }
         }
 
         return blocks;
+    }
+
+
+
+    public static Map<Tier, Map<Color, DeferredBlock<StairBlock>>> registerStairs()
+    {
+        Map<Tier, Map<Color, DeferredBlock<StairBlock>>> stairBlocks = new HashMap<>();
+        for (Tier tier : Tier.values()) {
+            stairBlocks.put(tier, new HashMap<>());
+            for (Color color : Color.values()) {
+                stairBlocks.get(tier).put(
+                        color,
+                        ModBlocks.registerBlock(getName(tier, color) + "_stairs", () -> new StairBlock(ModBlocks.ARMOR_BLOCKS.get(tier).get(color).get().defaultBlockState() ,getProperties(tier)))
+                );
+            }
+        }
+
+        return stairBlocks;
     }
 
 

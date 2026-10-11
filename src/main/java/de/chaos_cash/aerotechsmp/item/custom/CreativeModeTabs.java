@@ -2,7 +2,7 @@ package de.chaos_cash.aerotechsmp.item.custom;
 
 import de.chaos_cash.aerotechsmp.AerotechSMP;
 import de.chaos_cash.aerotechsmp.block.ModBlocks;
-import de.chaos_cash.aerotechsmp.block.custom.ArmorBlock;
+import de.chaos_cash.aerotechsmp.block.custom.ArmorBlocks;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -19,13 +19,14 @@ public class CreativeModeTabs {
             "armor_blocks_tab",
             () -> CreativeModeTab.builder()
                     .title(Component.literal("Armor Blocks"))
-                    .icon(() -> ModBlocks.ARMOR_BLOCKS.get(ArmorBlock.Tier.Compressed).get(ArmorBlock.Color.Default).toStack())
+                    .icon(() -> ModBlocks.ARMOR_BLOCKS.get(ArmorBlocks.Tier.Compressed).get(ArmorBlocks.Color.Default).toStack())
                     .displayItems((itemDisplayParameters, output) -> {
-                        for (ArmorBlock.Color color : ArmorBlock.Color.values())
+                        for (ArmorBlocks.Color color : ArmorBlocks.Color.values())
                         {
-                            for (ArmorBlock.Tier tier : ArmorBlock.Tier.values())
+                            for (ArmorBlocks.Tier tier : ArmorBlocks.Tier.values())
                             {
                                 output.accept(ModBlocks.ARMOR_BLOCKS.get(tier).get(color).get());
+                                output.accept(ModBlocks.ARMOR_STAIRS.get(tier).get(color).get());
                             }
                         }
                     }).build()

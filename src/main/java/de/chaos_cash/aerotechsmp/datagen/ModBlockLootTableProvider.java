@@ -1,11 +1,12 @@
 package de.chaos_cash.aerotechsmp.datagen;
 
 import de.chaos_cash.aerotechsmp.block.ModBlocks;
-import de.chaos_cash.aerotechsmp.block.custom.ArmorBlock;
+import de.chaos_cash.aerotechsmp.block.custom.ArmorBlocks;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.level.block.Block;
+import net.neoforged.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -17,11 +18,12 @@ public class ModBlockLootTableProvider extends BlockLootSubProvider {
 
     @Override
     protected void generate() {
-        for (ArmorBlock.Color color : ArmorBlock.Color.values())
+        for (ArmorBlocks.Color color : ArmorBlocks.Color.values())
         {
-            for (ArmorBlock.Tier tier : ArmorBlock.Tier.values())
+            for (ArmorBlocks.Tier tier : ArmorBlocks.Tier.values())
             {
                 dropSelf(ModBlocks.ARMOR_BLOCKS.get(tier).get(color).get());
+                dropSelf(ModBlocks.ARMOR_STAIRS.get(tier).get(color).get());
             }
         }
 

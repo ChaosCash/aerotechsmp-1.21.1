@@ -2,11 +2,12 @@ package de.chaos_cash.aerotechsmp.datagen;
 
 import de.chaos_cash.aerotechsmp.AerotechSMP;
 import de.chaos_cash.aerotechsmp.block.ModBlocks;
-import de.chaos_cash.aerotechsmp.block.custom.ArmorBlock;
+import de.chaos_cash.aerotechsmp.block.custom.ArmorBlocks;
 import de.chaos_cash.aerotechsmp.util.ModTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
@@ -21,28 +22,40 @@ public class ModBlockTagProvider extends BlockTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.@NotNull Provider pProvider) {
-        for (ArmorBlock.Color color : ArmorBlock.Color.values())
+        for (ArmorBlocks.Color color : ArmorBlocks.Color.values())
         {
-            ArmorBlock basicArmor = ModBlocks.ARMOR_BLOCKS.get(ArmorBlock.Tier.Basic).get(color).get();
-            ArmorBlock hardenedArmor = ModBlocks.ARMOR_BLOCKS.get(ArmorBlock.Tier.Hardened).get(color).get();
-            ArmorBlock compressedArmor = ModBlocks.ARMOR_BLOCKS.get(ArmorBlock.Tier.Compressed).get(color).get();
+            Block basicArmor = ModBlocks.ARMOR_BLOCKS.get(ArmorBlocks.Tier.Basic).get(color).get();
+            Block hardenedArmor = ModBlocks.ARMOR_BLOCKS.get(ArmorBlocks.Tier.Hardened).get(color).get();
+            Block compressedArmor = ModBlocks.ARMOR_BLOCKS.get(ArmorBlocks.Tier.Compressed).get(color).get();
+            Block basicArmorStair = ModBlocks.ARMOR_STAIRS.get(ArmorBlocks.Tier.Basic).get(color).get();
+            Block hardenedArmorStair = ModBlocks.ARMOR_STAIRS.get(ArmorBlocks.Tier.Hardened).get(color).get();
+            Block compressedArmorStair = ModBlocks.ARMOR_STAIRS.get(ArmorBlocks.Tier.Compressed).get(color).get();
+
 
             tag(BlockTags.MINEABLE_WITH_PICKAXE)
                     .add(basicArmor)
                     .add(hardenedArmor)
-                    .add(compressedArmor);
+                    .add(compressedArmor)
+                    .add(basicArmorStair)
+                    .add(hardenedArmorStair)
+                    .add(compressedArmorStair);
 
             tag(BlockTags.NEEDS_IRON_TOOL)
                     .add(basicArmor)
-                    .add(hardenedArmor);
+                    .add(hardenedArmor)
+                    .add(basicArmorStair)
+                    .add(hardenedArmorStair);
 
             tag(BlockTags.NEEDS_DIAMOND_TOOL)
-                    .add(compressedArmor);
+                    .add(compressedArmor)
+                    .add(compressedArmorStair);
 
             tag(ModTags.Blocks.HEAVY)
-                    .add(hardenedArmor);
+                    .add(hardenedArmor)
+                    .add(hardenedArmorStair);
             tag(ModTags.Blocks.SUPER_HEAVY)
-                    .add(compressedArmor);
+                    .add(compressedArmor)
+                    .add(compressedArmorStair);
         }
 
     }
