@@ -18,6 +18,9 @@ public class ModTags {
         public static final TagKey<Block> LIGHT
                 = BlockTags.create(ResourceLocation.fromNamespaceAndPath(Sable.MOD_ID, "light"));
 
+        public static final TagKey<Block> HALF_VOLUME
+                = BlockTags.create(ResourceLocation.fromNamespaceAndPath(Sable.MOD_ID, "half_volume"));
+
         private static TagKey<Block> createTag(String name)
         {
             return BlockTags.create(ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID, name));

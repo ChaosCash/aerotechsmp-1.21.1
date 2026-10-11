@@ -70,14 +70,21 @@ public class ModBlockTagProvider extends BlockTagsProvider {
                     .add(compressedArmorSlab);
 
 
+            tag(ModTags.Blocks.LIGHT)
+                    .add(basicArmorStair);
+
             tag(ModTags.Blocks.HEAVY)
                     .add(hardenedArmorBlock)
                     .add(hardenedArmorStair)
-                    .add(hardenedArmorSlab);
+                    .add(compressedArmorSlab);
 
             tag(ModTags.Blocks.SUPER_HEAVY)
                     .add(compressedArmorBlock)
-                    .add(compressedArmorStair)
+                    .add(compressedArmorStair);
+
+            tag(ModTags.Blocks.HALF_VOLUME)
+                    .add(basicArmorSlab)
+                    .add(hardenedArmorSlab)
                     .add(compressedArmorSlab);
         }
 
