@@ -26,9 +26,9 @@ public class ModBlockTagProvider extends BlockTagsProvider {
     protected void addTags(HolderLookup.@NotNull Provider pProvider) {
         for (ArmorBlocks.Color color : ArmorBlocks.Color.values())
         {
-            Block basicArmor = ArmorBlocks.getBlock(ArmorBlocks.Tier.Basic, color).get();
-            Block hardenedArmor = ArmorBlocks.getBlock(ArmorBlocks.Tier.Hardened, color).get();
-            Block compressedArmor = ArmorBlocks.getBlock(ArmorBlocks.Tier.Compressed, color).get();
+            Block basicArmorBlock = ArmorBlocks.getBlock(ArmorBlocks.Tier.Basic, color).get();
+            Block hardenedArmorBlock = ArmorBlocks.getBlock(ArmorBlocks.Tier.Hardened, color).get();
+            Block compressedArmorBlock = ArmorBlocks.getBlock(ArmorBlocks.Tier.Compressed, color).get();
 
             StairBlock basicArmorStair = ArmorBlocks.getStair(ArmorBlocks.Tier.Basic, color).get();
             StairBlock hardenedArmorStair = ArmorBlocks.getStair(ArmorBlocks.Tier.Hardened, color).get();
@@ -40,9 +40,9 @@ public class ModBlockTagProvider extends BlockTagsProvider {
 
 
             tag(BlockTags.MINEABLE_WITH_PICKAXE)
-                    .add(basicArmor)
-                    .add(hardenedArmor)
-                    .add(compressedArmor)
+                    .add(basicArmorBlock)
+                    .add(hardenedArmorBlock)
+                    .add(compressedArmorBlock)
 
                     .add(basicArmorStair)
                     .add(hardenedArmorStair)
@@ -54,8 +54,8 @@ public class ModBlockTagProvider extends BlockTagsProvider {
 
 
             tag(BlockTags.NEEDS_IRON_TOOL)
-                    .add(basicArmor)
-                    .add(hardenedArmor)
+                    .add(basicArmorBlock)
+                    .add(hardenedArmorBlock)
 
                     .add(basicArmorStair)
                     .add(hardenedArmorStair)
@@ -65,18 +65,18 @@ public class ModBlockTagProvider extends BlockTagsProvider {
 
 
             tag(BlockTags.NEEDS_DIAMOND_TOOL)
-                    .add(compressedArmor)
+                    .add(compressedArmorBlock)
                     .add(compressedArmorStair)
                     .add(compressedArmorSlab);
 
 
             tag(ModTags.Blocks.HEAVY)
-                    .add(hardenedArmor)
+                    .add(hardenedArmorBlock)
                     .add(hardenedArmorStair)
                     .add(hardenedArmorSlab);
 
             tag(ModTags.Blocks.SUPER_HEAVY)
-                    .add(compressedArmor)
+                    .add(compressedArmorBlock)
                     .add(compressedArmorStair)
                     .add(compressedArmorSlab);
         }

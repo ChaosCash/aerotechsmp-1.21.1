@@ -32,6 +32,26 @@ public class ModItemTagProvider extends ItemTagsProvider {
 
             tag(ModTags.Items.ARMOR_BLOCK_COMPRESSED)
                     .add(ArmorBlocks.getBlock(ArmorBlocks.Tier.Compressed, color).asItem());
+
+
+            tag(ModTags.Items.ARMOR_STAIR_BASIC)
+                    .add(ArmorBlocks.getStair(ArmorBlocks.Tier.Basic, color).asItem());
+
+            tag(ModTags.Items.ARMOR_STAIR_HARDENED)
+                    .add(ArmorBlocks.getStair(ArmorBlocks.Tier.Hardened, color).asItem());
+
+            tag(ModTags.Items.ARMOR_STAIR_COMPRESSED)
+                    .add(ArmorBlocks.getStair(ArmorBlocks.Tier.Compressed, color).asItem());
+
+
+            tag(ModTags.Items.ARMOR_SLAB_BASIC)
+                    .add(ArmorBlocks.getSlab(ArmorBlocks.Tier.Basic, color).asItem());
+
+            tag(ModTags.Items.ARMOR_SLAB_HARDENED)
+                    .add(ArmorBlocks.getSlab(ArmorBlocks.Tier.Hardened, color).asItem());
+
+            tag(ModTags.Items.ARMOR_SLAB_COMPRESSED)
+                    .add(ArmorBlocks.getSlab(ArmorBlocks.Tier.Compressed, color).asItem());
         }
     }
 }
