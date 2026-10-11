@@ -71,7 +71,7 @@ public class ModBlockTagProvider extends BlockTagsProvider {
 
 
             tag(ModTags.Blocks.LIGHT)
-                    .add(basicArmorStair);
+                    .add(basicArmorSlab);
 
             tag(ModTags.Blocks.HEAVY)
                     .add(hardenedArmorBlock)
