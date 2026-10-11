@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:block/cube_all",
-  "textures": {
-    "all": "aerotechsmp:block/hardened_ardenne_armor_block"
-  }
-}

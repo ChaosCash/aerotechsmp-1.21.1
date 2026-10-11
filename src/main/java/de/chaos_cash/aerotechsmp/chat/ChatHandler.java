@@ -18,7 +18,7 @@ import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import java.util.ArrayList;
 
 
-@EventBusSubscriber(modid = AerotechSMP.MODID)
+@EventBusSubscriber(modid = AerotechSMP.MOD_ID)
 public class ChatHandler {
 
     @SubscribeEvent

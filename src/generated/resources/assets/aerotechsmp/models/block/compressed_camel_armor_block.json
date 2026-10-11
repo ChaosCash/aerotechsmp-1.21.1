@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:block/cube_all",
-  "textures": {
-    "all": "aerotechsmp:block/compressed_camel_armor_block"
-  }
-}

@@ -26,10 +26,10 @@ import net.neoforged.neoforge.event.server.ServerStartingEvent;
 
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
-@Mod(AerotechSMP.MODID)
+@Mod(AerotechSMP.MOD_ID)
 public class AerotechSMP {
     // Define mod id in a common place for everything to reference
-    public static final String MODID = "aerotechsmp";
+    public static final String MOD_ID = "aerotechsmp";
     // Directly reference a slf4j logger
     public static final Logger LOGGER = LogUtils.getLogger();
 

@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 public class ModBlocks {
-    public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(AerotechSMP.MODID);
+    public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(AerotechSMP.MOD_ID);
 
     public static final DeferredBlock<TeamCoreBlock> TEAM_CORE_BLOCK = registerBlock("team_core", () -> new TeamCoreBlock(BlockBehaviour.Properties.of()));
     public static final Map<ArmorBlock.Tier, Map<ArmorBlock.Color, DeferredBlock<ArmorBlock>>> ARMOR_BLOCKS = ArmorBlock.register();

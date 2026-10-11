@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class TeamCoreScreen extends AbstractContainerScreen<TeamCoreMenu> {
     private static final ResourceLocation GUI_TEXTURE =
-            ResourceLocation.fromNamespaceAndPath(AerotechSMP.MODID, "textures/gui/team_core/team_core_gui.png");
+            ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID, "textures/gui/team_core/team_core_gui.png");
 
     public TeamCoreScreen(TeamCoreMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);

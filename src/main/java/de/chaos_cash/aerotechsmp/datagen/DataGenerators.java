@@ -17,7 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-@EventBusSubscriber(modid = AerotechSMP.MODID)
+@EventBusSubscriber(modid = AerotechSMP.MOD_ID)
 public class DataGenerators {
 
     @SubscribeEvent

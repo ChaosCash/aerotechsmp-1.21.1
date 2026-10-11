@@ -2,6 +2,9 @@ package de.chaos_cash.aerotechsmp.block.custom;
 
 import de.chaos_cash.aerotechsmp.block.ModBlocks;
 
+import dev.ryanhcode.sable.Sable;
+import dev.ryanhcode.sable.SableServerConfig;
+import dev.ryanhcode.sable.index.SableAttributes;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.neoforged.neoforge.registries.DeferredBlock;
@@ -46,6 +49,7 @@ public class ArmorBlock extends Block {
             case Tier.Hardened -> properties.strength(28).destroyTime(3f).sound(SoundType.NETHERITE_BLOCK);
             case Tier.Compressed -> properties.strength(32).destroyTime(3.5f).sound(SoundType.NETHERITE_BLOCK);
         };
+
 
         return properties;
     }
@@ -94,8 +98,8 @@ public class ArmorBlock extends Block {
 
     public enum Color
     {
-        Charcoal,
         Default,
+        Charcoal,
         Hide,
         Grizzly,
         Gink,

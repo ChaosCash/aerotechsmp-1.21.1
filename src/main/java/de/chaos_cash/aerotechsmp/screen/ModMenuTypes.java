@@ -12,7 +12,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class ModMenuTypes {
     public static final DeferredRegister<MenuType<?>> MENUS =
-            DeferredRegister.create(Registries.MENU, AerotechSMP.MODID);
+            DeferredRegister.create(Registries.MENU, AerotechSMP.MOD_ID);
 
     public static final DeferredHolder<MenuType<?>, MenuType<TeamCoreMenu>> TEAM_CORE_MENU =
             MENUS.register("team_core_name", () -> IMenuTypeExtension.create(TeamCoreMenu::new));

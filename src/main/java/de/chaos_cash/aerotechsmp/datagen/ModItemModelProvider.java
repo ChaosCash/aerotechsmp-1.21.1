@@ -11,7 +11,7 @@ public class ModItemModelProvider extends ItemModelProvider {
 
 
     public ModItemModelProvider(PackOutput output, ExistingFileHelper existingFileHelper) {
-        super(output, AerotechSMP.MODID, existingFileHelper);
+        super(output, AerotechSMP.MOD_ID, existingFileHelper);
     }
 
     @Override

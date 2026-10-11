@@ -3,7 +3,6 @@ package de.chaos_cash.aerotechsmp.item.custom;
 import de.chaos_cash.aerotechsmp.AerotechSMP;
 import de.chaos_cash.aerotechsmp.block.ModBlocks;
 import de.chaos_cash.aerotechsmp.block.custom.ArmorBlock;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -14,7 +13,7 @@ import java.util.function.Supplier;
 
 public class CreativeModeTabs {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS =
-            DeferredRegister.create(Registries.CREATIVE_MODE_TAB, AerotechSMP.MODID);
+            DeferredRegister.create(Registries.CREATIVE_MODE_TAB, AerotechSMP.MOD_ID);
 
     public static final Supplier<CreativeModeTab> ARMOR_BLOCKS_TAB = CREATIVE_MODE_TABS.register(
             "armor_blocks_tab",

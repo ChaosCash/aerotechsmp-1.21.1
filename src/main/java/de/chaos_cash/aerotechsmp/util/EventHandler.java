@@ -9,7 +9,7 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-@EventBusSubscriber(modid = AerotechSMP.MODID)
+@EventBusSubscriber(modid = AerotechSMP.MOD_ID)
 public class EventHandler {
         private static final List<ScheduledTask> TASKS = new ArrayList<>();
 
