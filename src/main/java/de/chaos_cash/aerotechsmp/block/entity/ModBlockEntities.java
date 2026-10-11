@@ -17,7 +17,7 @@ public class ModBlockEntities {
 
     public static final Supplier<BlockEntityType<TeamCoreBlockEntity>> TEAM_CORE_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
             "team_core_be",
-            () -> BlockEntityType.Builder.of(TeamCoreBlockEntity::new, ModBlocks.TEAM_CORE_BLOCK.get()).build(null)
+            () -> BlockEntityType.Builder.of(TeamCoreBlockEntity::new, ModBlocks.TEAM_CORE.get()).build(null)
     );
 
 

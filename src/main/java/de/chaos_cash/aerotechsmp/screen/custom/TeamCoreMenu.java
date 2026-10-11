@@ -5,7 +5,6 @@ import de.chaos_cash.aerotechsmp.block.ModBlocks;
 import de.chaos_cash.aerotechsmp.block.entity.custom.TeamCoreBlockEntity;
 import de.chaos_cash.aerotechsmp.screen.ModMenuTypes;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -32,7 +31,12 @@ public class TeamCoreMenu extends AbstractContainerMenu {
 
         addPlayerInventory(inv);
         addPlayerHotbar(inv);
+    }
 
+
+
+    private void addCoreInventory()
+    {
         this.addSlot(new SlotItemHandler(this.blockEntity.inventory, 0, 80, 35));
     }
 
@@ -91,7 +95,7 @@ public class TeamCoreMenu extends AbstractContainerMenu {
     @Override
     public boolean stillValid(@NotNull Player pPlayer) {
         return stillValid(ContainerLevelAccess.create(level, blockEntity.getBlockPos()),
-                pPlayer, ModBlocks.TEAM_CORE_BLOCK.get());
+                pPlayer, ModBlocks.TEAM_CORE.get());
     }
 
     private void addPlayerInventory(Inventory playerInventory) {

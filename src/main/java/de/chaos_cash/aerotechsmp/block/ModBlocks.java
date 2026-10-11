@@ -20,7 +20,7 @@ import java.util.function.Supplier;
 public class ModBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(AerotechSMP.MOD_ID);
 
-    public static final DeferredBlock<TeamCoreBlock> TEAM_CORE_BLOCK = registerBlock("team_core", () -> new TeamCoreBlock(BlockBehaviour.Properties.of()));
+    public static final DeferredBlock<TeamCoreBlock> TEAM_CORE = registerBlock("team_core", () -> new TeamCoreBlock(BlockBehaviour.Properties.of()));
 
     public static final Map<ArmorBlocks.Tier, Map<ArmorBlocks.Color, DeferredBlock<Block>>> ARMOR_BLOCKS = ArmorBlocks.registerBlocks();
     public static final Map<ArmorBlocks.Tier, Map<ArmorBlocks.Color, DeferredBlock<StairBlock>>> ARMOR_STAIRS = ArmorBlocks.registerStairs();

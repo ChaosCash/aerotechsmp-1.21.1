@@ -32,7 +32,7 @@ public class ModBlockLootTableProvider extends BlockLootSubProvider {
             }
         }
 
-        dropSelf(ModBlocks.TEAM_CORE_BLOCK.get());
+        dropSelf(ModBlocks.TEAM_CORE.get());
     }
 
 

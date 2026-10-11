@@ -22,6 +22,8 @@ public class ModBlockStateProvider extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
+        blockWithItem(ModBlocks.TEAM_CORE);
+
         for (ArmorBlocks.Color color : ArmorBlocks.Color.values())
         {
             for (ArmorBlocks.Tier tier : ArmorBlocks.Tier.values())
