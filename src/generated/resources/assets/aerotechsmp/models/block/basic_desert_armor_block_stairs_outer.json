@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/outer_stairs",
+  "textures": {
+    "bottom": "aerotechsmp:block/basic_desert_armor_block",
+    "side": "aerotechsmp:block/basic_desert_armor_block",
+    "top": "aerotechsmp:block/basic_desert_armor_block"
+  }
+}

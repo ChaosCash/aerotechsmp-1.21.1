@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/inner_stairs",
+  "textures": {
+    "bottom": "aerotechsmp:block/compressed_gravel_armor_block",
+    "side": "aerotechsmp:block/compressed_gravel_armor_block",
+    "top": "aerotechsmp:block/compressed_gravel_armor_block"
+  }
+}

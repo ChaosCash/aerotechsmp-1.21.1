@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/inner_stairs",
+  "textures": {
+    "bottom": "aerotechsmp:block/basic_type_10_armor_block",
+    "side": "aerotechsmp:block/basic_type_10_armor_block",
+    "top": "aerotechsmp:block/basic_type_10_armor_block"
+  }
+}
