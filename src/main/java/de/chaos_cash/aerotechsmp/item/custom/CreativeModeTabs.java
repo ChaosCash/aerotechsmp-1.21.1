@@ -25,11 +25,22 @@ public class CreativeModeTabs {
                         {
                             for (ArmorBlocks.Tier tier : ArmorBlocks.Tier.values())
                             {
-                                output.accept(ModBlocks.ARMOR_BLOCKS.get(tier).get(color).get());
-                                output.accept(ModBlocks.ARMOR_STAIRS.get(tier).get(color).get());
-                                output.accept(ModBlocks.ARMOR_SLABS.get(tier).get(color).get());
+                                output.accept(ArmorBlocks.getBlock(tier, color));
+                                output.accept(ArmorBlocks.getStair(tier, color));
+                                output.accept(ArmorBlocks.getSlab(tier, color));
                             }
                         }
+                    }).build()
+            );
+
+
+    public static final Supplier<CreativeModeTab> AEROTECH_TAB = CREATIVE_MODE_TABS.register(
+            "aerotech_tab",
+            () -> CreativeModeTab.builder()
+                    .title(Component.literal("AeroTech"))
+                    .icon(ModBlocks.TEAM_CORE::toStack)
+                    .displayItems((itemDisplayParameters, output) -> {
+                        output.accept(ModBlocks.TEAM_CORE);
                     }).build()
             );
 
