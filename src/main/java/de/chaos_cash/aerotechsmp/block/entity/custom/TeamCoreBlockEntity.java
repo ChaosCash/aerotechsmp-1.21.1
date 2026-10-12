@@ -1,7 +1,8 @@
 package de.chaos_cash.aerotechsmp.block.entity.custom;
 
+import de.chaos_cash.aerotechsmp.block.custom.ArmorBlocks;
 import de.chaos_cash.aerotechsmp.block.entity.ModBlockEntities;
-import de.chaos_cash.aerotechsmp.screen.custom.TeamCoreMenu;
+import de.chaos_cash.aerotechsmp.chat.ChatHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -17,12 +18,14 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class TeamCoreBlockEntity extends ModBlockEntity implements MenuProvider {
-    public final ItemStackHandler inventory = new ItemStackHandler(9);
+public class TeamCoreBlockEntity extends ModBlockEntity {
+    public final ItemStackHandler inventory = new ItemStackHandler(100);
 
 
     public TeamCoreBlockEntity(BlockPos pos, BlockState blockState) {
         super(ModBlockEntities.TEAM_CORE_BLOCK_ENTITY.get(), pos, blockState);
+
+
     }
 
 
@@ -47,15 +50,5 @@ public class TeamCoreBlockEntity extends ModBlockEntity implements MenuProvider 
     @Override
     protected void loadAdditionalData(CompoundTag tag, HolderLookup.Provider registries) {
         inventory.deserializeNBT(registries, tag.getCompound("inventory"));
-    }
-
-    @Override
-    public @NotNull Component getDisplayName() {
-        return Component.literal("Team Core");
-    }
-
-    @Override
-    public @Nullable AbstractContainerMenu createMenu(int i, @NotNull Inventory inventory, @NotNull Player player) {
-        return new TeamCoreMenu(i, inventory, this);
     }
 }

@@ -3,6 +3,7 @@ package de.chaos_cash.aerotechsmp.block.custom;
 import com.mojang.serialization.MapCodec;
 import de.chaos_cash.aerotechsmp.block.entity.ModBlockEntities;
 import de.chaos_cash.aerotechsmp.block.entity.custom.TeamCoreBlockEntity;
+import de.chaos_cash.aerotechsmp.chat.ChatHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -32,11 +33,13 @@ public class TeamCoreBlock extends BaseEntityBlock {
 
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack pStack, BlockState pState, Level pLevel,
-                                              BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHitResult) {
+    protected @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack pStack, @NotNull BlockState pState, Level pLevel,
+                                                       @NotNull BlockPos pPos, @NotNull Player pPlayer, @NotNull InteractionHand pHand, @NotNull BlockHitResult pHitResult) {
         if(pLevel.getBlockEntity(pPos) instanceof TeamCoreBlockEntity teamCoreBlockEntity) {
             if(!pPlayer.isCrouching() && !pLevel.isClientSide()) {
-                pPlayer.openMenu(new SimpleMenuProvider(teamCoreBlockEntity, Component.literal("Team Core")), pPos);
+
+
+
                 return ItemInteractionResult.SUCCESS;
             }
         }
@@ -45,9 +48,18 @@ public class TeamCoreBlock extends BaseEntityBlock {
     }
 
 
+    @Override
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        if (!movedByPiston){
+            if (level.getBlockEntity(pos) instanceof TeamCoreBlockEntity teamCoreBlockEntity){
+                teamCoreBlockEntity.dropItems();
+            }
+        }
+        super.onRemove(state, level, pos, newState, movedByPiston);
+    }
 
     @Override
-    protected RenderShape getRenderShape(BlockState state) {
+    protected @NotNull RenderShape getRenderShape(@NotNull BlockState state) {
         return RenderShape.MODEL;
     }
 
