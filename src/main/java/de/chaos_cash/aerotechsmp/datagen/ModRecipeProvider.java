@@ -2,7 +2,6 @@ package de.chaos_cash.aerotechsmp.datagen;
 
 
 import de.chaos_cash.aerotechsmp.AerotechSMP;
-import de.chaos_cash.aerotechsmp.block.ModBlocks;
 import de.chaos_cash.aerotechsmp.block.custom.ArmorBlocks;
 import de.chaos_cash.aerotechsmp.util.ModTags;
 import net.minecraft.core.HolderLookup;
@@ -31,15 +30,15 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
 
     private void addArmorRecipes(@NotNull RecipeOutput recipeOutput) {
         for (ArmorBlocks.Color color : ArmorBlocks.Color.values()) {
-            Block basicArmorBlock = ArmorBlocks.getBlock(ArmorBlocks.Tier.Basic, color).get();
+            Block basicArmorBlock = ArmorBlocks.getBlock(ArmorBlocks.Tier.Light, color).get();
             Block hardenedArmorBlock = ArmorBlocks.getBlock(ArmorBlocks.Tier.Hardened, color).get();
             Block compressedArmorBlock = ArmorBlocks.getBlock(ArmorBlocks.Tier.Compressed, color).get();
 
-            StairBlock basicArmorStair = ArmorBlocks.getStair(ArmorBlocks.Tier.Basic, color).get();
+            StairBlock basicArmorStair = ArmorBlocks.getStair(ArmorBlocks.Tier.Light, color).get();
             StairBlock hardenedArmorStair = ArmorBlocks.getStair(ArmorBlocks.Tier.Hardened, color).get();
             StairBlock compressedArmorStair = ArmorBlocks.getStair(ArmorBlocks.Tier.Compressed, color).get();
 
-            SlabBlock basicArmorSlab = ArmorBlocks.getSlab(ArmorBlocks.Tier.Basic, color).get();
+            SlabBlock basicArmorSlab = ArmorBlocks.getSlab(ArmorBlocks.Tier.Light, color).get();
             SlabBlock hardenedArmorSlab = ArmorBlocks.getSlab(ArmorBlocks.Tier.Hardened, color).get();
             SlabBlock compressedArmorSlab = ArmorBlocks.getSlab(ArmorBlocks.Tier.Compressed, color).get();
 
@@ -142,7 +141,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 1
             )
             .unlockedBy("has_basic_armor_stair", has(ModTags.Items.ARMOR_STAIR_BASIC))
-            .save(recipeOutput, ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID,ArmorBlocks.getName(ArmorBlocks.Tier.Basic, color, ArmorBlocks.BlockType.Stairs) + "_from_stairs"));
+            .save(recipeOutput, ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID,ArmorBlocks.getName(ArmorBlocks.Tier.Light, color, ArmorBlocks.BlockType.Stairs) + "_from_stairs"));
 
             SingleItemRecipeBuilder.stonecutting(
                 Ingredient.of(ModTags.Items.ARMOR_STAIR_HARDENED),
@@ -172,7 +171,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 1
             )
             .unlockedBy("has_basic_armor_slab", has(ModTags.Items.ARMOR_SLAB_BASIC))
-            .save(recipeOutput, ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID,ArmorBlocks.getName(ArmorBlocks.Tier.Basic, color, ArmorBlocks.BlockType.Slab) + "_from_slab"));
+            .save(recipeOutput, ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID,ArmorBlocks.getName(ArmorBlocks.Tier.Light, color, ArmorBlocks.BlockType.Slab) + "_from_slab"));
 
             SingleItemRecipeBuilder.stonecutting(
                 Ingredient.of(ModTags.Items.ARMOR_SLAB_HARDENED),

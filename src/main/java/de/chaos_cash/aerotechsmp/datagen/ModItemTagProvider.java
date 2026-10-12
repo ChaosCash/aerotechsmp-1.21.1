@@ -25,7 +25,7 @@ public class ModItemTagProvider extends ItemTagsProvider {
         for (ArmorBlocks.Color color : ArmorBlocks.Color.values())
         {
             tag(ModTags.Items.ARMOR_BLOCK_BASIC)
-                    .add(ArmorBlocks.getBlock(ArmorBlocks.Tier.Basic, color).asItem());
+                    .add(ArmorBlocks.getBlock(ArmorBlocks.Tier.Light, color).asItem());
 
             tag(ModTags.Items.ARMOR_BLOCK_HARDENED)
                     .add(ArmorBlocks.getBlock(ArmorBlocks.Tier.Hardened, color).asItem());
@@ -35,7 +35,7 @@ public class ModItemTagProvider extends ItemTagsProvider {
 
 
             tag(ModTags.Items.ARMOR_STAIR_BASIC)
-                    .add(ArmorBlocks.getStair(ArmorBlocks.Tier.Basic, color).asItem());
+                    .add(ArmorBlocks.getStair(ArmorBlocks.Tier.Light, color).asItem());
 
             tag(ModTags.Items.ARMOR_STAIR_HARDENED)
                     .add(ArmorBlocks.getStair(ArmorBlocks.Tier.Hardened, color).asItem());
@@ -45,7 +45,7 @@ public class ModItemTagProvider extends ItemTagsProvider {
 
 
             tag(ModTags.Items.ARMOR_SLAB_BASIC)
-                    .add(ArmorBlocks.getSlab(ArmorBlocks.Tier.Basic, color).asItem());
+                    .add(ArmorBlocks.getSlab(ArmorBlocks.Tier.Light, color).asItem());
 
             tag(ModTags.Items.ARMOR_SLAB_HARDENED)
                     .add(ArmorBlocks.getSlab(ArmorBlocks.Tier.Hardened, color).asItem());

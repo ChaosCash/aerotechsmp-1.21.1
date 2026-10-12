@@ -1,7 +1,6 @@
 package de.chaos_cash.aerotechsmp.datagen;
 
 import de.chaos_cash.aerotechsmp.AerotechSMP;
-import de.chaos_cash.aerotechsmp.block.ModBlocks;
 import de.chaos_cash.aerotechsmp.block.custom.ArmorBlocks;
 import de.chaos_cash.aerotechsmp.util.ModTags;
 import net.minecraft.core.HolderLookup;
@@ -26,15 +25,15 @@ public class ModBlockTagProvider extends BlockTagsProvider {
     protected void addTags(HolderLookup.@NotNull Provider pProvider) {
         for (ArmorBlocks.Color color : ArmorBlocks.Color.values())
         {
-            Block basicArmorBlock = ArmorBlocks.getBlock(ArmorBlocks.Tier.Basic, color).get();
+            Block basicArmorBlock = ArmorBlocks.getBlock(ArmorBlocks.Tier.Light, color).get();
             Block hardenedArmorBlock = ArmorBlocks.getBlock(ArmorBlocks.Tier.Hardened, color).get();
             Block compressedArmorBlock = ArmorBlocks.getBlock(ArmorBlocks.Tier.Compressed, color).get();
 
-            StairBlock basicArmorStair = ArmorBlocks.getStair(ArmorBlocks.Tier.Basic, color).get();
+            StairBlock basicArmorStair = ArmorBlocks.getStair(ArmorBlocks.Tier.Light, color).get();
             StairBlock hardenedArmorStair = ArmorBlocks.getStair(ArmorBlocks.Tier.Hardened, color).get();
             StairBlock compressedArmorStair = ArmorBlocks.getStair(ArmorBlocks.Tier.Compressed, color).get();
 
-            SlabBlock basicArmorSlab = ArmorBlocks.getSlab(ArmorBlocks.Tier.Basic, color).get();
+            SlabBlock basicArmorSlab = ArmorBlocks.getSlab(ArmorBlocks.Tier.Light, color).get();
             SlabBlock hardenedArmorSlab = ArmorBlocks.getSlab(ArmorBlocks.Tier.Hardened, color).get();
             SlabBlock compressedArmorSlab = ArmorBlocks.getSlab(ArmorBlocks.Tier.Compressed, color).get();
 

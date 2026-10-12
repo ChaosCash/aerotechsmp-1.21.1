@@ -10,7 +10,6 @@ import net.neoforged.neoforge.registries.DeferredBlock;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 
 public class ArmorBlocks {
@@ -43,7 +42,7 @@ public class ArmorBlocks {
 
     private static BlockBehaviour.Properties getProperties(Tier tier, BlockType type) {
         int strength = switch (tier){
-            case Basic -> 24;
+            case Light -> 24;
             case Hardened -> 28;
             case Compressed -> 32;
         };
@@ -59,7 +58,7 @@ public class ArmorBlocks {
                 .strength(strength);
 
         properties = switch (tier) {
-            case Basic -> properties.destroyTime(2.5f).sound(SoundType.COPPER);
+            case Light -> properties.destroyTime(2.5f).sound(SoundType.COPPER);
             case Hardened -> properties.destroyTime(3f).sound(SoundType.NETHERITE_BLOCK);
             case Compressed -> properties.destroyTime(3.5f).sound(SoundType.NETHERITE_BLOCK);
         };
@@ -130,7 +129,7 @@ public class ArmorBlocks {
 
     public enum Tier
     {
-        Basic,
+        Light,
         Hardened,
         Compressed
     }
