@@ -37,9 +37,7 @@ public class TeamCoreBlock extends BaseEntityBlock {
                                                        @NotNull BlockPos pPos, @NotNull Player pPlayer, @NotNull InteractionHand pHand, @NotNull BlockHitResult pHitResult) {
         if(pLevel.getBlockEntity(pPos) instanceof TeamCoreBlockEntity teamCoreBlockEntity) {
             if(!pPlayer.isCrouching() && !pLevel.isClientSide()) {
-
-
-
+                teamCoreBlockEntity.dropRewards(pPlayer);
                 return ItemInteractionResult.SUCCESS;
             }
         }

@@ -121,8 +121,8 @@ configurations {
 }
 
 dependencies {
-    implementation "curse.maven:FTBTeams-404468:8724782"
     implementation "curse.maven:FTBLibrary-404465:9008089"
+    implementation "curse.maven:FTBTeams-404468:8724782"
     implementation "curse.maven:FTBChunks-314906:8791113"
     implementation "curse.maven:ArchitecturyAPI-419699:8492726"
     implementation "curse.maven:Sable-1312371:9043865"
