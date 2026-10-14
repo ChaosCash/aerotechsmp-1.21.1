@@ -1,10 +1,9 @@
-package de.chaos_cash.aerotechsmp.chat;
+package de.chaos_cash.aerotechsmp.util;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import de.chaos_cash.aerotechsmp.AerotechSMP;
 import de.chaos_cash.aerotechsmp.team.Team;
-import de.chaos_cash.aerotechsmp.util.EventHandler;
 import de.chaos_cash.aerotechsmp.phases.PhaseHandler;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;

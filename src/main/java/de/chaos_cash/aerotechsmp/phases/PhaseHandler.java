@@ -3,7 +3,7 @@ package de.chaos_cash.aerotechsmp.phases;
 import com.mojang.brigadier.context.CommandContext;
 import de.chaos_cash.aerotechsmp.AerotechSMP;
 import de.chaos_cash.aerotechsmp.util.EventHandler;
-import de.chaos_cash.aerotechsmp.chat.ChatHandler;
+import de.chaos_cash.aerotechsmp.util.ChatHandler;
 import dev.architectury.event.CompoundEventResult;
 import dev.ftb.mods.ftbchunks.FTBChunksAPIImpl;
 import dev.ftb.mods.ftbchunks.api.ClaimResult;
