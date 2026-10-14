@@ -11,13 +11,16 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public class Team extends SavedData {
     public static final int maxSize = 2;
@@ -44,17 +47,27 @@ public class Team extends SavedData {
     public boolean hasRewards() {return !rewards.isEmpty();}
 
 
+
+    public void sendUnclaimedRewardsMessage(UUID playerId){
+        ChatHandler.sendMessage(playerId, Component.literal("Your team has unclaimed rewards!").withColor(Color.green.getRGB()));
+    }
+
+
     public void sendInvite(ServerPlayer player){
         if (invites.containsKey(player.getUUID()))
             invites.replace(player.getUUID(), this);
         else
             invites.put(player.getUUID(), this);
 
-        ChatHandler.sendMessage(player, "You have been invited to the Team: " + ftbTeam.getName());
+        ChatHandler.sendMessage(player, Component.literal("You have been invited to the Team: " + ftbTeam.getName()));
     }
 
 
     public void addReward(IReward reward){
+        if (rewards.isEmpty())
+            for (var player : getOnlinePlayers())
+                sendUnclaimedRewardsMessage(player.getUUID());
+
         rewards.add(reward);
         setDirty();
     }

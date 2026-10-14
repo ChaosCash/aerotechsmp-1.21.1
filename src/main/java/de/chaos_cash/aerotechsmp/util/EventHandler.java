@@ -2,8 +2,12 @@ package de.chaos_cash.aerotechsmp.util;
 
 
 import de.chaos_cash.aerotechsmp.AerotechSMP;
+import de.chaos_cash.aerotechsmp.team.Team;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
 import java.util.ArrayList;
@@ -41,7 +45,7 @@ public class EventHandler {
 
 
         @SubscribeEvent
-        public static void onServerTick(ServerTickEvent.Post event) {
+        static void onServerTick(ServerTickEvent.Post event) {
             synchronized (TASKS) {
                 if (!TASKS_TO_ADD.isEmpty())
                     while (!TASKS_TO_ADD.isEmpty()) {
@@ -73,4 +77,16 @@ public class EventHandler {
             }
         }
 
+
+
+        @SubscribeEvent
+        static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event){
+            Player player = event.getEntity();
+            var team = Team.get(player);
+            if (team.isEmpty())
+                return;
+
+            if (team.get().hasRewards())
+                team.get().sendUnclaimedRewardsMessage(player.getUUID());
+        }
 }

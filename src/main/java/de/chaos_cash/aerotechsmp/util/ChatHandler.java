@@ -3,6 +3,7 @@ package de.chaos_cash.aerotechsmp.util;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import de.chaos_cash.aerotechsmp.AerotechSMP;
+import de.chaos_cash.aerotechsmp.team.RandomItemsReward;
 import de.chaos_cash.aerotechsmp.team.Team;
 import de.chaos_cash.aerotechsmp.phases.PhaseHandler;
 import net.minecraft.commands.CommandSourceStack;
@@ -17,9 +18,12 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.server.command.EnumArgument;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.UUID;
 
 
 @EventBusSubscriber(modid = AerotechSMP.MOD_ID)
@@ -149,7 +153,7 @@ public class ChatHandler {
                         switch (acceptResponse){
                             case Success -> {
                                 var team = Team.get(player).get();
-                                source.sendSuccess(() -> Component.literal("Successfully joined the team: " + team.getDisplayName()), false);
+                                source.sendSuccess(() -> Component.literal("Successfully joined the team '" + team.getDisplayName() + "'"), false);
                                 return 1;
                             }
                             case FailedForUnknownReason -> source.sendFailure(Component.literal("Accepting failed for unknown reasons"));
@@ -160,6 +164,35 @@ public class ChatHandler {
 
                         return 0;
                     })
+                )
+
+
+                .then(Commands.literal("giveReward")
+                    .requires(stack -> Team.get(Objects.requireNonNull(stack.getPlayer())).isPresent())
+                    .requires(stack -> stack.hasPermission(Commands.LEVEL_ADMINS))
+                    .then(Commands.argument("Player", EntityArgument.player())
+                        .then(Commands.literal("randomItems")
+                            .then(Commands.argument("rarity", EnumArgument.enumArgument(RandomItemsReward.Rarity.class))
+                                .executes((context) -> {
+                                    var source = context.getSource();
+                                    var player = source.getPlayer();
+                                    var team = Team.get(player);
+
+                                    if (team.isEmpty()){
+                                        source.sendFailure(Component.literal("This player is not part of a team"));
+                                        return 0;
+                                    }
+
+                                    var rarity = context.getArgument("rarity", RandomItemsReward.Rarity.class);
+                                    team.get().addReward(new RandomItemsReward(rarity));
+
+                                    source.sendSuccess(() -> Component.literal("Successfully gave the team of the Player '" + player.getDisplayName().getString() + "' a random item reward of the rarity '" + rarity + "'.") ,false);
+
+                                    return 1;
+                                })
+                            )
+                        )
+                    )
                 )
             )
         );
@@ -224,14 +257,14 @@ public class ChatHandler {
 
 
 
-    public static void sendMessage(Player player, String message)
-    {
-        PlayerChatMessage chatMessage = PlayerChatMessage.unsigned(player.getUUID(), message);
+    public static void sendMessage(Player player, Component message) {sendMessage(player.getUUID(), message);}
 
-        player.createCommandSourceStack().sendChatMessage(
-            new OutgoingChatMessage.Player(chatMessage),
-            false,
-            ChatType.bind(ChatType.MSG_COMMAND_INCOMING, player)
+    public static void sendMessage(UUID playerId, Component message) {sendMessage(Objects.requireNonNull(AerotechSMP.getServer().getPlayerList().getPlayer(playerId)), message);}
+
+    public static void sendMessage(ServerPlayer player, Component message)
+    {
+        player.sendSystemMessage(
+            message
         );
     }
 }
