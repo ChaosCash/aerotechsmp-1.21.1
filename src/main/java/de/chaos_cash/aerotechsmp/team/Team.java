@@ -57,13 +57,17 @@ public class Team extends SavedData {
 
     public void join(ServerPlayer player) throws CommandSyntaxException {
         ftbTeam.join(player);
+        ChatHandler.updateCommands(player);
     }
 
     public void leave(ServerPlayer player) throws CommandSyntaxException {
         ftbTeam.leave(player.getUUID());
+        ChatHandler.updateCommands(player);
     }
 
     public void delete(CommandSourceStack from) throws CommandSyntaxException {
+        for (var player : getOnlinePlayers())
+            ChatHandler.updateCommands(player);
         ftbTeam.forceDisband(from);
     }
 
@@ -112,13 +116,17 @@ public class Team extends SavedData {
     public static Team create(ServerPlayer player, String name) throws CommandSyntaxException {
         PartyTeam ftbTeam = FTBTeamsAPIImpl.INSTANCE.getManager().createParty(player, name);
 
-        return getDS().computeIfAbsent(
+        var newTeam = getDS().computeIfAbsent(
             new Factory<>(
                     () -> new Team(ftbTeam),
                     Team::load
             ),
             "team_" + ftbTeam.getTeamId()
         );
+
+        ChatHandler.updateCommands(player);
+
+        return newTeam;
     }
 
 

@@ -13,6 +13,7 @@ import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.OutgoingChatMessage;
 import net.minecraft.network.chat.PlayerChatMessage;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -58,7 +59,9 @@ public class ChatHandler {
                     )
                 )
 
+
                 .then(Commands.literal("invite")
+                    .requires(stack -> Team.get(Objects.requireNonNull(stack.getPlayer())).isPresent())
                     .then(Commands.argument("Player", EntityArgument.player())
                         .executes((context) ->{
                             var source = context.getSource();
@@ -91,47 +94,51 @@ public class ChatHandler {
                 )
 
                 .then(Commands.literal("leave")
-                        .executes((context) -> {
-                            var source = context.getSource();
-                            var player = source.getPlayer();
-                            var team = Team.get(player);
+                    .requires(stack -> Team.get(Objects.requireNonNull(stack.getPlayer())).isPresent())
+                    .executes((context) -> {
+                        var source = context.getSource();
+                        var player = source.getPlayer();
+                        var team = Team.get(player);
 
-                            if (team.isEmpty()) {
-                                source.sendFailure(Component.literal("You are not part of a team"));
-                                return 0;
-                            }
-                            if (team.get().isOwner(player)) {
-                                source.sendFailure(Component.literal("You cant leave the team because you are its Owner"));
-                                return 0;
-                            }
+                        if (team.isEmpty()) {
+                            source.sendFailure(Component.literal("You are not part of a team"));
+                            return 0;
+                        }
+                        if (team.get().isOwner(player)) {
+                            source.sendFailure(Component.literal("You cant leave the team because you are its Owner"));
+                            return 0;
+                        }
 
-                            team.get().leave(player);
-                            source.sendSuccess(() -> Component.literal("Successfully left the team"), false);
+                        team.get().leave(player);
+                        source.sendSuccess(() -> Component.literal("Successfully left the team"), false);
 
-                            return 1;
-                        })
+                        player.server.getCommands().sendCommands(player);
+
+                        return 1;
+                    })
                 )
 
                 .then(Commands.literal("delete")
-                        .executes((context) -> {
-                            var source = context.getSource();
-                            var player = source.getPlayer();
-                            var team = Team.get(player);
+                    .requires(stack -> Team.get(Objects.requireNonNull(stack.getPlayer())).isPresent())
+                    .executes((context) -> {
+                        var source = context.getSource();
+                        var player = source.getPlayer();
+                        var team = Team.get(player);
 
-                            if (team.isEmpty()) {
-                                source.sendFailure(Component.literal("You are not part of a team"));
-                                return 0;
-                            }
-                            if (!team.get().isOwner(player)) {
-                                source.sendFailure(Component.literal("Only the Owner can delete a team"));
-                                return 0;
-                            }
+                        if (team.isEmpty()) {
+                            source.sendFailure(Component.literal("You are not part of a team"));
+                            return 0;
+                        }
+                        if (!team.get().isOwner(player)) {
+                            source.sendFailure(Component.literal("Only the Owner can delete a team"));
+                            return 0;
+                        }
 
-                            team.get().delete(source);
-                            source.sendSuccess(() -> Component.literal("Successfully deleted the team '" + team.get().getDisplayName() + "'"), false);
+                        source.sendSuccess(() -> Component.literal("Successfully deleted the team '" + team.get().getDisplayName() + "'"), false);
+                        team.get().delete(source);
 
-                            return 1;
-                        })
+                        return 1;
+                    })
                 )
 
                 .then(Commands.literal("acceptInvite")
@@ -157,6 +164,11 @@ public class ChatHandler {
                 )
             )
         );
+    }
+
+
+    public static void updateCommands(ServerPlayer player){
+        player.server.getCommands().sendCommands(player);
     }
 
 
