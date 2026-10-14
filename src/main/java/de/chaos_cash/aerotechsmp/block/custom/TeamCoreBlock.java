@@ -4,9 +4,11 @@ import com.mojang.serialization.MapCodec;
 import de.chaos_cash.aerotechsmp.block.entity.ModBlockEntities;
 import de.chaos_cash.aerotechsmp.block.entity.custom.TeamCoreBlockEntity;
 import de.chaos_cash.aerotechsmp.chat.ChatHandler;
+import de.chaos_cash.aerotechsmp.team.Team;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.SimpleMenuProvider;
@@ -43,17 +45,6 @@ public class TeamCoreBlock extends BaseEntityBlock {
         }
 
         return ItemInteractionResult.SUCCESS;
-    }
-
-
-    @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
-        if (!movedByPiston){
-            if (level.getBlockEntity(pos) instanceof TeamCoreBlockEntity teamCoreBlockEntity){
-                teamCoreBlockEntity.dropItems();
-            }
-        }
-        super.onRemove(state, level, pos, newState, movedByPiston);
     }
 
     @Override

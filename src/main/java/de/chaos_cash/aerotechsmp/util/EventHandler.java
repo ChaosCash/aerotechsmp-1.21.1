@@ -12,6 +12,7 @@ import java.util.List;
 @EventBusSubscriber(modid = AerotechSMP.MOD_ID)
 public class EventHandler {
         private static final List<ScheduledTask> TASKS = new ArrayList<>();
+        private static final List<ScheduledTask> TASKS_TO_ADD = new ArrayList<>();
 
 
         private static class ScheduledTask {
@@ -33,7 +34,7 @@ public class EventHandler {
             }
 
             synchronized (TASKS) {
-                TASKS.add(new ScheduledTask(delayInTicks, action));
+                TASKS_TO_ADD.add(new ScheduledTask(delayInTicks, action));
             }
         }
 
@@ -42,6 +43,13 @@ public class EventHandler {
         @SubscribeEvent
         public static void onServerTick(ServerTickEvent.Post event) {
             synchronized (TASKS) {
+                if (!TASKS_TO_ADD.isEmpty())
+                    while (!TASKS_TO_ADD.isEmpty()) {
+                        var task = TASKS_TO_ADD.getFirst();
+                        TASKS.add(task);
+                        TASKS_TO_ADD.remove(task);
+                    }
+
                 if (TASKS.isEmpty()) return;
 
                 List<ScheduledTask> tasksToRemove = new ArrayList<>();
@@ -56,8 +64,6 @@ public class EventHandler {
                         }
                         tasksToRemove.add(task);
                     }
-
-
                 }
 
                 if (tasksToRemove.isEmpty()) return;

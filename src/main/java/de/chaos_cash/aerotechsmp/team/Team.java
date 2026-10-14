@@ -1,6 +1,7 @@
 package de.chaos_cash.aerotechsmp.team;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.datafixers.types.templates.CompoundList;
 import de.chaos_cash.aerotechsmp.AerotechSMP;
 import de.chaos_cash.aerotechsmp.chat.ChatHandler;
 import dev.ftb.mods.ftbteams.FTBTeamsAPIImpl;
@@ -9,6 +10,9 @@ import dev.ftb.mods.ftbteams.data.PartyTeam;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.saveddata.SavedData;
@@ -24,6 +28,7 @@ public class Team extends SavedData {
 
 
     private final PartyTeam ftbTeam;
+    private final List<IReward> rewards = new ArrayList<>();
 
 
     private Team(PartyTeam ftbTeam){
@@ -38,6 +43,8 @@ public class Team extends SavedData {
 
     public boolean isFull() {return getTeamSize() >= maxSize;}
 
+    public boolean hasRewards() {return !rewards.isEmpty();}
+
 
     public void sendInvite(ServerPlayer player){
         if (invites.containsKey(player.getUUID()))
@@ -47,6 +54,19 @@ public class Team extends SavedData {
 
         ChatHandler.sendMessage(player, "You have been invited to the Team: " + ftbTeam.getName());
     }
+
+
+    public void addReward(IReward reward){
+        rewards.add(reward);
+        setDirty();
+    }
+
+    public void removeReward(IReward reward){
+        rewards.remove(reward);
+        setDirty();
+    }
+
+    public IReward getFirstReward() {return rewards.getFirst();}
 
 
 
@@ -80,14 +100,28 @@ public class Team extends SavedData {
     }
 
 
-    static Team load(CompoundTag tag, HolderLookup.Provider lookupProvider) {
+    static Team load(CompoundTag tag, HolderLookup.Provider lookupProvider){
         UUID teamID = tag.getUUID("ftbTeam");
 
-        var team = FTBTeamsAPIImpl.INSTANCE.getManager().getTeamByID(teamID);
-        if (team.isEmpty())
+        var ftbTeam = FTBTeamsAPIImpl.INSTANCE.getManager().getTeamByID(teamID);
+
+        if (ftbTeam.isEmpty())
             throw new RuntimeException("Team with ID: " + teamID + " does not exist!");
 
-        return new Team((PartyTeam) team.get());
+        var newTeam = new Team((PartyTeam) ftbTeam.get());
+
+        ListTag rewards = tag.getList("rewards", Tag.TAG_COMPOUND);
+        for (int i = 0; i < rewards.size(); i++){
+            var compound = rewards.getCompound(i);
+            try {
+                newTeam.addReward(IReward.getInstance(compound));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+
+        return newTeam;
     }
 
 
@@ -161,6 +195,12 @@ public class Team extends SavedData {
     @Override
     public @NotNull CompoundTag save(@NotNull CompoundTag compoundTag, HolderLookup.@NotNull Provider provider) {
         compoundTag.putUUID("ftbTeam", ftbTeam.getTeamId());
+
+        ListTag rewardsCompound = new ListTag();
+        for (var reward : rewards)
+            rewardsCompound.add(reward.save());
+
+        compoundTag.put("rewards", rewardsCompound);
         return compoundTag;
     }
 
