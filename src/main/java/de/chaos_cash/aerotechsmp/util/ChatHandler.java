@@ -29,6 +29,8 @@ import java.util.UUID;
 @EventBusSubscriber(modid = AerotechSMP.MOD_ID)
 public class ChatHandler {
 
+    static final int[] countdownIntervals = {30, 15, 10, 5, 4, 3, 2, 1};
+
     @SubscribeEvent
     public static void onRegisterCommands(RegisterCommandsEvent event) {
         CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
@@ -214,17 +216,23 @@ public class ChatHandler {
 
     public static void broadcastCountdown(int ticks, String prefix, String suffix, Component countDownOverMessage)
     {
-        int hours = Math.floorDiv(ticks, 720000);
-        ticks -= hours * 720000;
+        int hours = Math.floorDiv(ticks, 72000);
+        ticks -= hours * 72000;
         int minutes = Math.floorDiv(ticks, 1200);
         ticks -= minutes * 1200;
         int seconds = Math.floorDiv(ticks, 20);
-
-        var messages = new ArrayList<Component>();
+        ticks -= seconds * 20;
 
         for (int hour = 1; hour <= hours; hour++)
         {
+            broadcast(createCountdownMessage(prefix, suffix, 0, 0, hour), (hours - hour) * 72000 + minutes * 1200 + seconds * 20 + ticks);
+        }
 
+        for (int interval : countdownIntervals){
+            if (minutes >= interval || hours > 0)
+                broadcast(createCountdownMessage(prefix, suffix, 0, interval, 0), hours * 72000 + (minutes - interval) * 1200 + seconds * 20 + ticks);
+            if (seconds >= interval || minutes > 0)
+                broadcast(createCountdownMessage(prefix, suffix, interval, 0, 0), hours * 72000 + minutes * 1200 + (seconds - interval) * 20 + ticks);
         }
     }
 
@@ -232,11 +240,27 @@ public class ChatHandler {
     static Component createCountdownMessage(String prefix, String suffix, int seconds, int minutes, int hours)
     {
         String message = prefix;
-        if (minutes > 0)
-            message += minutes + "m ";
-        if (hours > 0)
-            message += minutes + "m ";
-        message += seconds + "s " + suffix;
+        if (hours > 0){
+            message += hours;
+            if (hours == 1)
+                message += " hour ";
+            else
+                message += " hours ";
+        }
+        if (minutes > 0) {
+            message += minutes;
+            if (minutes == 1)
+                message += " minute ";
+            else
+                message += " minutes ";
+        }
+        if (seconds > 0) {
+            message += seconds;
+            if (seconds == 1)
+                message += " second ";
+            else
+                message += " seconds ";
+        }
 
         return Component.literal(message);
     }

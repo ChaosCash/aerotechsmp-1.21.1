@@ -36,17 +36,9 @@ public class PhaseHandler {
 
     public static int schedulePVPPhaseStartCommand(CommandContext<CommandSourceStack> context)
     {
-        ChatHandler.broadcast(Component.literal("Starting PVP phase in 60 seconds..."));
-
         createBackup("Pre PVP-Phase Backup ");
 
-        ChatHandler.broadcast(Component.literal("Starting PVP phase in 30 seconds..."), 600);
-        ChatHandler.broadcast(Component.literal("Starting PVP phase in 10 seconds..."), 1000);
-        ChatHandler.broadcast(Component.literal("Starting PVP phase in 5 seconds..."), 1100);
-        ChatHandler.broadcast(Component.literal("Starting PVP phase in 4 seconds..."), 1120);
-        ChatHandler.broadcast(Component.literal("Starting PVP phase in 3 seconds..."), 1140);
-        ChatHandler.broadcast(Component.literal("Starting PVP phase in 2 seconds..."), 1160);
-        ChatHandler.broadcast(Component.literal("Starting PVP phase in 1 seconds..."), 1180);
+        ChatHandler.broadcastCountdown(1200, "Starting PVP-Phase in ", "...", Component.literal("Starting PVP-Phase..."));
 
         EventHandler.scheduleTask(1200, () -> startPVPPhase(context.getSource()));
 
