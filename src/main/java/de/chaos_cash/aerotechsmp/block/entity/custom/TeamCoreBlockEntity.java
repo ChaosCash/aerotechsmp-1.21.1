@@ -39,6 +39,12 @@ public class TeamCoreBlockEntity extends ModBlockEntity {
         if (level.isClientSide) return;
         if (placer == null) return;
 
+        if (!level.dimensionType().equals(AerotechSMP.getServer().overworld().dimensionType())) {
+            level.destroyBlock(getBlockPos(), true);
+            ChatHandler.sendMessage(placer, Component.literal("A Team Core can only be placed in the overworld!").withColor(Color.red.getRGB()));
+            return;
+        }
+
         var team = Team.get(placer);
         if (team.isEmpty()) {
             level.destroyBlock(getBlockPos(), true);

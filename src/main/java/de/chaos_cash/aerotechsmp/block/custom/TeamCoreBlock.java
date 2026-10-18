@@ -1,7 +1,9 @@
 package de.chaos_cash.aerotechsmp.block.custom;
 
 import com.mojang.serialization.MapCodec;
+import de.chaos_cash.aerotechsmp.AerotechSMP;
 import de.chaos_cash.aerotechsmp.block.entity.custom.TeamCoreBlockEntity;
+import de.chaos_cash.aerotechsmp.util.EventHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
@@ -57,7 +59,7 @@ public class TeamCoreBlock extends BaseEntityBlock {
 
 
     @Override
-    public void setPlacedBy(@NotNull Level level, @NotNull BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+    public void setPlacedBy(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @Nullable LivingEntity placer, @NotNull ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack);
 
         if (level.isClientSide)
@@ -71,7 +73,7 @@ public class TeamCoreBlock extends BaseEntityBlock {
 
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+    protected void onRemove(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull BlockState newState, boolean movedByPiston) {
         if (!level.isClientSide()) {
             if (level.getBlockEntity(pos) instanceof TeamCoreBlockEntity coreBE) {
                 coreBE.onRemove();
@@ -79,5 +81,11 @@ public class TeamCoreBlock extends BaseEntityBlock {
         }
 
         super.onRemove(state, level, pos, newState, movedByPiston);
+    }
+
+
+    @Override
+    protected void onPlace(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState oldState, boolean movedByPiston) {
+        super.onPlace(state, level, pos, oldState, movedByPiston);
     }
 }
