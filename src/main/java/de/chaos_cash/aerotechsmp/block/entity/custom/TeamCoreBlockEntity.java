@@ -8,19 +8,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.fml.loading.FMLEnvironment;
-import net.neoforged.neoforge.client.event.CustomizeGuiOverlayEvent;
-import net.neoforged.neoforge.client.event.RenderTooltipEvent;
 
 import java.awt.*;
-import java.util.Optional;
 
 
 public class TeamCoreBlockEntity extends ModBlockEntity {
@@ -57,7 +51,14 @@ public class TeamCoreBlockEntity extends ModBlockEntity {
             return;
         }
 
-        this.team = team.get();
+        setTeam(team.get());
+    }
+
+
+    private void setTeam(Team team){
+        if (team.setCore(this)){
+            this.team = team;
+        }
     }
 
 
@@ -71,7 +72,6 @@ public class TeamCoreBlockEntity extends ModBlockEntity {
 
         if (this.level == null) return;
         if (isGivingRewards) return;
-        if (team == null) return;
 
         if (!team.hasRewards()) {
             level.playSound(null, getBlockPos(), SoundEvents.VAULT_INSERT_ITEM_FAIL, SoundSource.BLOCKS, 2, 1);
@@ -87,6 +87,8 @@ public class TeamCoreBlockEntity extends ModBlockEntity {
 
 
     void dropReward(Team team){
+        if (this.level == null) return;
+
         if (!team.hasRewards()) {
             finishGivingRewards();
         return;
@@ -121,6 +123,8 @@ public class TeamCoreBlockEntity extends ModBlockEntity {
 
     void finishGivingRewards(){
         isGivingRewards = false;
+
+        if (this.level == null) return;
         level.playSound(null, getBlockPos(), SoundEvents.BEACON_DEACTIVATE, SoundSource.BLOCKS, 3, 1);
     }
 

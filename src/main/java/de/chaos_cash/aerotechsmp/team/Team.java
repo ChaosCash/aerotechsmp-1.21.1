@@ -2,66 +2,158 @@ package de.chaos_cash.aerotechsmp.team;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import de.chaos_cash.aerotechsmp.AerotechSMP;
+import de.chaos_cash.aerotechsmp.block.entity.custom.TeamCoreBlockEntity;
 import de.chaos_cash.aerotechsmp.util.ChatHandler;
 import dev.ftb.mods.ftbteams.FTBTeamsAPIImpl;
 import dev.ftb.mods.ftbteams.api.TeamRank;
+import dev.ftb.mods.ftbteams.api.property.BooleanProperty;
+import dev.ftb.mods.ftbteams.api.property.IntProperty;
+import dev.ftb.mods.ftbteams.api.property.StringListProperty;
 import dev.ftb.mods.ftbteams.data.PartyTeam;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.saveddata.SavedData;
-import net.minecraft.world.level.storage.DimensionDataStorage;
-import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-public class Team extends SavedData {
+public class Team {
     public static final int maxSize = 2;
     private static final Map<UUID, Team> teams = new HashMap<>();
     private static final Map<UUID, Team> invites = new HashMap<>();
 
 
+    private static final BooleanProperty hasCorePropertyType = new BooleanProperty(ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID, "has_core"), false);
+    private static final IntProperty corePosXPropertyType = new IntProperty(ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID, "core_pos_x"), null);
+    private static final IntProperty corePosYPropertyType = new IntProperty(ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID, "core_pos_y"), null);
+    private static final IntProperty corePosZPropertyType = new IntProperty(ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID, "core_pos_z"), null);
+    private static final StringListProperty rewardsPropertyType = new StringListProperty(ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID, "rewards"), () -> null);
+
+
     private final PartyTeam ftbTeam;
     private final List<IReward> rewards = new ArrayList<>();
+    private BlockPos corePos = null;
 
+
+
+
+    //<editor-fold desc="Creating / getting / loading">
 
     private Team(PartyTeam ftbTeam){
         this.ftbTeam = ftbTeam;
-        setDirty(true);
 
         teams.put(ftbTeam.getTeamId(), this);
+
+        loadRewards();
+        loadCore();
     }
 
+
+    private void loadCore() {
+        boolean hasCore = ftbTeam.getProperty(hasCorePropertyType);
+        if (!hasCore) return;
+
+        var position = new BlockPos(
+            ftbTeam.getProperty(corePosXPropertyType),
+            ftbTeam.getProperty(corePosYPropertyType),
+            ftbTeam.getProperty(corePosZPropertyType)
+        );
+
+        if (AerotechSMP.getServer().overworld().getBlockEntity(position) instanceof TeamCoreBlockEntity) {
+            corePos = position;
+        }
+    }
+
+    private void loadRewards(){
+        var rewards = ftbTeam.getProperty(rewardsPropertyType);
+        if (rewards == null) {
+            ChatHandler.broadcast(Component.literal("rewards is null"), 5);
+            return;
+        }
+
+        ChatHandler.broadcast(Component.literal(rewards.toString()), 5);
+
+        for (var reward : rewards){
+            ChatHandler.broadcast(Component.literal("reward!"), 5);
+            try {
+                addReward(IReward.getInstance(TagParser.parseTag(reward)));
+            } catch (Exception e) {
+                ChatHandler.broadcast(Component.literal(e.toString()), 5);
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+
+
+    public static Optional<Team> get(ServerPlayer player){
+        var ftbTeam = FTBTeamsAPIImpl.INSTANCE.getManager().getTeamForPlayerID(player.getUUID());
+        return ftbTeam.flatMap(team -> get(team.getTeamId()));
+    }
+
+    public static Optional<Team> get(Player player){
+        var ftbTeam = FTBTeamsAPIImpl.INSTANCE.getManager().getTeamForPlayerID(player.getUUID());
+        return ftbTeam.flatMap(team -> get(team.getTeamId()));
+    }
+
+    public static Optional<Team> get(UUID teamID){
+        if (teams.containsKey(teamID))
+            return Optional.ofNullable(teams.get(teamID));
+
+        var optTeam = FTBTeamsAPIImpl.INSTANCE.getManager().getTeamByID(teamID);
+
+        if (optTeam.isPresent() && optTeam.get() instanceof PartyTeam party)
+            return Optional.of(new Team(party));
+        else
+            return Optional.empty();
+    }
+
+
+
+    public static void create(ServerPlayer player, String name) throws CommandSyntaxException {
+        PartyTeam ftbTeam = FTBTeamsAPIImpl.INSTANCE.getManager().createParty(player, name);
+        new Team(ftbTeam);
+        ChatHandler.updateCommands(player);
+    }
+
+    //</editor-fold>
+
+
+
+    //<editor-fold desc="API">
+
+    public String getDisplayName() {
+        return ftbTeam.getDisplayName();
+    }
 
     public int getTeamSize() {return ftbTeam.getPlayersByRank(TeamRank.ALLY).size();}
 
+    public List<ServerPlayer> getOnlinePlayers(){
+        return ftbTeam.getOnlineMembers();
+    }
+
+
     public boolean isFull() {return getTeamSize() >= maxSize;}
 
+    public boolean isOwner(ServerPlayer player){
+        return ftbTeam.isOwner(player.getUUID());
+    }
+
+
+    public boolean setCore(TeamCoreBlockEntity teamCoreBlockEntity) {
+        ChatHandler.broadcast(Component.literal("setCore"));
+        corePos = teamCoreBlockEntity.getBlockPos();
+        ftbTeam.setProperty(hasCorePropertyType, true);
+        return true;
+    }
+
+
     public boolean hasRewards() {return !rewards.isEmpty();}
-
-
-
-    public void sendUnclaimedRewardsMessage(UUID playerId){
-        ChatHandler.sendMessage(playerId, Component.literal("Your team has unclaimed rewards!").withColor(Color.green.getRGB()));
-    }
-
-
-    public void sendInvite(ServerPlayer player){
-        if (invites.containsKey(player.getUUID()))
-            invites.replace(player.getUUID(), this);
-        else
-            invites.put(player.getUUID(), this);
-
-        ChatHandler.sendMessage(player, Component.literal("You have been invited to the Team: " + ftbTeam.getName()));
-    }
-
 
     public void addReward(IReward reward){
         if (rewards.isEmpty())
@@ -69,22 +161,35 @@ public class Team extends SavedData {
                 sendUnclaimedRewardsMessage(player.getUUID());
 
         rewards.add(reward);
-        setDirty();
+
+
+        List<String> rewardsProperty = ftbTeam.getProperty(rewardsPropertyType);
+        if (rewardsProperty == null)
+            rewardsProperty = new ArrayList<>();
+        rewardsProperty.add(reward.save().toString());
+        ftbTeam.setProperty(rewardsPropertyType, rewardsProperty);
     }
 
     public void removeReward(IReward reward){
-        rewards.remove(reward);
-        setDirty();
+        int index = rewards.indexOf(reward);
+        rewards.remove(index);
+
+        var rewardsProperty = ftbTeam.getProperty(rewardsPropertyType);
+        rewardsProperty.remove(index);
+        ftbTeam.setProperty(rewardsPropertyType, rewardsProperty);
     }
 
     public IReward getFirstReward() {return rewards.getFirst();}
 
-
-
-    public List<ServerPlayer> getOnlinePlayers(){
-        return ftbTeam.getOnlineMembers();
+    public void sendUnclaimedRewardsMessage(UUID playerId){
+        ChatHandler.sendMessage(playerId, Component.literal("Your team has unclaimed rewards!").withColor(Color.green.getRGB()));
     }
 
+    //</editor-fold>
+
+
+
+    //<editor-fold desc="Commands">
 
     public void join(ServerPlayer player) throws CommandSyntaxException {
         ftbTeam.join(player);
@@ -102,41 +207,14 @@ public class Team extends SavedData {
         ftbTeam.forceDisband(from);
     }
 
-    public boolean isOwner(ServerPlayer player){
-        return ftbTeam.isOwner(player.getUUID());
+    public void sendInvite(ServerPlayer player){
+        if (invites.containsKey(player.getUUID()))
+            invites.replace(player.getUUID(), this);
+        else
+            invites.put(player.getUUID(), this);
+
+        ChatHandler.sendMessage(player, Component.literal("You have been invited to the Team: " + ftbTeam.getName()));
     }
-
-    public String getDisplayName() {
-        return ftbTeam.getDisplayName();
-    }
-
-
-    static Team load(CompoundTag tag, HolderLookup.Provider lookupProvider){
-        UUID teamID = tag.getUUID("ftbTeam");
-
-        var ftbTeam = FTBTeamsAPIImpl.INSTANCE.getManager().getTeamByID(teamID);
-
-        if (ftbTeam.isEmpty())
-            throw new RuntimeException("Team with ID: " + teamID + " does not exist!");
-
-        var newTeam = new Team((PartyTeam) ftbTeam.get());
-
-        ListTag rewards = tag.getList("rewards", Tag.TAG_COMPOUND);
-        for (int i = 0; i < rewards.size(); i++){
-            var compound = rewards.getCompound(i);
-            try {
-                newTeam.addReward(IReward.getInstance(compound));
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-
-        }
-
-        return newTeam;
-    }
-
-
-
 
     public static AcceptReturn acceptInvite(ServerPlayer player){
         if (!invites.containsKey(player.getUUID()))
@@ -157,66 +235,8 @@ public class Team extends SavedData {
         return AcceptReturn.Success;
     }
 
+    //</editor-fold>
 
-    public static Team create(ServerPlayer player, String name) throws CommandSyntaxException {
-        PartyTeam ftbTeam = FTBTeamsAPIImpl.INSTANCE.getManager().createParty(player, name);
-
-        var newTeam = getDS().computeIfAbsent(
-            new Factory<>(
-                    () -> new Team(ftbTeam),
-                    Team::load
-            ),
-            "team_" + ftbTeam.getTeamId()
-        );
-
-        ChatHandler.updateCommands(player);
-
-        return newTeam;
-    }
-
-
-    public static Optional<Team> get(ServerPlayer player){
-        var ftbTeam = FTBTeamsAPIImpl.INSTANCE.getManager().getTeamForPlayerID(player.getUUID());
-        return ftbTeam.flatMap(team -> get(team.getTeamId()));
-    }
-
-
-    public static Optional<Team> get(Player player){
-        var ftbTeam = FTBTeamsAPIImpl.INSTANCE.getManager().getTeamForPlayerID(player.getUUID());
-        return ftbTeam.flatMap(team -> get(team.getTeamId()));
-    }
-
-
-
-
-    public static Optional<Team> get(UUID teamID){
-        if (teams.containsKey(teamID))
-            return Optional.ofNullable(teams.get(teamID));
-
-        return Optional.ofNullable(getDS().get(
-                new Factory<>(
-                        () -> null,
-                        Team::load
-                ),
-                "team_" + teamID
-        ));
-    }
-
-
-    @Override
-    public @NotNull CompoundTag save(@NotNull CompoundTag compoundTag, HolderLookup.@NotNull Provider provider) {
-        compoundTag.putUUID("ftbTeam", ftbTeam.getTeamId());
-
-        ListTag rewardsCompound = new ListTag();
-        for (var reward : rewards)
-            rewardsCompound.add(reward.save());
-
-        compoundTag.put("rewards", rewardsCompound);
-        return compoundTag;
-    }
-
-
-    static DimensionDataStorage getDS() {return AerotechSMP.getServer().overworld().getDataStorage();}
 
 
 
