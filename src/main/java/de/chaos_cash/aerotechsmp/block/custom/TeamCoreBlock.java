@@ -68,4 +68,16 @@ public class TeamCoreBlock extends BaseEntityBlock {
                blockEntity.setPlacer(player);
        }
     }
+
+
+    @Override
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        if (!level.isClientSide()) {
+            if (level.getBlockEntity(pos) instanceof TeamCoreBlockEntity coreBE) {
+                coreBE.onRemove();
+            }
+        }
+
+        super.onRemove(state, level, pos, newState, movedByPiston);
+    }
 }

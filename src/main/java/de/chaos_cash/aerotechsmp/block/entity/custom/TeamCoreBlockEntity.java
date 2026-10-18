@@ -1,5 +1,6 @@
 package de.chaos_cash.aerotechsmp.block.entity.custom;
 
+import de.chaos_cash.aerotechsmp.AerotechSMP;
 import de.chaos_cash.aerotechsmp.block.entity.ModBlockEntities;
 import de.chaos_cash.aerotechsmp.team.Team;
 import de.chaos_cash.aerotechsmp.util.ChatHandler;
@@ -34,15 +35,9 @@ public class TeamCoreBlockEntity extends ModBlockEntity {
     public void setPlacer(Player placer) {this.placer = placer;}
 
     private void checkPlacer() {
-        if (level == null){
-            return;
-        }
+        if (level == null) return;
         if (level.isClientSide) return;
-
-        if (placer == null) {
-            level.destroyBlock(getBlockPos(), true);
-            return;
-        }
+        if (placer == null) return;
 
         var team = Team.get(placer);
         if (team.isEmpty()) {
@@ -52,6 +47,8 @@ public class TeamCoreBlockEntity extends ModBlockEntity {
         }
 
         setTeam(team.get());
+        if (this.team == null)
+            ChatHandler.sendMessage(placer, Component.literal("Your Team already has a Team Core!").withColor(Color.red.getRGB()));
     }
 
 
@@ -59,6 +56,8 @@ public class TeamCoreBlockEntity extends ModBlockEntity {
         if (team.setCore(this)){
             this.team = team;
         }
+        else
+            AerotechSMP.getServer().overworld().destroyBlock(getBlockPos(), true);
     }
 
 
@@ -84,7 +83,6 @@ public class TeamCoreBlockEntity extends ModBlockEntity {
 
         EventHandler.scheduleTask(40, () -> dropReward(team));
     }
-
 
     void dropReward(Team team){
         if (this.level == null) return;
@@ -114,12 +112,9 @@ public class TeamCoreBlockEntity extends ModBlockEntity {
 
         if (team.hasRewards())
             EventHandler.scheduleTask(20, () -> dropReward(team));
-            //dropReward(team);
         else
-            //finishGivingRewards();
             EventHandler.scheduleTask(40, this::finishGivingRewards);
     }
-
 
     void finishGivingRewards(){
         isGivingRewards = false;
@@ -131,12 +126,22 @@ public class TeamCoreBlockEntity extends ModBlockEntity {
 
     @Override
     protected void saveAdditionalData(CompoundTag tag, HolderLookup.Provider registries) {
-
+        if (team != null)
+            tag.putUUID("team_id", team.getId());
     }
 
 
     @Override
     protected void loadAdditionalData(CompoundTag tag, HolderLookup.Provider registries) {
+        if (tag.hasUUID("team_id"))
+            Team.get(tag.getUUID("team_id")).ifPresent(value -> team = value);
 
+        if (team == null && level != null)
+            EventHandler.scheduleTask(1, () -> this.level.destroyBlock(getBlockPos(), true));
+    }
+
+    public void onRemove() {
+        if (team != null)
+            team.removeCore();
     }
 }

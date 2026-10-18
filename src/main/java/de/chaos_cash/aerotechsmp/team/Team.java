@@ -72,18 +72,13 @@ public class Team {
     private void loadRewards(){
         var rewards = ftbTeam.getProperty(rewardsPropertyType);
         if (rewards == null) {
-            ChatHandler.broadcast(Component.literal("rewards is null"), 5);
             return;
         }
 
-        ChatHandler.broadcast(Component.literal(rewards.toString()), 5);
-
         for (var reward : rewards){
-            ChatHandler.broadcast(Component.literal("reward!"), 5);
             try {
                 addReward(IReward.getInstance(TagParser.parseTag(reward)));
             } catch (Exception e) {
-                ChatHandler.broadcast(Component.literal(e.toString()), 5);
                 throw new RuntimeException(e);
             }
         }
@@ -127,6 +122,8 @@ public class Team {
 
     //<editor-fold desc="API">
 
+    public UUID getId() {return ftbTeam.getId();}
+
     public String getDisplayName() {
         return ftbTeam.getDisplayName();
     }
@@ -146,9 +143,35 @@ public class Team {
 
 
     public boolean setCore(TeamCoreBlockEntity teamCoreBlockEntity) {
-        ChatHandler.broadcast(Component.literal("setCore"));
+        if (hasCore()) return false;
+
         corePos = teamCoreBlockEntity.getBlockPos();
         ftbTeam.setProperty(hasCorePropertyType, true);
+        ftbTeam.setProperty(corePosXPropertyType, corePos.getX());
+        ftbTeam.setProperty(corePosYPropertyType, corePos.getY());
+        ftbTeam.setProperty(corePosZPropertyType, corePos.getZ());
+        return true;
+    }
+
+    public void removeCore() {
+        if (corePos != null)
+            if (AerotechSMP.getServer().overworld().getBlockEntity(corePos) instanceof TeamCoreBlockEntity)
+                AerotechSMP.getServer().overworld().destroyBlock(corePos, true);
+
+        corePos = null;
+        ftbTeam.setProperty(hasCorePropertyType, false);
+        ftbTeam.setProperty(corePosXPropertyType, 0);
+        ftbTeam.setProperty(corePosYPropertyType, 0);
+        ftbTeam.setProperty(corePosZPropertyType, 0);
+    }
+
+    public boolean hasCore() {
+        if (corePos == null) return false;
+        if (!(AerotechSMP.getServer().overworld().getBlockEntity(corePos) instanceof TeamCoreBlockEntity)){
+            removeCore();
+            return false;
+        }
+
         return true;
     }
 
@@ -204,6 +227,8 @@ public class Team {
     public void delete(CommandSourceStack from) throws CommandSyntaxException {
         for (var player : getOnlinePlayers())
             ChatHandler.updateCommands(player);
+        if (hasCore())
+            removeCore();
         ftbTeam.forceDisband(from);
     }
 
