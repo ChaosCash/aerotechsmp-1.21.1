@@ -9,10 +9,7 @@ import de.chaos_cash.aerotechsmp.phases.PhaseHandler;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
-import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.OutgoingChatMessage;
-import net.minecraft.network.chat.PlayerChatMessage;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -21,7 +18,6 @@ import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.server.command.EnumArgument;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -103,6 +99,7 @@ public class ChatHandler {
                     .executes((context) -> {
                         var source = context.getSource();
                         var player = source.getPlayer();
+                        assert player != null;
                         var team = Team.get(player);
 
                         if (team.isEmpty()) {
@@ -128,6 +125,7 @@ public class ChatHandler {
                     .executes((context) -> {
                         var source = context.getSource();
                         var player = source.getPlayer();
+                        assert player != null;
                         var team = Team.get(player);
 
                         if (team.isEmpty()) {
@@ -150,6 +148,7 @@ public class ChatHandler {
                     .executes((context) -> {
                         var source = context.getSource();
                         var player = source.getPlayer();
+                        assert player != null;
                         var acceptResponse = Team.acceptInvite(player);
 
                         switch (acceptResponse){
@@ -178,6 +177,7 @@ public class ChatHandler {
                                 .executes((context) -> {
                                     var source = context.getSource();
                                     var player = source.getPlayer();
+                                    assert player != null;
                                     var team = Team.get(player);
 
                                     if (team.isEmpty()){
@@ -207,15 +207,13 @@ public class ChatHandler {
 
 
 
-    public static void broadcast(Component message)
-    {
+    public static void broadcast(Component message) {
         AerotechSMP.getServer().getPlayerList().broadcastSystemMessage(message, false);
     }
 
 
 
-    public static void broadcastCountdown(int ticks, String prefix, String suffix, Component countDownOverMessage)
-    {
+    public static void broadcastCountdown(int ticks, String prefix, String suffix, Component countDownOverMessage) {
         int hours = Math.floorDiv(ticks, 72000);
         ticks -= hours * 72000;
         int minutes = Math.floorDiv(ticks, 1200);
@@ -237,8 +235,7 @@ public class ChatHandler {
     }
 
 
-    static Component createCountdownMessage(String prefix, String suffix, int seconds, int minutes, int hours)
-    {
+    static Component createCountdownMessage(String prefix, String suffix, int seconds, int minutes, int hours) {
         String message = prefix;
         if (hours > 0){
             message += hours;
@@ -266,18 +263,16 @@ public class ChatHandler {
     }
 
 
-
-    static int timeToTick(int seconds, int minutes, int hours)
-    {
+    static int timeToTick(int seconds, int minutes, int hours) {
         return seconds * 20 + minutes * 1200 + hours * 720000;
     }
 
 
-
-    public static void broadcast(Component message, int tickDelay)
-    {
-        EventHandler.scheduleTask(tickDelay,() -> {broadcast(message);});
+    public static void broadcast(Component message, int tickDelay) {
+        EventHandler.scheduleTask(tickDelay,() -> broadcast(message));
     }
+
+    public static void broadcast(String message) {broadcast(Component.literal(message));}
 
 
 
@@ -285,8 +280,7 @@ public class ChatHandler {
 
     public static void sendMessage(UUID playerId, Component message) {sendMessage(Objects.requireNonNull(AerotechSMP.getServer().getPlayerList().getPlayer(playerId)), message);}
 
-    public static void sendMessage(ServerPlayer player, Component message)
-    {
+    public static void sendMessage(ServerPlayer player, Component message) {
         player.sendSystemMessage(
             message
         );
