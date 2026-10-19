@@ -2,6 +2,7 @@ package de.chaos_cash.aerotechsmp.block.entity.custom;
 
 import de.chaos_cash.aerotechsmp.AerotechSMP;
 import de.chaos_cash.aerotechsmp.block.entity.ModBlockEntities;
+import de.chaos_cash.aerotechsmp.phases.PhaseHandler;
 import de.chaos_cash.aerotechsmp.team.Team;
 import de.chaos_cash.aerotechsmp.util.ChatHandler;
 import de.chaos_cash.aerotechsmp.util.EventHandler;
@@ -36,30 +37,35 @@ public class TeamCoreBlockEntity extends ModBlockEntity {
     public void setPlacer(Player placer) {this.placer = placer;}
 
     private void checkPlacer() {
+        if (isLoading) return;
         if (level == null) return;
         if (level.isClientSide) return;
         if (placer == null){
-            if (!isLoading)
-                level.destroyBlock(getBlockPos(), true);
+            level.destroyBlock(getBlockPos(), true);
+            return;
+        }
+        if (PhaseHandler.getPhase() != PhaseHandler.Phase.Peaceful){
+            ChatHandler.sendError(placer.getUUID(),"A Team Core can only be placed in times of peace!");
+            level.destroyBlock(getBlockPos(), true);
             return;
         }
 
         if (!level.dimensionType().equals(AerotechSMP.getServer().overworld().dimensionType())) {
             level.destroyBlock(getBlockPos(), true);
-            ChatHandler.sendMessage(placer, Component.literal("A Team Core can only be placed in the overworld!").withColor(Color.red.getRGB()));
+            ChatHandler.sendError(placer.getUUID(),"A Team Core can only be placed in the overworld!");
             return;
         }
 
         var team = Team.get(placer);
         if (team.isEmpty()) {
             level.destroyBlock(getBlockPos(), true);
-            ChatHandler.sendMessage(placer, Component.literal("You need to be part of a team to place a Team Core!").withColor(Color.red.getRGB()));
+            ChatHandler.sendError(placer.getUUID(),"You need to be part of a team to place a Team Core!");
             return;
         }
 
         setTeam(team.get());
         if (this.team == null)
-            ChatHandler.sendMessage(placer, Component.literal("Your Team already has a Team Core!").withColor(Color.red.getRGB()));
+            ChatHandler.sendError(placer.getUUID(),"Your Team already has a Team Core!");
     }
 
 

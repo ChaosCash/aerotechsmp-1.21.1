@@ -80,10 +80,4 @@ public class TeamCoreBlock extends BaseEntityBlock {
 
         super.onRemove(state, level, pos, newState, movedByPiston);
     }
-
-
-    @Override
-    protected void onPlace(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState oldState, boolean movedByPiston) {
-        super.onPlace(state, level, pos, oldState, movedByPiston);
-    }
 }

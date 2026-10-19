@@ -36,6 +36,8 @@ public class PhaseHandler {
 
     public static int schedulePVPPhaseStartCommand(CommandContext<CommandSourceStack> context)
     {
+        phase = Phase.Intermission;
+
         createBackup("Pre PVP-Phase Backup ");
 
         ChatHandler.broadcastCountdown(1200, "Starting PVP-Phase in ", "...", Component.literal("Starting PVP-Phase..."));
@@ -128,6 +130,6 @@ public class PhaseHandler {
     {
         Peaceful,
         PVP,
-        Cooldown
+        Intermission
     }
 }

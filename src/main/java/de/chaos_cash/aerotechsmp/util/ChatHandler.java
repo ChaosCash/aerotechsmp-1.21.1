@@ -285,4 +285,6 @@ public class ChatHandler {
             message
         );
     }
+
+    public static void sendError(UUID playerId, String error) {sendMessage(playerId, Component.literal(error).withColor(Color.red.getRGB()));}
 }
