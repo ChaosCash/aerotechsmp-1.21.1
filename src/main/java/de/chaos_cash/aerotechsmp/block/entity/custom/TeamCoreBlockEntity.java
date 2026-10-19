@@ -23,6 +23,7 @@ public class TeamCoreBlockEntity extends ModBlockEntity {
     private Player placer;
 
     private Team team;
+    private boolean isLoading = false;
 
 
     public TeamCoreBlockEntity(BlockPos pos, BlockState blockState) {
@@ -37,7 +38,11 @@ public class TeamCoreBlockEntity extends ModBlockEntity {
     private void checkPlacer() {
         if (level == null) return;
         if (level.isClientSide) return;
-        if (placer == null) return;
+        if (placer == null){
+            if (!isLoading)
+                level.destroyBlock(getBlockPos(), true);
+            return;
+        }
 
         if (!level.dimensionType().equals(AerotechSMP.getServer().overworld().dimensionType())) {
             level.destroyBlock(getBlockPos(), true);
@@ -144,6 +149,8 @@ public class TeamCoreBlockEntity extends ModBlockEntity {
 
         if (team == null && level != null)
             EventHandler.scheduleTask(1, () -> this.level.destroyBlock(getBlockPos(), true));
+
+        isLoading = true;
     }
 
     public void onRemove() {
