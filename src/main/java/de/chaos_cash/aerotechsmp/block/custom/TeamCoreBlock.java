@@ -1,9 +1,7 @@
 package de.chaos_cash.aerotechsmp.block.custom;
 
 import com.mojang.serialization.MapCodec;
-import de.chaos_cash.aerotechsmp.AerotechSMP;
 import de.chaos_cash.aerotechsmp.block.entity.custom.TeamCoreBlockEntity;
-import de.chaos_cash.aerotechsmp.util.EventHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
