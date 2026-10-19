@@ -4,9 +4,7 @@ import com.mojang.brigadier.context.CommandContext;
 import de.chaos_cash.aerotechsmp.AerotechSMP;
 import de.chaos_cash.aerotechsmp.util.EventHandler;
 import de.chaos_cash.aerotechsmp.util.ChatHandler;
-import dev.architectury.event.CompoundEventResult;
 import dev.ftb.mods.ftbchunks.FTBChunksAPIImpl;
-import dev.ftb.mods.ftbchunks.api.ClaimResult;
 import dev.ftb.mods.ftbchunks.api.ClaimedChunk;
 import net.creeperhost.ftbbackups.BackupHandler;
 import net.creeperhost.ftbbackups.FTBBackups;
@@ -14,9 +12,11 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.world.BossEvent;
+import net.minecraft.world.level.border.WorldBorder;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
 @EventBusSubscriber(modid = AerotechSMP.MOD_ID)
@@ -25,8 +25,22 @@ public class PhaseHandler {
     static Phase phase = Phase.Peaceful;
 
     static ServerBossEvent bossEvent;
-    static final int PVP_PHASE_LENGTH = 1000;
+    static final int pvpPhaseLength = 144000 / 60;
+    static final int battleRoyalLength = pvpPhaseLength / 2;
+    static final int battleRoyalStart = pvpPhaseLength - battleRoyalLength;
     static int pvpPhaseActiveTicks = 0;
+
+    static int defaultBorderSize = 4000;
+    static double currentBorderSize = defaultBorderSize;
+    static double borderBaseSpeedPerTick = .15 * 60;
+    private static WorldBorder border;
+
+
+    @SubscribeEvent
+    public static void onServerStart(ServerStartingEvent event){
+        border = AerotechSMP.getServer().overworld().getWorldBorder();
+        border.setSize(currentBorderSize);
+    }
 
 
 
@@ -42,7 +56,7 @@ public class PhaseHandler {
 
         ChatHandler.broadcastCountdown(1200, "Starting PVP-Phase in ", "...", Component.literal("Starting PVP-Phase..."));
 
-        EventHandler.scheduleTask(1200, () -> startPVPPhase(context.getSource()));
+        EventHandler.scheduleTask(0, () -> startPVPPhase(context.getSource()));
 
         return 1;
     }
@@ -52,7 +66,7 @@ public class PhaseHandler {
 
     static void startPVPPhase(CommandSourceStack source)
     {
-        phase = Phase.PVP;
+        phase = Phase.Domination;
         ChatHandler.broadcast(Component.literal("Starting PVP phase..."));
 
         deleteAllClaims(source);
@@ -67,7 +81,7 @@ public class PhaseHandler {
 
     @SubscribeEvent
     public static void onServerTick(ServerTickEvent.Post event) {
-        if (phase == Phase.PVP)
+        if (phase == Phase.Domination || phase == Phase.BattleRoyal)
             onPVPPhaseTick(event);
     }
 
@@ -75,7 +89,7 @@ public class PhaseHandler {
 
     @SubscribeEvent
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-        if (phase == Phase.PVP) {
+        if (phase == Phase.Domination) {
             var player = AerotechSMP.getServer().getPlayerList().getPlayer(event.getEntity().getUUID());
             if (player != null)
                 bossEvent.addPlayer(player);
@@ -86,7 +100,27 @@ public class PhaseHandler {
 
     public static void onPVPPhaseTick(ServerTickEvent.Post event) {
         pvpPhaseActiveTicks ++;
-        bossEvent.setProgress(1 -(float) pvpPhaseActiveTicks / PVP_PHASE_LENGTH);
+        bossEvent.setProgress(1 - ((float) pvpPhaseActiveTicks / pvpPhaseLength));
+
+        if (phase == Phase.Domination){
+            if (pvpPhaseActiveTicks > battleRoyalStart)
+                phase = Phase.BattleRoyal;
+        }
+        else {
+            currentBorderSize = Math.max(currentBorderSize - getBorderShrinkSpeed(), 16);
+            border.setSize(currentBorderSize);
+        }
+    }
+
+
+    public static double getBorderShrinkSpeed(){
+        double t = (double) getBattleRoyalActiveTicks() / battleRoyalLength;
+        return borderBaseSpeedPerTick * Math.pow(t + 1, -3.1);
+    }
+
+
+    public static int getBattleRoyalActiveTicks(){
+        return Math.max(pvpPhaseActiveTicks - battleRoyalStart, 0);
     }
 
 
@@ -118,18 +152,17 @@ public class PhaseHandler {
 
 
 
-    public static CompoundEventResult<ClaimResult> onChunkClaim(CommandSourceStack source, ClaimedChunk claimedChunk) {
-        if (phase == Phase.PVP)
+    public static void onChunkClaim(CommandSourceStack source, ClaimedChunk claimedChunk) {
+        if (phase == Phase.Domination)
             claimedChunk.unclaim(source, true);
-
-        return CompoundEventResult.interruptTrue(ClaimResult.success());
     }
 
 
     public enum Phase
     {
         Peaceful,
-        PVP,
-        Intermission
+        Intermission,
+        Domination,
+        BattleRoyal,
     }
 }
