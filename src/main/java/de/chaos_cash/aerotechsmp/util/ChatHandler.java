@@ -263,7 +263,7 @@ public class ChatHandler {
     }
 
 
-    static int timeToTick(int seconds, int minutes, int hours) {
+    public static int timeToTick(int seconds, int minutes, int hours) {
         return seconds * 20 + minutes * 1200 + hours * 720000;
     }
 

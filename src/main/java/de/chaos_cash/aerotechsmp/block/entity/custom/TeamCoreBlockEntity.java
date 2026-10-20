@@ -2,6 +2,7 @@ package de.chaos_cash.aerotechsmp.block.entity.custom;
 
 import de.chaos_cash.aerotechsmp.AerotechSMP;
 import de.chaos_cash.aerotechsmp.block.entity.ModBlockEntities;
+import de.chaos_cash.aerotechsmp.phases.PeacefulPhase;
 import de.chaos_cash.aerotechsmp.phases.PhaseHandler;
 import de.chaos_cash.aerotechsmp.team.Team;
 import de.chaos_cash.aerotechsmp.util.ChatHandler;
@@ -44,7 +45,7 @@ public class TeamCoreBlockEntity extends ModBlockEntity {
             level.destroyBlock(getBlockPos(), true);
             return;
         }
-        if (PhaseHandler.getPhase() != PhaseHandler.Phase.Peaceful){
+        if (PhaseHandler.getPhase() instanceof PeacefulPhase){
             ChatHandler.sendError(placer.getUUID(),"A Team Core can only be placed in times of peace!");
             level.destroyBlock(getBlockPos(), true);
             return;

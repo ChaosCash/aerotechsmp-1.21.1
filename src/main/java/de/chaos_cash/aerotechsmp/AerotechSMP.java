@@ -70,8 +70,6 @@ public class AerotechSMP {
 
 
         FTBTeamsAPIImpl.INSTANCE.setPartyCreationFromAPIOnly(true);
-
-        ClaimedChunkEvent.AFTER_CLAIM.register(PhaseHandler::onChunkClaim);
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
