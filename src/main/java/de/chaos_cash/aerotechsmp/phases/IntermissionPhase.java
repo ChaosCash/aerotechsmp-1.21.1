@@ -1,10 +1,12 @@
 package de.chaos_cash.aerotechsmp.phases;
 
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.BossEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.function.Supplier;
 
 public class IntermissionPhase extends TimedPhase{
 
@@ -12,9 +14,13 @@ public class IntermissionPhase extends TimedPhase{
         super(length, nextPhase);
     }
 
+    public IntermissionPhase(int length, @NotNull Phase nextPhase, @NotNull Supplier<Boolean> lengtheningCondition, int lengthIncrease, @NotNull String lengtheningReason) {
+        super(length, nextPhase, lengtheningCondition, lengthIncrease, lengtheningReason);
+    }
+
     @Override
-    public Component getDisplayName() {
-        return Component.literal("Intermission");
+    public String getDisplayName() {
+        return "Intermission";
     }
 
     @Override

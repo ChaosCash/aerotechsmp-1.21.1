@@ -22,8 +22,6 @@ public class DominationPhase extends TimedPhase{
 
     @Override
     public void onActivation() {
-        ChatHandler.broadcast(Component.literal("Starting Domination-Phase!").withColor(Color.YELLOW.getRGB()));
-
         super.onActivation();
 
         deleteAllClaims();
@@ -39,8 +37,8 @@ public class DominationPhase extends TimedPhase{
     }
 
     @Override
-    public Component getDisplayName() {
-        return Component.literal("Domination");
+    public String getDisplayName() {
+        return "Domination-Phase";
     }
 
 

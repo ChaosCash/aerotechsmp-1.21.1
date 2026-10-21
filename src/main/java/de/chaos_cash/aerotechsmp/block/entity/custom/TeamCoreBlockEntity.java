@@ -45,22 +45,22 @@ public class TeamCoreBlockEntity extends ModBlockEntity {
             level.destroyBlock(getBlockPos(), true);
             return;
         }
-        if (PhaseHandler.getPhase() instanceof PeacefulPhase){
+        if (!(PhaseHandler.getPhase() instanceof PeacefulPhase)){
             ChatHandler.sendError(placer.getUUID(),"A Team Core can only be placed in times of peace!");
             level.destroyBlock(getBlockPos(), true);
             return;
         }
 
         if (!level.dimensionType().equals(AerotechSMP.getServer().overworld().dimensionType())) {
-            level.destroyBlock(getBlockPos(), true);
             ChatHandler.sendError(placer.getUUID(),"A Team Core can only be placed in the overworld!");
+            level.destroyBlock(getBlockPos(), true);
             return;
         }
 
         var team = Team.get(placer);
         if (team.isEmpty()) {
-            level.destroyBlock(getBlockPos(), true);
             ChatHandler.sendError(placer.getUUID(),"You need to be part of a team to place a Team Core!");
+            level.destroyBlock(getBlockPos(), true);
             return;
         }
 

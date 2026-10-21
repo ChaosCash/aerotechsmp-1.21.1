@@ -212,54 +212,46 @@ public class ChatHandler {
     }
 
 
-
-    public static void broadcastCountdown(int ticks, String prefix, String suffix, Component countDownOverMessage) {
+    public static String formatTickTime(int ticks) {
         int hours = Math.floorDiv(ticks, 72000);
         ticks -= hours * 72000;
         int minutes = Math.floorDiv(ticks, 1200);
         ticks -= minutes * 1200;
         int seconds = Math.floorDiv(ticks, 20);
-        ticks -= seconds * 20;
 
-        for (int hour = 1; hour <= hours; hour++)
-        {
-            broadcast(createCountdownMessage(prefix, suffix, 0, 0, hour), (hours - hour) * 72000 + minutes * 1200 + seconds * 20 + ticks);
-        }
+        String formattedTime = "";
 
-        for (int interval : countdownIntervals){
-            if (minutes >= interval || hours > 0)
-                broadcast(createCountdownMessage(prefix, suffix, 0, interval, 0), hours * 72000 + (minutes - interval) * 1200 + seconds * 20 + ticks);
-            if (seconds >= interval || minutes > 0)
-                broadcast(createCountdownMessage(prefix, suffix, interval, 0, 0), hours * 72000 + minutes * 1200 + (seconds - interval) * 20 + ticks);
-        }
-    }
-
-
-    static Component createCountdownMessage(String prefix, String suffix, int seconds, int minutes, int hours) {
-        String message = prefix;
         if (hours > 0){
-            message += hours;
+            formattedTime += hours;
             if (hours == 1)
-                message += " hour ";
+                formattedTime += " hour";
             else
-                message += " hours ";
-        }
-        if (minutes > 0) {
-            message += minutes;
-            if (minutes == 1)
-                message += " minute ";
-            else
-                message += " minutes ";
-        }
-        if (seconds > 0) {
-            message += seconds;
-            if (seconds == 1)
-                message += " second ";
-            else
-                message += " seconds ";
+                formattedTime += " hours";
         }
 
-        return Component.literal(message);
+        if (minutes > 0) {
+            if (!formattedTime.isEmpty())
+                formattedTime += " ";
+
+            formattedTime += minutes;
+            if (minutes == 1)
+                formattedTime += " minute";
+            else
+                formattedTime += " minutes";
+        }
+
+        if (seconds > 0 || (minutes <= 0 && hours <= 0)) {
+            if (!formattedTime.isEmpty())
+                formattedTime += " ";
+
+            formattedTime += seconds;
+            if (seconds == 1)
+                formattedTime += " second";
+            else
+                formattedTime += " seconds";
+        }
+
+        return formattedTime;
     }
 
 

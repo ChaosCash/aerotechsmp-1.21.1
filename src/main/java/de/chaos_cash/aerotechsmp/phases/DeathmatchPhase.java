@@ -1,11 +1,9 @@
 package de.chaos_cash.aerotechsmp.phases;
 
 import de.chaos_cash.aerotechsmp.AerotechSMP;
-import de.chaos_cash.aerotechsmp.util.ChatHandler;
 import dev.ftb.mods.ftbchunks.api.ClaimedChunk;
 import dev.ftb.mods.ftbchunks.api.event.ClaimedChunkEvent;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.border.WorldBorder;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -14,8 +12,9 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import java.awt.*;
 
 public class DeathmatchPhase extends TimedPhase{
-    static double currentBorderSize = PeacefulPhase.borderSize;
-    static double borderBaseSpeedPerTick = .15;
+    static final double borderBaseSpeedPerTick = .15;
+
+    private double currentBorderSize = PeacefulPhase.borderSize;
     private final WorldBorder border;
 
 
@@ -27,8 +26,6 @@ public class DeathmatchPhase extends TimedPhase{
 
     @Override
     public void onActivation() {
-        ChatHandler.broadcast(Component.literal("Starting Deathmatch-Phase!").withColor(Color.YELLOW.getRGB()));
-
         super.onActivation();
 
         ClaimedChunkEvent.AFTER_CLAIM.register(this::onChunkClaim);
@@ -43,8 +40,8 @@ public class DeathmatchPhase extends TimedPhase{
 
 
     @Override
-    public Component getDisplayName() {
-        return Component.literal("Deathmatch");
+    public String getDisplayName() {
+        return "Deathmatch-Phase";
     }
 
 
