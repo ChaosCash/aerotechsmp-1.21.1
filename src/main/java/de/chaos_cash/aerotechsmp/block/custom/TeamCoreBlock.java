@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,8 +46,8 @@ public class TeamCoreBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return null;
+    protected @NotNull MapCodec<? extends BaseEntityBlock> codec() {
+        return CODEC;
     }
 
     @Override
@@ -79,5 +80,19 @@ public class TeamCoreBlock extends BaseEntityBlock {
         }
 
         super.onRemove(state, level, pos, newState, movedByPiston);
+    }
+
+    @Override
+    public boolean onDestroyedByPlayer(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, boolean willHarvest, @NotNull FluidState fluid) {
+        if(!level.isClientSide()){
+            var blockEntity = level.getBlockEntity(pos);
+            if (blockEntity instanceof TeamCoreBlockEntity coreBlockEntity){
+                var team = coreBlockEntity.getTeam();
+                if (team != null)
+                    team.onCoreBrokeByPlayer(player);
+            }
+        }
+
+        return super.onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid);
     }
 }

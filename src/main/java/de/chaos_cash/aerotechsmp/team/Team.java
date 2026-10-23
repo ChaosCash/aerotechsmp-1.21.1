@@ -3,6 +3,7 @@ package de.chaos_cash.aerotechsmp.team;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import de.chaos_cash.aerotechsmp.AerotechSMP;
 import de.chaos_cash.aerotechsmp.block.entity.custom.TeamCoreBlockEntity;
+import de.chaos_cash.aerotechsmp.phases.PhaseHandler;
 import de.chaos_cash.aerotechsmp.util.ChatHandler;
 import dev.ftb.mods.ftbteams.FTBTeamsAPIImpl;
 import dev.ftb.mods.ftbteams.api.TeamRank;
@@ -36,7 +37,7 @@ public class Team {
 
 
     private final PartyTeam ftbTeam;
-    private final List<IReward> rewards = new ArrayList<>();
+    private final List<Reward> rewards = new ArrayList<>();
     private BlockPos corePos = null;
 
 
@@ -77,7 +78,7 @@ public class Team {
 
         for (var reward : rewards){
             try {
-                addReward(IReward.getInstance(TagParser.parseTag(reward)));
+                addReward(Reward.getInstance(TagParser.parseTag(reward)));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -175,10 +176,17 @@ public class Team {
         return true;
     }
 
+    public void onCoreBrokeByPlayer(Player player) {
+        if (!ftbTeam.isMember(player.getUUID()) || PhaseHandler.getPhase().allowsTeamModifications())
+            sendTeamMessage(Component.literal("Your Team Core has been broken by " + player.getDisplayName().getString() + "!"));
+
+        RewardHandler.onTeamCoreBreak(player, this);
+    }
+
 
     public boolean hasRewards() {return !rewards.isEmpty();}
 
-    public void addReward(IReward reward){
+    public void addReward(Reward reward){
         if (rewards.isEmpty())
             for (var player : getOnlinePlayers())
                 sendUnclaimedRewardsMessage(player.getUUID());
@@ -193,7 +201,7 @@ public class Team {
         ftbTeam.setProperty(rewardsPropertyType, rewardsProperty);
     }
 
-    public void removeReward(IReward reward){
+    public void removeReward(Reward reward){
         int index = rewards.indexOf(reward);
         rewards.remove(index);
 
@@ -202,7 +210,12 @@ public class Team {
         ftbTeam.setProperty(rewardsPropertyType, rewardsProperty);
     }
 
-    public IReward getFirstReward() {return rewards.getFirst();}
+    public Reward getFirstReward() {return rewards.getFirst();}
+
+    public void sendTeamMessage(Component message) {
+        for (var player : getOnlinePlayers())
+            ChatHandler.sendMessage(player, message);
+    }
 
     public void sendUnclaimedRewardsMessage(UUID playerId){
         ChatHandler.sendMessage(playerId, Component.literal("Your team has unclaimed rewards!").withColor(Color.green.getRGB()));

@@ -35,6 +35,9 @@ public class TeamCoreBlockEntity extends ModBlockEntity {
     }
 
 
+    public Team getTeam() {return team;}
+
+
     public void setPlacer(Player placer) {this.placer = placer;}
 
     private void checkPlacer() {
@@ -45,8 +48,8 @@ public class TeamCoreBlockEntity extends ModBlockEntity {
             level.destroyBlock(getBlockPos(), true);
             return;
         }
-        if (!(PhaseHandler.getPhase() instanceof PeacefulPhase)){
-            ChatHandler.sendError(placer.getUUID(),"A Team Core can only be placed in times of peace!");
+        if (!PhaseHandler.getPhase().allowsTeamModifications()){
+            ChatHandler.sendError(placer.getUUID(),"You can not place a Team Core in this Phase!");
             level.destroyBlock(getBlockPos(), true);
             return;
         }
@@ -82,13 +85,24 @@ public class TeamCoreBlockEntity extends ModBlockEntity {
 
     public void dropRewards(Player player){
         var playerTeam = Team.get(player);
+        if (this.level == null) return;
+
+        if (isGivingRewards){
+            level.playSound(null, getBlockPos(), SoundEvents.VAULT_INSERT_ITEM_FAIL, SoundSource.BLOCKS, 2, 1);
+            return;
+        }
+
         if (playerTeam.isEmpty() || playerTeam.get() != team){
+            level.playSound(null, getBlockPos(), SoundEvents.VAULT_INSERT_ITEM_FAIL, SoundSource.BLOCKS, 2, 1);
             ChatHandler.sendMessage(player, Component.literal("This team Core is not owned by Your Team!").withColor(Color.red.getRGB()));
             return;
         }
 
-        if (this.level == null) return;
-        if (isGivingRewards) return;
+        if (!(PhaseHandler.getPhase() instanceof PeacefulPhase)){
+            level.playSound(null, getBlockPos(), SoundEvents.VAULT_INSERT_ITEM_FAIL, SoundSource.BLOCKS, 2, 1);
+            ChatHandler.sendMessage(player, Component.literal("You can only withdraw Rewards in times of peace!").withColor(Color.red.getRGB()));
+            return;
+        }
 
         if (!team.hasRewards()) {
             level.playSound(null, getBlockPos(), SoundEvents.VAULT_INSERT_ITEM_FAIL, SoundSource.BLOCKS, 2, 1);
