@@ -16,6 +16,7 @@ public class ModItemModelProvider extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
+        //basicItem(ModItems.HEART_CORE.get());
     }
 
 }

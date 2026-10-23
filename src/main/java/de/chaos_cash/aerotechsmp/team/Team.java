@@ -187,6 +187,13 @@ public class Team {
     public boolean hasRewards() {return !rewards.isEmpty();}
 
     public void addReward(Reward reward){
+        if (AerotechSMP.getServer().overworld().isClientSide()) {
+            ChatHandler.broadcast("Client");
+            return;
+        }
+
+        ChatHandler.broadcast("Reward");
+
         if (rewards.isEmpty())
             for (var player : getOnlinePlayers())
                 sendUnclaimedRewardsMessage(player.getUUID());

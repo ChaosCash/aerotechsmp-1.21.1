@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "aerotechsmp:item/heart_core_common"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "aerotechsmp:rarity": 1
+      },
+      "model": "aerotechsmp:item/heart_core_uncommon"
+    },
+    {
+      "predicate": {
+        "aerotechsmp:rarity": 2
+      },
+      "model": "aerotechsmp:item/heart_core_rare"
+    },
+    {
+      "predicate": {
+        "aerotechsmp:rarity": 3
+      },
+      "model": "aerotechsmp:item/heart_core_epic"
+    },
+    {
+      "predicate": {
+        "aerotechsmp:rarity": 4
+      },
+      "model": "aerotechsmp:item/heart_core_legendary"
+    }
+  ]
+}

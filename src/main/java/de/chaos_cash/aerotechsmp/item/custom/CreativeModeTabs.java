@@ -3,6 +3,7 @@ package de.chaos_cash.aerotechsmp.item.custom;
 import de.chaos_cash.aerotechsmp.AerotechSMP;
 import de.chaos_cash.aerotechsmp.block.ModBlocks;
 import de.chaos_cash.aerotechsmp.block.custom.ArmorBlocks;
+import de.chaos_cash.aerotechsmp.item.ModItems;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -41,6 +42,7 @@ public class CreativeModeTabs {
                     .icon(ModBlocks.TEAM_CORE::toStack)
                     .displayItems((itemDisplayParameters, output) -> {
                         output.accept(ModBlocks.TEAM_CORE);
+                        output.accept(ModItems.HEART_CORE);
                     }).build()
             );
 

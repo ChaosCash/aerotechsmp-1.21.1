@@ -20,7 +20,7 @@ public abstract class Reward {
 
 
     static Reward getInstance(CompoundTag tag) {
-        var rarity = stringToRarity(tag.getString("rarity"));
+        var rarity = Rarity.fromString(tag.getString("rarity"));
 
         return switch (tag.getString("type")) {
             case RandomItemsReward.typeName -> new RandomItemsReward(rarity);
@@ -45,17 +45,6 @@ public abstract class Reward {
     }
 
 
-    public static Rarity stringToRarity(String string){
-        return switch (string){
-            case "Uncommon" -> Rarity.Uncommon;
-            case "Rarity" -> Rarity.Rare;
-            case "Epic" -> Rarity.Epic;
-            case "Legendary" -> Rarity.Legendary;
-            default -> Rarity.Common;
-        };
-    }
-
-
     public abstract @NotNull List<ItemStack> getRewards();
 
     public abstract @NotNull String getTypeName();
@@ -68,6 +57,27 @@ public abstract class Reward {
         Uncommon,
         Rare,
         Epic,
-        Legendary,
+        Legendary;
+
+
+        public static Rarity fromString(String string){
+            return switch (string){
+                case "Uncommon" -> Rarity.Uncommon;
+                case "Rarity" -> Rarity.Rare;
+                case "Epic" -> Rarity.Epic;
+                case "Legendary" -> Rarity.Legendary;
+                default -> Rarity.Common;
+            };
+        }
+
+        public static Rarity fromInt(int integer){
+            return switch (integer){
+                case 1 -> Rarity.Uncommon;
+                case 2 -> Rarity.Rare;
+                case 3 -> Rarity.Epic;
+                case 4 -> Rarity.Legendary;
+                default -> Rarity.Common;
+            };
+        }
     }
 }

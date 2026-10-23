@@ -1,5 +1,6 @@
 package de.chaos_cash.aerotechsmp;
 
+import de.chaos_cash.aerotechsmp.item.ModItemProperties;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
@@ -30,12 +31,7 @@ public class AerotechSMPClient {
         // Some client setup code
         AerotechSMP.LOGGER.info("HELLO FROM CLIENT SETUP");
         AerotechSMP.LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
-    }
 
-    @SubscribeEvent
-    static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event)
-    {
-        Player player = event.getEntity();
-
+        ModItemProperties.addCustomItemProperties();
     }
 }

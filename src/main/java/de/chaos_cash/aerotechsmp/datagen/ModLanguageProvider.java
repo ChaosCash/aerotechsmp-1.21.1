@@ -3,6 +3,7 @@ package de.chaos_cash.aerotechsmp.datagen;
 import de.chaos_cash.aerotechsmp.AerotechSMP;
 import de.chaos_cash.aerotechsmp.block.ModBlocks;
 import de.chaos_cash.aerotechsmp.block.custom.ArmorBlocks;
+import de.chaos_cash.aerotechsmp.item.ModItems;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 
@@ -14,6 +15,7 @@ public class ModLanguageProvider extends LanguageProvider {
     @Override
     protected void addTranslations() {
         add(ModBlocks.TEAM_CORE.get(), "Team Core");
+        add(ModItems.HEART_CORE.get(), "Heart Core");
 
         for (ArmorBlocks.Color color : ArmorBlocks.Color.values())
         {
