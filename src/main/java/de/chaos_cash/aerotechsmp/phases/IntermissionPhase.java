@@ -1,5 +1,7 @@
 package de.chaos_cash.aerotechsmp.phases;
 
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.BossEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -38,5 +40,17 @@ public class IntermissionPhase extends TimedPhase{
     @Override
     protected void onTick(ServerTickEvent.Post event) {
         super.onTick(event);
+    }
+
+
+
+    @Override
+    public SoundEvent getActivationSound() {
+        return SoundEvents.BEACON_ACTIVATE;
+    }
+
+    @Override
+    public float getActivationSoundVolume() {
+        return 1;
     }
 }

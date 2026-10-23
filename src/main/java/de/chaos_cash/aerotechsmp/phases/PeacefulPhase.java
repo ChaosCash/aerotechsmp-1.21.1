@@ -12,7 +12,7 @@ public class PeacefulPhase extends Phase {
     }
 
     @Override
-    public boolean allowsClaims() {
+    public boolean allowsTeamModifications() {
         return true;
     }
 

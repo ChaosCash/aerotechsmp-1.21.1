@@ -30,6 +30,9 @@ public class PhaseHandler {
             phase.onDeactivation();
         phase = newPhase;
         phase.onActivation();
+
+        for (var player : AerotechSMP.getServer().getPlayerList().getPlayers())
+            ChatHandler.updateCommands(player);
     }
 
 
@@ -39,7 +42,15 @@ public class PhaseHandler {
 
         createBackup("Pre PVP-Phase Backup ");
 
-        setPhase(new IntermissionPhase(1200, new DominationPhase(), BackupHandler::isRunning, 400,  "the Backup is not finished yet."));
+        setPhase(
+            new IntermissionPhase(
+                1200,
+                new DominationPhase(),
+                BackupHandler::isRunning,
+                400,
+                "the Backup is not finished yet."
+            )
+        );
 
         return 1;
     }
@@ -64,7 +75,7 @@ public class PhaseHandler {
 
 
     private static void onAfterClaim(CommandSourceStack commandSourceStack, ClaimedChunk claimedChunk) {
-        if (phase == null || phase.allowsClaims())
+        if (phase == null || phase.allowsTeamModifications())
             return;
 
         claimedChunk.unclaim(commandSourceStack, true);

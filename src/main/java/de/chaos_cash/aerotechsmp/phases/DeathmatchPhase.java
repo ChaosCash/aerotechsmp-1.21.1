@@ -11,7 +11,7 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
 import java.awt.*;
 
-public class DeathmatchPhase extends TimedPhase{
+public class DeathmatchPhase extends PVPPhase{
     static final double borderBaseSpeedPerTick = .15;
 
     private double currentBorderSize = PeacefulPhase.borderSize;

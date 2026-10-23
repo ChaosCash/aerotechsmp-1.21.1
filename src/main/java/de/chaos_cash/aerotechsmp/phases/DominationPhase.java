@@ -13,9 +13,9 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
 import java.awt.*;
 
-public class DominationPhase extends TimedPhase{
+public class DominationPhase extends PVPPhase{
     public DominationPhase() {
-        super(72000, new DeathmatchPhase());
+        super(72000, new BreakPhase(12000, new DeathmatchPhase()));
     }
 
 

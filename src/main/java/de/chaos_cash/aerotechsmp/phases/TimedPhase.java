@@ -16,7 +16,7 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 public abstract class TimedPhase extends Phase {
-    private ServerBossEvent bossEvent;
+    protected ServerBossEvent bossEvent;
     private int length;
     private int activeDuration;
     private final Phase nextPhase;
@@ -103,5 +103,12 @@ public abstract class TimedPhase extends Phase {
     @Override
     public MutableComponent getActivationMessage() {
         return super.getActivationMessage().append(" (Estimated length: " + ChatHandler.formatTickTime(length) + ")");
+    }
+
+    public void skip(boolean shouldForce) {
+        if (shouldForce)
+            PhaseHandler.setPhase(nextPhase);
+        else
+            activeDuration = length;
     }
 }
