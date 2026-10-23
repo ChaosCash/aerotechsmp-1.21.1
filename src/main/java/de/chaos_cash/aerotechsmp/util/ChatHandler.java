@@ -1,9 +1,12 @@
 package de.chaos_cash.aerotechsmp.util;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import de.chaos_cash.aerotechsmp.AerotechSMP;
+import de.chaos_cash.aerotechsmp.phases.TimedPhase;
 import de.chaos_cash.aerotechsmp.team.RandomItemsReward;
+import de.chaos_cash.aerotechsmp.team.Reward;
 import de.chaos_cash.aerotechsmp.team.Team;
 import de.chaos_cash.aerotechsmp.phases.PhaseHandler;
 import net.minecraft.commands.CommandSourceStack;
@@ -31,173 +34,210 @@ public class ChatHandler {
     public static void onRegisterCommands(RegisterCommandsEvent event) {
         CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
 
-        dispatcher.register(
-        Commands.literal("AeroTech")
 
-            // Phase command
-            .then(Commands.literal("phase")
-                .then(Commands.literal("start")
-                    .requires((stack) -> stack.hasPermission(Commands.LEVEL_ADMINS))
-                    .then(Commands.literal("PVP")
-                        .executes(PhaseHandler::schedulePVPPhaseStartCommand)
-                    )
+        var aeroCommand = Commands.literal("AeroTech");
+
+        // Phase command
+        aeroCommand.then(Commands.literal("phase")
+            .requires((stack) -> stack.hasPermission(Commands.LEVEL_ADMINS))
+            .then(Commands.literal("start")
+                .then(Commands.literal("PVP")
+                    .executes(PhaseHandler::schedulePVPPhaseStartCommand)
                 )
             )
 
-            // team command
-            .then(Commands.literal("team")
-                .then(Commands.literal("create")
-                    .then(Commands.argument("Name", StringArgumentType.string())
-                        .executes((context) -> {
-                            if (Team.get(Objects.requireNonNull(context.getSource().getPlayer())).isPresent()) {
-                                context.getSource().sendFailure(Component.literal("You are already part of a team!"));
-                                return 0;
-                            }
 
-                            Team.create(context.getSource().getPlayer(), StringArgumentType.getString(context,"Name"));
+            .then(Commands.literal("skip")
+                .requires((stack) -> PhaseHandler.getPhase() instanceof TimedPhase)
+                .then(Commands.argument("Force", BoolArgumentType.bool())
+                    .executes((context) -> {
+
+                        if (PhaseHandler.getPhase() instanceof TimedPhase timedPhase) {
+                            var shouldForce = BoolArgumentType.getBool(context, "Force");
+                            timedPhase.skip(shouldForce);
                             return 1;
-                        })
-                    )
-                )
-
-
-                .then(Commands.literal("invite")
-                    .requires(stack -> Team.get(Objects.requireNonNull(stack.getPlayer())).isPresent())
-                    .then(Commands.argument("Player", EntityArgument.player())
-                        .executes((context) ->{
-                            var source = context.getSource();
-                            var team = Team.get(Objects.requireNonNull(source.getPlayer()));
-
-                            if (team.isEmpty()) {source.sendFailure(Component.literal("You are not part of a team!")); return 0;}
-                            if (team.get().isFull()) {source.sendFailure(Component.literal("Your team is already full!"));  return 0;}
-
-                            var invitedPlayer = EntityArgument.getPlayer(context, "Player");
-                            if (invitedPlayer.getUUID() == source.getPlayer().getUUID()){
-                                source.sendFailure(Component.literal("You cant invite yourself!"));
-                                return 0;
-                            }
-
-
-                            var teamOfInvitedPlayer = Team.get(invitedPlayer);
-                            if (teamOfInvitedPlayer.isPresent())
-                                if (teamOfInvitedPlayer == team) {
-                                    source.sendFailure(Component.literal("This player is already in your team!"));
-                                    return 0;
-                                }
-
-                            team.get().sendInvite(invitedPlayer);
-
-                            source.sendSuccess(() -> Component.literal("Successfully sent an Invite"), false);
-
-                            return 1;
-                        })
-                    )
-                )
-
-                .then(Commands.literal("leave")
-                    .requires(stack -> Team.get(Objects.requireNonNull(stack.getPlayer())).isPresent())
-                    .executes((context) -> {
-                        var source = context.getSource();
-                        var player = source.getPlayer();
-                        assert player != null;
-                        var team = Team.get(player);
-
-                        if (team.isEmpty()) {
-                            source.sendFailure(Component.literal("You are not part of a team"));
+                        }
+                        else {
+                            context.getSource().sendFailure(Component.literal("The current Phase is not Skippable!"));
                             return 0;
                         }
-                        if (team.get().isOwner(player)) {
-                            source.sendFailure(Component.literal("You cant leave the team because you are its Owner"));
-                            return 0;
-                        }
-
-                        team.get().leave(player);
-                        source.sendSuccess(() -> Component.literal("Successfully left the team"), false);
-
-                        player.server.getCommands().sendCommands(player);
-
-                        return 1;
                     })
-                )
-
-                .then(Commands.literal("delete")
-                    .requires(stack -> Team.get(Objects.requireNonNull(stack.getPlayer())).isPresent())
-                    .executes((context) -> {
-                        var source = context.getSource();
-                        var player = source.getPlayer();
-                        assert player != null;
-                        var team = Team.get(player);
-
-                        if (team.isEmpty()) {
-                            source.sendFailure(Component.literal("You are not part of a team"));
-                            return 0;
-                        }
-                        if (!team.get().isOwner(player)) {
-                            source.sendFailure(Component.literal("Only the Owner can delete a team"));
-                            return 0;
-                        }
-
-                        source.sendSuccess(() -> Component.literal("Successfully deleted the team '" + team.get().getDisplayName() + "'"), false);
-                        team.get().delete(source);
-
-                        return 1;
-                    })
-                )
-
-                .then(Commands.literal("acceptInvite")
-                    .executes((context) -> {
-                        var source = context.getSource();
-                        var player = source.getPlayer();
-                        assert player != null;
-                        var acceptResponse = Team.acceptInvite(player);
-
-                        switch (acceptResponse){
-                            case Success -> {
-                                var team = Team.get(player).get();
-                                source.sendSuccess(() -> Component.literal("Successfully joined the team '" + team.getDisplayName() + "'"), false);
-                                return 1;
-                            }
-                            case FailedForUnknownReason -> source.sendFailure(Component.literal("Accepting failed for unknown reasons"));
-                            case NoInvite -> source.sendFailure(Component.literal("You don't have any pending invites"));
-                            case AlreadyInTeam -> source.sendFailure(Component.literal("You are already in a team"));
-                            case TeamIsFull -> source.sendFailure(Component.literal("The team you tried to join is already full"));
-                        }
-
-                        return 0;
-                    })
-                )
-
-
-                .then(Commands.literal("giveReward")
-                    .requires(stack -> Team.get(Objects.requireNonNull(stack.getPlayer())).isPresent())
-                    .requires(stack -> stack.hasPermission(Commands.LEVEL_ADMINS))
-                    .then(Commands.argument("Player", EntityArgument.player())
-                        .then(Commands.literal("randomItems")
-                            .then(Commands.argument("rarity", EnumArgument.enumArgument(RandomItemsReward.Rarity.class))
-                                .executes((context) -> {
-                                    var source = context.getSource();
-                                    var player = source.getPlayer();
-                                    assert player != null;
-                                    var team = Team.get(player);
-
-                                    if (team.isEmpty()){
-                                        source.sendFailure(Component.literal("This player is not part of a team"));
-                                        return 0;
-                                    }
-
-                                    var rarity = context.getArgument("rarity", RandomItemsReward.Rarity.class);
-                                    team.get().addReward(new RandomItemsReward(rarity));
-
-                                    source.sendSuccess(() -> Component.literal("Successfully gave the team of the Player '" + player.getDisplayName().getString() + "' a random item reward of the rarity '" + rarity + "'.") ,false);
-
-                                    return 1;
-                                })
-                            )
-                        )
-                    )
                 )
             )
         );
+
+
+
+
+        // team command
+        var teamCommand = Commands.literal("team")
+                .requires((source) -> PhaseHandler.getPhase().allowsTeamModifications());
+
+        // /team create
+        teamCommand.then(Commands.literal("create")
+            .then(Commands.argument("Name", StringArgumentType.string())
+                .executes((context) -> {
+                    if (Team.get(Objects.requireNonNull(context.getSource().getPlayer())).isPresent()) {
+                        context.getSource().sendFailure(Component.literal("You are already part of a team!"));
+                        return 0;
+                    }
+
+                    Team.create(context.getSource().getPlayer(), StringArgumentType.getString(context,"Name"));
+                    return 1;
+                })
+            )
+        );
+
+
+        // /team invite
+        teamCommand.then(Commands.literal("invite")
+            .requires(stack -> Team.get(Objects.requireNonNull(stack.getPlayer())).isPresent())
+            .then(Commands.argument("Player", EntityArgument.player())
+                .executes((context) ->{
+                    var source = context.getSource();
+                    var team = Team.get(Objects.requireNonNull(source.getPlayer()));
+
+                    if (team.isEmpty()) {source.sendFailure(Component.literal("You are not part of a team!")); return 0;}
+                    if (team.get().isFull()) {source.sendFailure(Component.literal("Your team is already full!"));  return 0;}
+
+                    var invitedPlayer = EntityArgument.getPlayer(context, "Player");
+                    if (invitedPlayer.getUUID() == source.getPlayer().getUUID()){
+                        source.sendFailure(Component.literal("You cant invite yourself!"));
+                        return 0;
+                    }
+
+
+                    var teamOfInvitedPlayer = Team.get(invitedPlayer);
+                    if (teamOfInvitedPlayer.isPresent())
+                        if (teamOfInvitedPlayer == team) {
+                            source.sendFailure(Component.literal("This player is already in your team!"));
+                            return 0;
+                        }
+
+                    team.get().sendInvite(invitedPlayer);
+
+                    source.sendSuccess(() -> Component.literal("Successfully sent an Invite"), false);
+
+                    return 1;
+                })
+            )
+        );
+
+
+        // /team leave
+        teamCommand.then(Commands.literal("leave")
+            .requires(stack -> Team.get(Objects.requireNonNull(stack.getPlayer())).isPresent())
+            .executes((context) -> {
+                var source = context.getSource();
+                var player = source.getPlayer();
+                assert player != null;
+                var team = Team.get(player);
+
+                if (team.isEmpty()) {
+                    source.sendFailure(Component.literal("You are not part of a team"));
+                    return 0;
+                }
+                if (team.get().isOwner(player)) {
+                    source.sendFailure(Component.literal("You cant leave the team because you are its Owner"));
+                    return 0;
+                }
+
+                team.get().leave(player);
+                source.sendSuccess(() -> Component.literal("Successfully left the team"), false);
+
+                player.server.getCommands().sendCommands(player);
+
+                return 1;
+            })
+        );
+
+
+        // /team delete
+        teamCommand.then(Commands.literal("delete")
+            .requires(stack -> Team.get(Objects.requireNonNull(stack.getPlayer())).isPresent())
+            .executes((context) -> {
+                var source = context.getSource();
+                var player = source.getPlayer();
+                assert player != null;
+                var team = Team.get(player);
+
+                if (team.isEmpty()) {
+                    source.sendFailure(Component.literal("You are not part of a team"));
+                    return 0;
+                }
+                if (!team.get().isOwner(player)) {
+                    source.sendFailure(Component.literal("Only the Owner can delete a team"));
+                    return 0;
+                }
+
+                source.sendSuccess(() -> Component.literal("Successfully deleted the team '" + team.get().getDisplayName() + "'"), false);
+                team.get().delete(source);
+
+                return 1;
+            })
+        );
+
+
+        // /team acceptInvite
+        teamCommand.then(Commands.literal("acceptInvite")
+            .executes((context) -> {
+                var source = context.getSource();
+                var player = source.getPlayer();
+                assert player != null;
+                var acceptResponse = Team.acceptInvite(player);
+
+                switch (acceptResponse){
+                    case Success -> {
+                        var team = Team.get(player).get();
+                        source.sendSuccess(() -> Component.literal("Successfully joined the team '" + team.getDisplayName() + "'"), false);
+                        return 1;
+                    }
+                    case FailedForUnknownReason -> source.sendFailure(Component.literal("Accepting failed for unknown reasons"));
+                    case NoInvite -> source.sendFailure(Component.literal("You don't have any pending invites"));
+                    case AlreadyInTeam -> source.sendFailure(Component.literal("You are already in a team"));
+                    case TeamIsFull -> source.sendFailure(Component.literal("The team you tried to join is already full"));
+                }
+
+                return 0;
+            })
+        );
+
+
+        // /team giveReward
+        for (Reward rewardType : Reward.getRewardTypes()) {
+            teamCommand.then(Commands.literal("giveReward")
+                .requires(stack -> Team.get(Objects.requireNonNull(stack.getPlayer())).isPresent())
+                .requires(stack -> stack.hasPermission(Commands.LEVEL_ADMINS))
+                .then(Commands.argument("Player", EntityArgument.player())
+                    .then(Commands.literal(rewardType.getTypeName())
+                        .then(Commands.argument("rarity", EnumArgument.enumArgument(RandomItemsReward.Rarity.class))
+                            .executes((context) -> {
+                                var source = context.getSource();
+                                var player = source.getPlayer();
+                                assert player != null;
+                                var team = Team.get(player);
+
+                                if (team.isEmpty()) {
+                                    source.sendFailure(Component.literal("This player is not part of a team"));
+                                    return 0;
+                                }
+
+                                var rarity = context.getArgument("rarity", RandomItemsReward.Rarity.class);
+                                team.get().addReward(rewardType.create(rarity));
+
+                                source.sendSuccess(() -> Component.literal("Successfully gave the team of the Player '" + player.getDisplayName().getString() + "' a random item reward of the rarity '" + rarity + "'."), false);
+
+                                return 1;
+                            })
+                        )
+                    )
+                )
+            );
+        }
+        aeroCommand.then(teamCommand);
+
+
+        dispatcher.register(aeroCommand);
     }
 
 
