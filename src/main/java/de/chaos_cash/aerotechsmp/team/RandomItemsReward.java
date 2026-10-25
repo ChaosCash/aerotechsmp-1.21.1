@@ -23,7 +23,7 @@ public class RandomItemsReward extends Reward {
     }
 
     @Override
-    public @NotNull List<ItemStack> getRewards() {
+    public @NotNull List<ItemStack> getRewards(Team team) {
         var items = new ArrayList<ItemStack>();
         items.add(ArmorBlocks.getBlock(ArmorBlocks.Tier.Light, ArmorBlocks.Color.Default).toStack(64));
         return items;

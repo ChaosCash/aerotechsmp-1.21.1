@@ -27,9 +27,6 @@ import java.util.UUID;
 
 @EventBusSubscriber(modid = AerotechSMP.MOD_ID)
 public class ChatHandler {
-
-    static final int[] countdownIntervals = {30, 15, 10, 5, 4, 3, 2, 1};
-
     @SubscribeEvent
     public static void onRegisterCommands(RegisterCommandsEvent event) {
         CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
@@ -246,13 +243,15 @@ public class ChatHandler {
     }
 
 
-
     public static void broadcast(Component message) {
         AerotechSMP.getServer().getPlayerList().broadcastSystemMessage(message, false);
     }
 
 
-    public static String formatTickTime(int ticks) {
+    public static String formatTickTime(int ticks) {return formatTickTime(ticks, false);}
+
+
+    public static String formatTickTime(int ticks, boolean approximate) {
         int hours = Math.floorDiv(ticks, 72000);
         ticks -= hours * 72000;
         int minutes = Math.floorDiv(ticks, 1200);
@@ -267,6 +266,9 @@ public class ChatHandler {
                 formattedTime += " hour";
             else
                 formattedTime += " hours";
+
+            if (approximate)
+                return formattedTime;
         }
 
         if (minutes > 0) {
@@ -278,6 +280,9 @@ public class ChatHandler {
                 formattedTime += " minute";
             else
                 formattedTime += " minutes";
+
+            if (approximate)
+                return formattedTime;
         }
 
         if (seconds > 0 || (minutes <= 0 && hours <= 0)) {
@@ -295,28 +300,18 @@ public class ChatHandler {
     }
 
 
-    public static int timeToTick(int seconds, int minutes, int hours) {
-        return seconds * 20 + minutes * 1200 + hours * 720000;
-    }
-
-
-    public static void broadcast(Component message, int tickDelay) {
-        EventHandler.scheduleTask(tickDelay,() -> broadcast(message));
-    }
-
-    public static void broadcast(String message) {broadcast(Component.literal(message));}
-
-
-
     public static void sendMessage(Player player, Component message) {sendMessage(player.getUUID(), message);}
 
+
     public static void sendMessage(UUID playerId, Component message) {sendMessage(Objects.requireNonNull(AerotechSMP.getServer().getPlayerList().getPlayer(playerId)), message);}
+
 
     public static void sendMessage(ServerPlayer player, Component message) {
         player.sendSystemMessage(
             message
         );
     }
+
 
     public static void sendError(UUID playerId, String error) {sendMessage(playerId, Component.literal(error).withColor(Color.red.getRGB()));}
 }
