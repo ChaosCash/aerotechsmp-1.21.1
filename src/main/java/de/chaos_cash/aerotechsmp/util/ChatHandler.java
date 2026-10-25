@@ -27,6 +27,12 @@ import java.util.UUID;
 
 @EventBusSubscriber(modid = AerotechSMP.MOD_ID)
 public class ChatHandler {
+    public static int ticksPerHour = 72000;
+    public static int ticksPerMinute = 1200;
+    public static int ticksPerSecond = 20;
+
+
+
     @SubscribeEvent
     public static void onRegisterCommands(RegisterCommandsEvent event) {
         CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
@@ -252,11 +258,11 @@ public class ChatHandler {
 
 
     public static String formatTickTime(int ticks, boolean approximate) {
-        int hours = Math.floorDiv(ticks, 72000);
-        ticks -= hours * 72000;
-        int minutes = Math.floorDiv(ticks, 1200);
-        ticks -= minutes * 1200;
-        int seconds = Math.floorDiv(ticks, 20);
+        int hours = Math.floorDiv(ticks, ticksPerHour);
+        ticks -= hours * ticksPerHour;
+        int minutes = Math.floorDiv(ticks, ticksPerMinute);
+        ticks -= minutes * ticksPerMinute;
+        int seconds = Math.floorDiv(ticks, ticksPerSecond);
 
         String formattedTime = "";
 
