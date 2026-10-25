@@ -125,6 +125,10 @@ public class Team {
 
     public UUID getId() {return ftbTeam.getId();}
 
+    public UUID getOwner() {
+        return ftbTeam.getOwner();
+    }
+
     public String getDisplayName() {
         return ftbTeam.getDisplayName();
     }
@@ -188,11 +192,8 @@ public class Team {
 
     public void addReward(Reward reward){
         if (AerotechSMP.getServer().overworld().isClientSide()) {
-            ChatHandler.broadcast("Client");
             return;
         }
-
-        ChatHandler.broadcast("Reward");
 
         if (rewards.isEmpty())
             for (var player : getOnlinePlayers())

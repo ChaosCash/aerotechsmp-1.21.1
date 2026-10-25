@@ -131,6 +131,7 @@ dependencies {
     implementation "curse.maven:Create-328085:7963363"
     implementation "curse.maven:CreateBigCannons-646668:8303106"
     implementation "curse.maven:RPLib-1279407:7587771"
+    implementation "curse.maven:Numismatics-889722:7948018"
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

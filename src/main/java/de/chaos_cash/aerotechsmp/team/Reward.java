@@ -1,9 +1,11 @@
 package de.chaos_cash.aerotechsmp.team;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.util.List;
 
 public abstract class Reward {
@@ -45,7 +47,7 @@ public abstract class Reward {
     }
 
 
-    public abstract @NotNull List<ItemStack> getRewards();
+    public abstract @NotNull List<ItemStack> getRewards(Team team);
 
     public abstract @NotNull String getTypeName();
 
@@ -53,11 +55,17 @@ public abstract class Reward {
 
 
     public enum Rarity {
-        Common,
-        Uncommon,
-        Rare,
-        Epic,
-        Legendary;
+        Common(ChatFormatting.GRAY),
+        Uncommon(ChatFormatting.GREEN),
+        Rare(ChatFormatting.BLUE),
+        Epic(ChatFormatting.LIGHT_PURPLE),
+        Legendary(ChatFormatting.GOLD);
+
+        public final ChatFormatting color;
+
+        Rarity(ChatFormatting color) {
+            this.color = color;
+        }
 
 
         public static Rarity fromString(String string){
@@ -78,6 +86,26 @@ public abstract class Reward {
                 case 4 -> Rarity.Legendary;
                 default -> Rarity.Common;
             };
+        }
+
+        public static int toInt(Rarity rarity) {
+            return switch (rarity){
+                case Uncommon -> 1;
+                case Rare -> 2;
+                case Epic -> 3;
+                case Legendary -> 4;
+                default -> 0;
+            };
+        }
+
+        public int toInt() {return toInt(this);}
+
+        public static final double tierExponentiationBase = 3;
+
+        public static double getMultiplier(Rarity rarity) {return Math.pow(tierExponentiationBase, rarity.toInt());}
+
+        public double getMultiplier(){
+            return getMultiplier(this);
         }
     }
 }

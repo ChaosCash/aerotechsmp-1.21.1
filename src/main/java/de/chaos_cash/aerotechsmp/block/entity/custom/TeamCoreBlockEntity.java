@@ -129,7 +129,7 @@ public class TeamCoreBlockEntity extends ModBlockEntity {
         level.playSound(null, getBlockPos(), SoundEvents.AMETHYST_BLOCK_PLACE, SoundSource.BLOCKS, 1, 1);
 
         var reward = team.getFirstReward();
-        var items = reward.getRewards();
+        var items = reward.getRewards(team);
 
         for (var item : items) {
             Containers.dropItemStack(
