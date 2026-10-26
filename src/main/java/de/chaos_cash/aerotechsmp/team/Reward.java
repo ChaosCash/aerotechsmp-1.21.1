@@ -115,5 +115,16 @@ public abstract class Reward {
         public double getMultiplier(){
             return getMultiplier(this);
         }
+
+        public double getAccumulatedMultiplier(){
+            double multiplier = 0;
+            for (var rarity : Rarity.values()) {
+                multiplier += getMultiplier(rarity);
+                if (rarity == this)
+                    break;
+            }
+
+            return multiplier;
+        }
     }
 }

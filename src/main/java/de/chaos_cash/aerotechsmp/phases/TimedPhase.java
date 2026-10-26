@@ -17,8 +17,8 @@ import java.util.function.Supplier;
 
 public abstract class TimedPhase extends Phase {
     protected ServerBossEvent bossEvent;
-    private int length;
-    private int activeDuration;
+    protected int length;
+    protected int activeDuration;
     private final Phase nextPhase;
     private Supplier<Boolean> lengtheningCondition;
     private int lengthIncrease = 0;
@@ -43,7 +43,8 @@ public abstract class TimedPhase extends Phase {
 
     protected void onTimeUp(){
         if (lengtheningCondition != null && lengtheningCondition.get()) {
-            length += lengthIncrease;
+            if (activeDuration < length)
+                length += lengthIncrease;
             ChatHandler.broadcast(
                 Component.literal(getDisplayName() + " has been lengthened, because " + lengtheningReason)
                     .withColor(Color.CYAN.getRGB())
@@ -109,6 +110,6 @@ public abstract class TimedPhase extends Phase {
         if (shouldForce)
             PhaseHandler.setPhase(nextPhase);
         else
-            activeDuration = length;
+            onTimeUp();
     }
 }

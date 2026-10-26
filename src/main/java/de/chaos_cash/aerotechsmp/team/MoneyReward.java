@@ -22,7 +22,7 @@ public class MoneyReward extends Reward {
 
     @Override
     public @NotNull List<ItemStack> getRewards(Team team) {
-        int depositAmount = (int) (baseAmount * rarity.getMultiplier());
+        int depositAmount = (int) (baseAmount * rarity.getAccumulatedMultiplier());
         Numismatics.BANK.getOrCreateAccount(team.getOwner(), BankAccount.Type.PLAYER).deposit(depositAmount);
         team.sendTeamMessage(Component.literal(depositAmount + " Credits have been deposited in the Bank Account of the leader of your Team!").withColor(Color.yellow.getRGB()));
         return List.of();

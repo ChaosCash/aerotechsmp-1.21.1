@@ -135,6 +135,8 @@ public class Team {
 
     public int getTeamSize() {return ftbTeam.getPlayersByRank(TeamRank.ALLY).size();}
 
+    public int getMaxTeamSize() {return maxSize;}
+
     public List<ServerPlayer> getOnlinePlayers(){
         return ftbTeam.getOnlineMembers();
     }

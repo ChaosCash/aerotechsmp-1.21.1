@@ -2,6 +2,8 @@ package de.chaos_cash.aerotechsmp.item.custom;
 
 import de.chaos_cash.aerotechsmp.AerotechSMP;
 import de.chaos_cash.aerotechsmp.item.ModItems;
+import de.chaos_cash.aerotechsmp.phases.DeathmatchPhase;
+import de.chaos_cash.aerotechsmp.phases.PhaseHandler;
 import de.chaos_cash.aerotechsmp.team.MoneyReward;
 import de.chaos_cash.aerotechsmp.team.RandomItemsReward;
 import de.chaos_cash.aerotechsmp.team.Reward;
@@ -43,6 +45,16 @@ public class HeartCoreItem extends Item {
         super(properties);
     }
 
+    public static ItemStack newStack(int chargeSpeed) {
+        var stack = ModItems.HEART_CORE.toStack();
+
+        var tag = getTag(stack);
+        tag.putInt("charge_speed", chargeSpeed);
+        stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+
+        return stack;
+    }
+
 
     @Override
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand usedHand) {
@@ -80,7 +92,7 @@ public class HeartCoreItem extends Item {
     }
 
 
-    private void grantRewards(Player player, ItemStack stack) {
+    private static void grantRewards(Player player, ItemStack stack) {
         var tag = getTag(stack);
         var rarity = Reward.Rarity.fromInt(tag.getInt("rarity"));
 
@@ -103,6 +115,7 @@ public class HeartCoreItem extends Item {
         stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 
         ChatHandler.sendMessage(player, Component.literal("Your Heart Core has granted you " + rarity.name() + " rewards!").withStyle(ChatFormatting.GOLD));
+        player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BELL_RESONATE, SoundSource.PLAYERS);
     }
 
 
@@ -122,20 +135,26 @@ public class HeartCoreItem extends Item {
     public void inventoryTick(@NotNull ItemStack stack, @NotNull Level level, @NotNull Entity entity, int slotId, boolean isSelected) {
         super.inventoryTick(stack, level, entity, slotId, isSelected);
 
-        if (!level.isClientSide() && entity instanceof Player) {
+        if (!level.isClientSide()) {
+            if (!(PhaseHandler.getPhase() instanceof DeathmatchPhase))
+                stack.setCount(0);
 
-            var tag = getTag(stack);
-            tag.putInt("charge_progress", tag.getInt("charge_progress") + tag.getInt("charge_speed"));
+            if (entity instanceof Player) {
+                var tag = getTag(stack);
+                tag.putInt("charge_progress", tag.getInt("charge_progress") + tag.getInt("charge_speed"));
 
-            if (tryIncreaseRarity(tag))
-                ChatHandler.sendMessage(entity.getUUID(), Component.literal("Your Heart Core has reached a higher rarity!").withStyle(ChatFormatting.GOLD));
+                if (tryIncreaseRarity(tag)) {
+                    ChatHandler.sendMessage(entity.getUUID(), Component.literal("Your Heart Core has reached a higher rarity!").withStyle(ChatFormatting.GOLD));
+                    entity.level().playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.BEACON_POWER_SELECT, SoundSource.PLAYERS);
+                }
 
-            stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+                stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+            }
         }
     }
 
 
-    boolean tryIncreaseRarity(CompoundTag tag) {
+    static boolean tryIncreaseRarity(CompoundTag tag) {
         int curRarity = tag.getInt("rarity");
         if (curRarity >= 5) return false;
 
@@ -233,6 +252,7 @@ public class HeartCoreItem extends Item {
         entity.kill();
 
         ChatHandler.sendMessage(player, Component.literal("You have picked up a Heart Core, It has combined with yours!").withStyle(ChatFormatting.GOLD));
+        player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.NOTE_BLOCK_CHIME.value(), SoundSource.PLAYERS);
     }
 
 
@@ -248,6 +268,38 @@ public class HeartCoreItem extends Item {
         }
 
         return accumulatedProgress;
+    }
+
+
+    public static void grantAllRewards(Player player) {
+        var inventory = player.getInventory();
+
+        for (var itemStack : inventory.items){
+            if (!itemStack.is(ModItems.HEART_CORE)) continue;
+
+            while (getTag(itemStack).getInt("rarity") > 0)
+                grantRewards(player, itemStack);
+        }
+    }
+
+
+    public static void grantChargeProgress(Player player, int charge) {
+        var inventory = player.getInventory();
+
+        for (var itemStack : inventory.items){
+            if (!itemStack.is(ModItems.HEART_CORE)) continue;
+
+            var tag = getTag(itemStack);
+            tag.putInt("charge_progress", tag.getInt("charge_progress") + charge);
+
+            while (true)
+                if (!tryIncreaseRarity(tag))
+                    break;
+
+            itemStack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+
+            break;
+        }
     }
 
 
