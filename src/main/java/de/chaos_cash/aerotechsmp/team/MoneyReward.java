@@ -15,7 +15,7 @@ public class MoneyReward extends Reward {
 
 
 
-    protected MoneyReward(@NotNull Rarity rarity) {
+    public MoneyReward(@NotNull Rarity rarity) {
         super(rarity);
     }
 
