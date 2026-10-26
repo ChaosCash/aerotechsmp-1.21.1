@@ -2,6 +2,7 @@ package de.chaos_cash.aerotechsmp.item.custom;
 
 import de.chaos_cash.aerotechsmp.AerotechSMP;
 import de.chaos_cash.aerotechsmp.item.ModItems;
+import de.chaos_cash.aerotechsmp.team.MoneyReward;
 import de.chaos_cash.aerotechsmp.team.RandomItemsReward;
 import de.chaos_cash.aerotechsmp.team.Reward;
 import de.chaos_cash.aerotechsmp.team.Team;
@@ -83,7 +84,7 @@ public class HeartCoreItem extends Item {
         var tag = getTag(stack);
         var rarity = Reward.Rarity.fromInt(tag.getInt("rarity"));
 
-        if (rarity == Reward.Rarity.Common)
+        if (rarity == Reward.Rarity.None)
             return;
 
         var optTeam = Team.get(player);
@@ -91,9 +92,17 @@ public class HeartCoreItem extends Item {
 
         var team = optTeam.get();
         team.addReward(new RandomItemsReward(rarity));
+        team.addReward(new MoneyReward(rarity));
+
 
         tag.putInt("rarity", 0);
+        while (true) {
+            if (!tryIncreaseRarity(tag))
+                break;
+        }
         stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+
+        ChatHandler.sendMessage(player, Component.literal("Your Heart Core has granted you " + rarity.name() + " rewards!").withStyle(ChatFormatting.GOLD));
     }
 
 
@@ -116,20 +125,32 @@ public class HeartCoreItem extends Item {
         if (!level.isClientSide() && entity instanceof Player) {
 
             var tag = getTag(stack);
+            tag.putInt("charge_progress", tag.getInt("charge_progress") + tag.getInt("charge_speed"));
 
-            int curRarity = tag.getInt("rarity");
-            int chargeSpeed = tag.getInt("charge_speed");
-            int curProgress = tag.getInt("charge_progress") + chargeSpeed;
-            int chargeToNextRarity = (int) (baseChargeDuration * Reward.Rarity.fromInt(curRarity).getMultiplier());
-            if (curRarity < 4 && curProgress >= chargeToNextRarity) {
-                curProgress -= chargeToNextRarity;
-                curRarity += 1;
-                tag.putInt("rarity", curRarity);
-            }
+            if (tryIncreaseRarity(tag))
+                ChatHandler.sendMessage(entity.getUUID(), Component.literal("Your Heart Core has reached a higher rarity!").withStyle(ChatFormatting.GOLD));
 
-            tag.putInt("charge_progress", curProgress);
             stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
         }
+    }
+
+
+    boolean tryIncreaseRarity(CompoundTag tag) {
+        int curRarity = tag.getInt("rarity");
+        if (curRarity >= 5) return false;
+
+        int curProgress = tag.getInt("charge_progress");
+        int chargeToNextRarity = (int) (baseChargeDuration * Reward.Rarity.fromInt(curRarity + 1).getMultiplier());
+
+        if (curProgress >= chargeToNextRarity) {
+            curProgress -= chargeToNextRarity;
+            curRarity += 1;
+            tag.putInt("rarity", curRarity);
+            tag.putInt("charge_progress", curProgress);
+            return true;
+        }
+
+        return false;
     }
 
 
@@ -166,16 +187,17 @@ public class HeartCoreItem extends Item {
     public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context, List<Component> tooltipComponents, @NotNull TooltipFlag tooltipFlag) {
         var tag = getTag(stack);
         var rarity = Reward.Rarity.fromInt(tag.getInt("rarity"));
-        int chargeSpeed = tag.getInt("charge_speed");
-        var chargeProgress = tag.getInt("charge_progress");
-        int chargeTime = (int) (baseChargeDuration * rarity.getMultiplier());
-        double chargePercent = (double) chargeProgress / chargeTime;
-        int finishedBars = (int) (chargePercent * tooltipProgressBarCount);
 
 
         tooltipComponents.add(Component.literal(rarity.name()).withStyle(rarity.color));
         tooltipComponents.add(Component.literal(""));
         if (rarity != Reward.Rarity.Legendary) {
+            int chargeSpeed = tag.getInt("charge_speed");
+            var chargeProgress = tag.getInt("charge_progress");
+            int chargeTime = (int) (baseChargeDuration * Reward.Rarity.fromInt(rarity.toInt() + 1).getMultiplier());
+            double chargePercent = (double) chargeProgress / chargeTime;
+            int finishedBars = (int) (chargePercent * tooltipProgressBarCount);
+
             tooltipComponents.add(Component.literal("Charging..."));
             if (chargeSpeed > 1)
                 tooltipComponents.add(Component.literal("x" + chargeSpeed).withStyle(ChatFormatting.GREEN).append(Component.literal(" charge speed").withStyle(ChatFormatting.WHITE)));
@@ -188,7 +210,7 @@ public class HeartCoreItem extends Item {
 
             tooltipComponents.add(Component.literal(""));
             tooltipComponents.add(Component.literal("Charge Time:"));
-            tooltipComponents.add(Component.literal(ChatHandler.formatTickTime((chargeTime - chargeProgress) / chargeSpeed, true)));
+            tooltipComponents.add(Component.literal(ChatHandler.formatTickTime((chargeTime - chargeProgress) / chargeSpeed, false)));
         }
         else{
             tooltipComponents.add(Component.literal("Fully Charged!").withStyle(ChatFormatting.GREEN));
@@ -198,7 +220,7 @@ public class HeartCoreItem extends Item {
     }
 
 
-    private static void combine(@NotNull ItemStack stack, @NotNull ItemEntity entity) {
+    private static void combine(@NotNull ItemStack stack, @NotNull ItemEntity entity, Player player) {
         var stackTag = getTag(stack);
         var otherTag = getTag(entity.getItem());
         Reward.Rarity otherRarity = Reward.Rarity.fromInt(otherTag.getInt("rarity"));
@@ -209,6 +231,8 @@ public class HeartCoreItem extends Item {
         stack.set(() -> DataComponents.CUSTOM_DATA, CustomData.of(stackTag));
 
         entity.kill();
+
+        ChatHandler.sendMessage(player, Component.literal("You have picked up a Heart Core, It has combined with yours!").withStyle(ChatFormatting.GOLD));
     }
 
 
@@ -234,9 +258,10 @@ public class HeartCoreItem extends Item {
         var itemEntity = event.getItemEntity();
         if (!itemEntity.getItem().is(ModItems.HEART_CORE)) return;
 
-        for (var stack : event.getPlayer().getInventory().items) {
+        var player = event.getPlayer();
+        for (var stack : player.getInventory().items) {
             if (stack.is(ModItems.HEART_CORE)) {
-                combine(stack, itemEntity);
+                combine(stack, itemEntity, player);
                 event.setCanPickup(TriState.FALSE);
                 return;
             }

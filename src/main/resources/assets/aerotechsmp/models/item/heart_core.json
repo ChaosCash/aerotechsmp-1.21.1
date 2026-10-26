@@ -6,25 +6,25 @@
   "overrides": [
     {
       "predicate": {
-        "aerotechsmp:rarity": 1
+        "aerotechsmp:rarity": 2
       },
       "model": "aerotechsmp:item/heart_core_uncommon"
     },
     {
       "predicate": {
-        "aerotechsmp:rarity": 2
+        "aerotechsmp:rarity": 3
       },
       "model": "aerotechsmp:item/heart_core_rare"
     },
     {
       "predicate": {
-        "aerotechsmp:rarity": 3
+        "aerotechsmp:rarity": 4
       },
       "model": "aerotechsmp:item/heart_core_epic"
     },
     {
       "predicate": {
-        "aerotechsmp:rarity": 4
+        "aerotechsmp:rarity": 5
       },
       "model": "aerotechsmp:item/heart_core_legendary"
     }

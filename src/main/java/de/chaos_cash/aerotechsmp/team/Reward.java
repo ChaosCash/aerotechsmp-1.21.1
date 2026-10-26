@@ -5,7 +5,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
 import java.util.List;
 
 public abstract class Reward {
@@ -55,6 +54,7 @@ public abstract class Reward {
 
 
     public enum Rarity {
+        None(ChatFormatting.WHITE),
         Common(ChatFormatting.GRAY),
         Uncommon(ChatFormatting.GREEN),
         Rare(ChatFormatting.BLUE),
@@ -70,39 +70,47 @@ public abstract class Reward {
 
         public static Rarity fromString(String string){
             return switch (string){
+                case "Common" -> Rarity.Common;
                 case "Uncommon" -> Rarity.Uncommon;
                 case "Rarity" -> Rarity.Rare;
                 case "Epic" -> Rarity.Epic;
                 case "Legendary" -> Rarity.Legendary;
-                default -> Rarity.Common;
+                default -> Rarity.None;
             };
         }
 
         public static Rarity fromInt(int integer){
             return switch (integer){
-                case 1 -> Rarity.Uncommon;
-                case 2 -> Rarity.Rare;
-                case 3 -> Rarity.Epic;
-                case 4 -> Rarity.Legendary;
-                default -> Rarity.Common;
+                case 1 -> Rarity.Common;
+                case 2 -> Rarity.Uncommon;
+                case 3 -> Rarity.Rare;
+                case 4 -> Rarity.Epic;
+                case 5 -> Rarity.Legendary;
+                default -> Rarity.None;
             };
         }
 
         public static int toInt(Rarity rarity) {
             return switch (rarity){
-                case Uncommon -> 1;
-                case Rare -> 2;
-                case Epic -> 3;
-                case Legendary -> 4;
+                case Common -> 1;
+                case Uncommon -> 2;
+                case Rare -> 3;
+                case Epic -> 4;
+                case Legendary -> 5;
                 default -> 0;
             };
         }
 
         public int toInt() {return toInt(this);}
 
-        public static final double tierExponentiationBase = 3;
+        public static final double rarityExponentiationBase = 2.5;
 
-        public static double getMultiplier(Rarity rarity) {return Math.pow(tierExponentiationBase, rarity.toInt());}
+        public static double getMultiplier(Rarity rarity) {
+            if (rarity == None)
+                return 0;
+
+            return Math.pow(rarityExponentiationBase, rarity.toInt() - 1);
+        }
 
         public double getMultiplier(){
             return getMultiplier(this);
