@@ -3,11 +3,8 @@ package de.chaos_cash.aerotechsmp.phases;
 import de.chaos_cash.aerotechsmp.AerotechSMP;
 import de.chaos_cash.aerotechsmp.util.ChatHandler;
 import de.chaos_cash.aerotechsmp.util.Messages;
-import dev.ftb.mods.ftbchunks.api.ClaimedChunk;
-import dev.ftb.mods.ftbchunks.api.event.ClaimedChunkEvent;
 import net.creeperhost.ftbbackups.BackupHandler;
 import net.creeperhost.ftbbackups.FTBBackups;
-import net.minecraft.commands.CommandSourceStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
@@ -59,15 +56,5 @@ public class PhaseHandler {
     @SubscribeEvent
     static void onServerStartup(ServerStartingEvent event) {
         setPhase(new PeacefulPhase());
-        ClaimedChunkEvent.AFTER_CLAIM.register(PhaseHandler::onAfterClaim);
-    }
-
-
-    private static void onAfterClaim(CommandSourceStack stack, ClaimedChunk claimedChunk) {
-        if (phase == null || phase.allowsTeamModifications())
-            return;
-
-        claimedChunk.unclaim(stack, true);
-        Messages.TeamModificationsNotAllowedInPhase.send(stack.getPlayer());
     }
 }

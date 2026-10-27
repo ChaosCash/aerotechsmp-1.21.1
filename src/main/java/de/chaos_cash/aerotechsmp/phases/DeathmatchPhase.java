@@ -3,9 +3,6 @@ package de.chaos_cash.aerotechsmp.phases;
 import de.chaos_cash.aerotechsmp.AerotechSMP;
 import de.chaos_cash.aerotechsmp.item.custom.HeartCoreItem;
 import de.chaos_cash.aerotechsmp.team.Team;
-import dev.ftb.mods.ftbchunks.api.ClaimedChunk;
-import dev.ftb.mods.ftbchunks.api.event.ClaimedChunkEvent;
-import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.world.level.border.WorldBorder;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -33,8 +30,6 @@ public class DeathmatchPhase extends PVPPhase{
         if (!AerotechSMP.getServer().overworld().isClientSide()) {
             giveCores();
         }
-
-        ClaimedChunkEvent.AFTER_CLAIM.register(this::onChunkClaim);
     }
 
     @Override
@@ -51,9 +46,6 @@ public class DeathmatchPhase extends PVPPhase{
                 HeartCoreItem.grantAllRewards(player);
             }
         }
-
-
-        ClaimedChunkEvent.AFTER_CLAIM.unregister(this::onChunkClaim);
     }
 
 
@@ -76,11 +68,6 @@ public class DeathmatchPhase extends PVPPhase{
     public double getBorderShrinkSpeed() {
         double t = getProgress();
         return borderBaseSpeedPerTick * Math.pow(t + 1, -3.1);
-    }
-
-
-    private void onChunkClaim(CommandSourceStack source, ClaimedChunk claimedChunk) {
-        claimedChunk.unclaim(source, true);
     }
 
 

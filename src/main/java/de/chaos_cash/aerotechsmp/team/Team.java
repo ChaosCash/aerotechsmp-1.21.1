@@ -244,12 +244,12 @@ public class Team {
     }
 
     private void setClaimCount(int count) {
-        claimCount = count;
+        claimCount = Math.max(count, 0);
         ftbTeam.setProperty(claimCountPropertyType, claimCount);
     }
 
     private void setForceLoadCount(int count) {
-        forceLoadCount = count;
+        forceLoadCount = Math.max(count, 0);
         ftbTeam.setProperty(forceLoadCountPropertyType, forceLoadCount);
     }
 
