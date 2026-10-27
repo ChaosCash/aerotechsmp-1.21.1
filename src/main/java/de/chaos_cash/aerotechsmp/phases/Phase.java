@@ -2,7 +2,7 @@ package de.chaos_cash.aerotechsmp.phases;
 
 import de.chaos_cash.aerotechsmp.AerotechSMP;
 import de.chaos_cash.aerotechsmp.util.ChatHandler;
-import net.minecraft.network.chat.Component;
+import de.chaos_cash.aerotechsmp.util.Messages;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
@@ -25,7 +25,7 @@ public abstract class Phase {
     public boolean allowsTeamModifications() {return false;}
 
     public MutableComponent getActivationMessage() {
-        return Component.literal("Starting " + getDisplayName() + "!").withColor(Color.YELLOW.getRGB());
+        return Messages.StartingPhase.getTranslation().append(getDisplayName());
     }
 
 
@@ -33,6 +33,4 @@ public abstract class Phase {
     public abstract String getDisplayName();
 
     public SoundEvent getActivationSound() {return null;}
-    public float getActivationSoundVolume() {return 1f;}
-
 }

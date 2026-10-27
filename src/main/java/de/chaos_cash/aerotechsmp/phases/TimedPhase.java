@@ -2,6 +2,7 @@ package de.chaos_cash.aerotechsmp.phases;
 
 import de.chaos_cash.aerotechsmp.AerotechSMP;
 import de.chaos_cash.aerotechsmp.util.ChatHandler;
+import de.chaos_cash.aerotechsmp.util.Messages;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerBossEvent;
@@ -46,8 +47,7 @@ public abstract class TimedPhase extends Phase {
             if (activeDuration < length)
                 length += lengthIncrease;
             ChatHandler.broadcast(
-                Component.literal(getDisplayName() + " has been lengthened, because " + lengtheningReason)
-                    .withColor(Color.CYAN.getRGB())
+                Messages.PhaseLengthened.getTranslation().append(lengtheningReason)
             );
         }
         else

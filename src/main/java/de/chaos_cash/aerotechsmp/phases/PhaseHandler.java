@@ -1,20 +1,16 @@
 package de.chaos_cash.aerotechsmp.phases;
 
-import com.mojang.brigadier.context.CommandContext;
 import de.chaos_cash.aerotechsmp.AerotechSMP;
 import de.chaos_cash.aerotechsmp.util.ChatHandler;
+import de.chaos_cash.aerotechsmp.util.Messages;
 import dev.ftb.mods.ftbchunks.api.ClaimedChunk;
 import dev.ftb.mods.ftbchunks.api.event.ClaimedChunkEvent;
 import net.creeperhost.ftbbackups.BackupHandler;
 import net.creeperhost.ftbbackups.FTBBackups;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.network.chat.Component;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
-
-import java.awt.*;
-import java.util.Objects;
 
 @EventBusSubscriber(modid = AerotechSMP.MOD_ID)
 public class PhaseHandler {
@@ -36,9 +32,8 @@ public class PhaseHandler {
     }
 
 
-    public static int schedulePVPPhaseStartCommand(CommandContext<CommandSourceStack> context)
-    {
-        ChatHandler.broadcast(Component.literal("PVP-Phase will start shortly!").withColor(Color.red.getRGB()));
+    public static int schedulePVPPhaseStartCommand() {
+        Messages.PVPImpedingWarning.broadcast();
 
         createBackup("Pre PVP-Phase Backup ");
 
@@ -55,12 +50,6 @@ public class PhaseHandler {
         return 1;
     }
 
-    public static void createBackup()
-    {
-        createBackup("UnnamedBackup");
-    }
-
-
 
     public static void createBackup(String name) {
         BackupHandler.createBackup(FTBBackups.minecraftServer, true, name);
@@ -74,14 +63,11 @@ public class PhaseHandler {
     }
 
 
-    private static void onAfterClaim(CommandSourceStack commandSourceStack, ClaimedChunk claimedChunk) {
+    private static void onAfterClaim(CommandSourceStack stack, ClaimedChunk claimedChunk) {
         if (phase == null || phase.allowsTeamModifications())
             return;
 
-        claimedChunk.unclaim(commandSourceStack, true);
-        ChatHandler.sendError(
-            Objects.requireNonNull(commandSourceStack.getPlayer()).getUUID(),
-            "In this Phase claiming is not allowed!"
-        );
+        claimedChunk.unclaim(stack, true);
+        Messages.TeamModificationsNotAllowedInPhase.send(stack.getPlayer());
     }
 }
