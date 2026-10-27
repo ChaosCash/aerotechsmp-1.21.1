@@ -1,6 +1,8 @@
 package de.chaos_cash.aerotechsmp.phases;
 
 import de.chaos_cash.aerotechsmp.AerotechSMP;
+import de.chaos_cash.aerotechsmp.team.RewardHandler;
+import de.chaos_cash.aerotechsmp.team.Team;
 import de.chaos_cash.aerotechsmp.util.Messages;
 import dev.ftb.mods.ftbchunks.FTBChunksAPIImpl;
 import dev.ftb.mods.ftbchunks.api.ClaimedChunk;
@@ -9,8 +11,6 @@ import net.minecraft.commands.CommandSourceStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
-
-import java.awt.*;
 
 public class DominationPhase extends PVPPhase{
     public DominationPhase() {
@@ -33,6 +33,8 @@ public class DominationPhase extends PVPPhase{
         super.onDeactivation();
 
         ClaimedChunkEvent.AFTER_CLAIM.unregister(this::onChunkClaim);
+
+        grantRemainingTeamCoresRewards();
     }
 
     @Override
@@ -56,6 +58,13 @@ public class DominationPhase extends PVPPhase{
 
     private void onChunkClaim(CommandSourceStack source, ClaimedChunk claimedChunk) {
         claimedChunk.unclaim(source, true);
+    }
+
+
+    private void grantRemainingTeamCoresRewards() {
+        for (var team : Team.list())
+            if (team.hasCore())
+                RewardHandler.grantTeamCoreGuardedRewards(team);
     }
 
 

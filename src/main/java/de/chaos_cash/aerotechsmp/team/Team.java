@@ -131,6 +131,15 @@ public class Team {
             return Optional.empty();
     }
 
+    public static List<Team> list() {
+        var teams = new ArrayList<Team>();
+
+        for (var ftbTeam : FTBTeamsAPIImpl.INSTANCE.getManager().getTeams())
+            get(ftbTeam.getTeamId()).ifPresent(teams::add);
+
+        return teams;
+    }
+
 
 
     public static void create(ServerPlayer player, String name) throws CommandSyntaxException {
@@ -218,7 +227,7 @@ public class Team {
 
     public void onCoreBrokeByPlayer(Player player) {
         if (!ftbTeam.isMember(player.getUUID()) || PhaseHandler.getPhase().allowsTeamModifications())
-            sendTeamMessage(Component.literal("Your Team Core has been broken by " + player.getDisplayName().getString() + "!"));
+            sendTeamMessage(Messages.OwnTeamCoreDestroyed.getTranslation().append(player.getDisplayName().getString()));
 
         RewardHandler.onTeamCoreBreak(player, this);
     }

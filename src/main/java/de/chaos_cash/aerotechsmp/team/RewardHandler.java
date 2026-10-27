@@ -6,11 +6,9 @@ import de.chaos_cash.aerotechsmp.util.Messages;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
-
 public class RewardHandler {
 
-    static Reward[] getTeamCoreBreakRewards() {
+    static Reward[] getTeamCoreRewards() {
         return new Reward[]{new RandomItemsReward(RandomItemsReward.Rarity.Legendary)};
     }
 
@@ -27,9 +25,7 @@ public class RewardHandler {
         if (breakingTeam == team) return;
         if (!(PhaseHandler.getPhase() instanceof PVPPhase)) return;
 
-        var rewards = getTeamCoreBreakRewards();
-
-        for (var reward : rewards)
+        for (var reward : getTeamCoreRewards())
             breakingTeam.addReward(reward);
 
         breakingTeam.sendTeamMessage(
@@ -38,4 +34,10 @@ public class RewardHandler {
     }
 
 
+    public static void grantTeamCoreGuardedRewards(@NotNull Team team) {
+        for (var reward : getTeamCoreRewards())
+            team.addReward(reward);
+
+        team.sendTeamMessage(Messages.TeamCoreGuardedRewardsGranted.getTranslation());
+    }
 }

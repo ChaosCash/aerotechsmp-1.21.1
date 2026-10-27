@@ -42,7 +42,8 @@ public class ModLanguageProvider extends LanguageProvider {
         add(Messages.TeamCoreAlreadyPresent.key, "Your Team already has a Team Core");
 
         // warnings
-        add(Messages.PVPImpedingWarning.key, "PVP-Phase will start shortly");
+        add(Messages.PVPImpeding.key, "PVP-Phase will start shortly");
+        add(Messages.OwnTeamCoreDestroyed.key, "Your Team Core has been broken by ");
 
         // infos
         add(Messages.TeamInvitation.key, "You have been invited to the Team: ");
@@ -55,6 +56,7 @@ public class ModLanguageProvider extends LanguageProvider {
         add(Messages.HeartCoreIncreasedRarity.key, "Your Heart Core has reached a higher rarity");
         add(Messages.HeartCoreCombined.key, "You have picked up a Heart Core, It has combined with yours");
         add(Messages.TeamCoreDestructionRewardsGranted.key, "Your Team has broken an enemy Team Core and received rewards");
+        add(Messages.TeamCoreGuardedRewardsGranted.key, "Your Team has successfully protected its Team Core and has received rewards");
         add(Messages.UnclaimedRewardsMessage.key, "Your Team has unclaimed rewards");
     }
 

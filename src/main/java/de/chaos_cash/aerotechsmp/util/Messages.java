@@ -23,7 +23,8 @@ public enum Messages {
     TeamCoreForbiddenOutsideOverworld(Types.Error),
     TeamCoreAlreadyPresent(Types.Error),
 
-    PVPImpedingWarning(Types.Warning),
+    PVPImpeding(Types.Warning),
+    OwnTeamCoreDestroyed(Types.Warning),
 
     TeamInvitation(Types.Info),
     AllClaimsDeleted(Types.Info),
@@ -34,6 +35,7 @@ public enum Messages {
     HeartCoreIncreasedRarity(Types.Congratulation),
     HeartCoreCombined(Types.Congratulation),
     TeamCoreDestructionRewardsGranted(Types.Congratulation),
+    TeamCoreGuardedRewardsGranted(Types.Congratulation),
     UnclaimedRewardsMessage(Types.Congratulation),
     ;
 
