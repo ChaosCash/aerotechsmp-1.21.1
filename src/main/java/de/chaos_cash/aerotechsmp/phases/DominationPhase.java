@@ -1,12 +1,11 @@
 package de.chaos_cash.aerotechsmp.phases;
 
 import de.chaos_cash.aerotechsmp.AerotechSMP;
-import de.chaos_cash.aerotechsmp.util.ChatHandler;
+import de.chaos_cash.aerotechsmp.util.Messages;
 import dev.ftb.mods.ftbchunks.FTBChunksAPIImpl;
 import dev.ftb.mods.ftbchunks.api.ClaimedChunk;
 import dev.ftb.mods.ftbchunks.api.event.ClaimedChunkEvent;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.network.chat.Component;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
@@ -44,8 +43,6 @@ public class DominationPhase extends PVPPhase{
 
     static void deleteAllClaims()
     {
-        ChatHandler.broadcast(Component.literal("Deleting all claims..."));
-
         var claimedChunks = FTBChunksAPIImpl.INSTANCE.getManager().getAllClaimedChunks().stream().toList();
         var stack = AerotechSMP.getServer().createCommandSourceStack();
         for (var chunk : claimedChunks)
@@ -53,7 +50,7 @@ public class DominationPhase extends PVPPhase{
             chunk.unclaim(stack, true);
         }
 
-        ChatHandler.broadcast(Component.literal("Claims Deleted!"));
+        Messages.AllClaimsDeleted.broadcast();
     }
 
 

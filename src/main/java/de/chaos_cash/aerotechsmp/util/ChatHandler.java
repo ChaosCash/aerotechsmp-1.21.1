@@ -20,7 +20,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.server.command.EnumArgument;
 
-import java.awt.*;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -45,7 +44,7 @@ public class ChatHandler {
             .requires((stack) -> stack.hasPermission(Commands.LEVEL_ADMINS))
             .then(Commands.literal("start")
                 .then(Commands.literal("PVP")
-                    .executes(PhaseHandler::schedulePVPPhaseStartCommand)
+                    .executes(context1 -> PhaseHandler.schedulePVPPhaseStartCommand())
                 )
             )
 
@@ -309,7 +308,9 @@ public class ChatHandler {
     public static void sendMessage(Player player, Component message) {sendMessage(player.getUUID(), message);}
 
 
-    public static void sendMessage(UUID playerId, Component message) {sendMessage(Objects.requireNonNull(AerotechSMP.getServer().getPlayerList().getPlayer(playerId)), message);}
+    public static void sendMessage(UUID playerId, Component message) {
+        sendMessage(Objects.requireNonNull(AerotechSMP.getServer().getPlayerList().getPlayer(playerId)), message);
+    }
 
 
     public static void sendMessage(ServerPlayer player, Component message) {
@@ -317,7 +318,4 @@ public class ChatHandler {
             message
         );
     }
-
-
-    public static void sendError(UUID playerId, String error) {sendMessage(playerId, Component.literal(error).withColor(Color.red.getRGB()));}
 }

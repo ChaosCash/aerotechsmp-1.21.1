@@ -5,6 +5,11 @@ import de.chaos_cash.aerotechsmp.AerotechSMP;
 import de.chaos_cash.aerotechsmp.block.entity.custom.TeamCoreBlockEntity;
 import de.chaos_cash.aerotechsmp.phases.PhaseHandler;
 import de.chaos_cash.aerotechsmp.util.ChatHandler;
+import de.chaos_cash.aerotechsmp.util.Messages;
+import dev.architectury.event.CompoundEventResult;
+import dev.ftb.mods.ftbchunks.api.ClaimResult;
+import dev.ftb.mods.ftbchunks.api.ClaimedChunk;
+import dev.ftb.mods.ftbchunks.api.event.ClaimedChunkEvent;
 import dev.ftb.mods.ftbteams.FTBTeamsAPIImpl;
 import dev.ftb.mods.ftbteams.api.TeamRank;
 import dev.ftb.mods.ftbteams.api.property.BooleanProperty;
@@ -18,11 +23,16 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.server.ServerStartingEvent;
 
 import java.awt.*;
 import java.util.*;
 import java.util.List;
 
+
+@EventBusSubscriber(modid = AerotechSMP.MOD_ID)
 public class Team {
     public static final int maxSize = 2;
     private static final Map<UUID, Team> teams = new HashMap<>();
@@ -33,12 +43,20 @@ public class Team {
     private static final IntProperty corePosXPropertyType = new IntProperty(ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID, "core_pos_x"), null);
     private static final IntProperty corePosYPropertyType = new IntProperty(ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID, "core_pos_y"), null);
     private static final IntProperty corePosZPropertyType = new IntProperty(ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID, "core_pos_z"), null);
+    private static final IntProperty maxClaimsPropertyType = new IntProperty(ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID, "max_claims"), 9);
+    private static final IntProperty maxForceLoadsPropertyType = new IntProperty(ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID, "max_force_loads"), 0);
+    private static final IntProperty forceLoadCountPropertyType = new IntProperty(ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID, "force_load_count"), 0);
+    private static final IntProperty claimCountPropertyType = new IntProperty(ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID, "claim_count"), 0);
     private static final StringListProperty rewardsPropertyType = new StringListProperty(ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID, "rewards"), () -> null);
 
 
     private final PartyTeam ftbTeam;
     private final List<Reward> rewards = new ArrayList<>();
     private BlockPos corePos = null;
+    private int maxClaims;
+    private int maxForceLoads;
+    private int claimCount;
+    private int forceLoadCount;
 
 
 
@@ -52,6 +70,11 @@ public class Team {
 
         loadRewards();
         loadCore();
+
+        maxClaims = ftbTeam.getProperty(maxClaimsPropertyType);
+        maxForceLoads = ftbTeam.getProperty(maxForceLoadsPropertyType);
+        claimCount = ftbTeam.getProperty(claimCountPropertyType);
+        forceLoadCount = ftbTeam.getProperty(forceLoadCountPropertyType);
     }
 
 
@@ -84,7 +107,6 @@ public class Team {
             }
         }
     }
-
 
 
     public static Optional<Team> get(ServerPlayer player){
@@ -141,6 +163,18 @@ public class Team {
         return ftbTeam.getOnlineMembers();
     }
 
+    public int getMaxClaims() {return maxClaims;}
+
+    public int getMaxForceLoads() {return maxForceLoads;}
+
+    public int getClaimCount() {
+        return claimCount;
+    }
+
+    public int getForceLoadCount() {
+        return forceLoadCount;
+    }
+
 
     public boolean isFull() {return getTeamSize() >= maxSize;}
 
@@ -190,6 +224,27 @@ public class Team {
     }
 
 
+    public void increaseMaxClaims(int increase) {
+        maxClaims += increase;
+        ftbTeam.setProperty(maxClaimsPropertyType, maxClaims);
+    }
+
+    public void increaseMaxForceLoads(int increase) {
+        maxForceLoads += increase;
+        ftbTeam.setProperty(maxForceLoadsPropertyType, maxForceLoads);
+    }
+
+    private void setClaimCount(int count) {
+        claimCount = count;
+        ftbTeam.setProperty(claimCountPropertyType, claimCount);
+    }
+
+    private void setForceLoadCount(int count) {
+        forceLoadCount = count;
+        ftbTeam.setProperty(forceLoadCountPropertyType, forceLoadCount);
+    }
+
+
     public boolean hasRewards() {return !rewards.isEmpty();}
 
     public void addReward(Reward reward){
@@ -197,12 +252,7 @@ public class Team {
             return;
         }
 
-        if (rewards.isEmpty())
-            for (var player : getOnlinePlayers())
-                sendUnclaimedRewardsMessage(player.getUUID());
-
         rewards.add(reward);
-
 
         List<String> rewardsProperty = ftbTeam.getProperty(rewardsPropertyType);
         if (rewardsProperty == null)
@@ -228,7 +278,7 @@ public class Team {
     }
 
     public void sendUnclaimedRewardsMessage(UUID playerId){
-        ChatHandler.sendMessage(playerId, Component.literal("Your team has unclaimed rewards!").withColor(Color.green.getRGB()));
+        Messages.UnclaimedRewardsMessage.send(playerId);
     }
 
     //</editor-fold>
@@ -261,7 +311,7 @@ public class Team {
         else
             invites.put(player.getUUID(), this);
 
-        ChatHandler.sendMessage(player, Component.literal("You have been invited to the Team: " + ftbTeam.getName()));
+        ChatHandler.sendMessage(player, Messages.TeamInvitation.getTranslation().append(ftbTeam.getName()));
     }
 
     public static AcceptReturn acceptInvite(ServerPlayer player){
@@ -286,6 +336,76 @@ public class Team {
     //</editor-fold>
 
 
+
+    @SubscribeEvent
+    static void onServerStartup(ServerStartingEvent event) {
+        ClaimedChunkEvent.BEFORE_CLAIM.register(Team::onBeforeClaim);
+        ClaimedChunkEvent.AFTER_CLAIM.register(Team::onAfterClaim);
+        ClaimedChunkEvent.AFTER_UNCLAIM.register(Team::onAfterUnclaim);
+
+        ClaimedChunkEvent.BEFORE_LOAD.register(Team::onBeforeLoad);
+        ClaimedChunkEvent.AFTER_LOAD.register(Team::onAfterLoad);
+        ClaimedChunkEvent.AFTER_UNLOAD.register(Team::onAfterUnload);
+
+    }
+
+    private static void onAfterUnload(CommandSourceStack stack, ClaimedChunk claimedChunk) {
+        var optTeam = Team.get(claimedChunk.getTeamData().getTeam().getTeamId());
+        if (optTeam.isEmpty()) return;
+        Team team = optTeam.get();
+
+        team.setForceLoadCount(team.getForceLoadCount() + 1);
+    }
+
+    private static void onAfterLoad(CommandSourceStack stack, ClaimedChunk claimedChunk) {
+        var optTeam = Team.get(claimedChunk.getTeamData().getTeam().getTeamId());
+        if (optTeam.isEmpty()) return;
+        Team team = optTeam.get();
+
+        team.setForceLoadCount(team.getForceLoadCount() - 1);
+    }
+
+    private static CompoundEventResult<ClaimResult> onBeforeLoad(CommandSourceStack stack, ClaimedChunk claimedChunk) {
+        var optTeam = Team.get(claimedChunk.getTeamData().getTeam().getTeamId());
+        if (optTeam.isEmpty()) return CompoundEventResult.interruptTrue(ClaimResult.customProblem(Messages.ActionRequiresTeam.key));
+
+        Team team = optTeam.get();
+        if (team.getForceLoadCount() >= team.getMaxForceLoads()) {
+            Messages.ForceLoadLimitExceededLong.send(stack.getPlayer());
+            return CompoundEventResult.interruptTrue(ClaimResult.customProblem(Messages.ForceLoadLimitExceeded.key));
+        }
+        else
+            return CompoundEventResult.pass();
+    }
+
+    private static CompoundEventResult<ClaimResult> onBeforeClaim(CommandSourceStack stack, ClaimedChunk claimedChunk) {
+        var optTeam = Team.get(claimedChunk.getTeamData().getTeam().getTeamId());
+        if (optTeam.isEmpty()) return CompoundEventResult.interruptTrue(ClaimResult.customProblem(Messages.ActionRequiresTeam.key));
+
+        Team team = optTeam.get();
+        if (team.getClaimCount() >= team.getMaxClaims()) {
+            Messages.ClaimLimitExceededLong.send(stack.getPlayer());
+            return CompoundEventResult.interruptTrue(ClaimResult.customProblem(Messages.ClaimLimitExceeded.key));
+        }
+        else
+            return CompoundEventResult.pass();
+    }
+
+    private static void onAfterUnclaim(CommandSourceStack commandSourceStack, ClaimedChunk claimedChunk) {
+        var optTeam = Team.get(claimedChunk.getTeamData().getTeam().getTeamId());
+        if (optTeam.isEmpty()) return;
+        Team team = optTeam.get();
+
+        team.setClaimCount(team.getClaimCount() - 1);
+    }
+
+    private static void onAfterClaim(CommandSourceStack commandSourceStack, ClaimedChunk claimedChunk) {
+        var optTeam = Team.get(claimedChunk.getTeamData().getTeam().getTeamId());
+        if (optTeam.isEmpty()) return;
+
+        Team team = optTeam.get();
+        team.setClaimCount(team.getClaimCount() + 1);
+    }
 
 
     public enum AcceptReturn {

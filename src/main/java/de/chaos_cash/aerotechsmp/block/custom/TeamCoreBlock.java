@@ -2,6 +2,10 @@ package de.chaos_cash.aerotechsmp.block.custom;
 
 import com.mojang.serialization.MapCodec;
 import de.chaos_cash.aerotechsmp.block.entity.custom.TeamCoreBlockEntity;
+import de.chaos_cash.aerotechsmp.phases.DominationPhase;
+import de.chaos_cash.aerotechsmp.phases.PhaseHandler;
+import de.chaos_cash.aerotechsmp.team.Team;
+import de.chaos_cash.aerotechsmp.util.Messages;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
@@ -87,12 +91,32 @@ public class TeamCoreBlock extends BaseEntityBlock {
         if(!level.isClientSide()){
             var blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof TeamCoreBlockEntity coreBlockEntity){
-                var team = coreBlockEntity.getTeam();
-                if (team != null)
-                    team.onCoreBrokeByPlayer(player);
+                var destroyingTeam = Team.get(player);
+                if (destroyingTeam.isEmpty()) {
+                    Messages.ActionRequiresTeam.send(player);
+                    return false;
+                }
+
+                var coreTeam = coreBlockEntity.getTeam();
+
+                if (coreTeam != destroyingTeam.get()) {
+                    if (!(PhaseHandler.getPhase() instanceof DominationPhase)) {
+                        Messages.ActionRequiresDominationPhase.send(player);
+                        return false;
+                    }
+                }
+                else if (!PhaseHandler.getPhase().allowsTeamModifications()) {
+                    Messages.TeamModificationsNotAllowedInPhase.send(player);
+                    return false;
+                }
+
+                if (coreTeam != null)
+                    coreTeam.onCoreBrokeByPlayer(player);
             }
+
+            return super.onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid);
         }
 
-        return super.onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid);
+        return false;
     }
 }

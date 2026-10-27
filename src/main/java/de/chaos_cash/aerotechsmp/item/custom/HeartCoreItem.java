@@ -9,6 +9,7 @@ import de.chaos_cash.aerotechsmp.team.RandomItemsReward;
 import de.chaos_cash.aerotechsmp.team.Reward;
 import de.chaos_cash.aerotechsmp.team.Team;
 import de.chaos_cash.aerotechsmp.util.ChatHandler;
+import de.chaos_cash.aerotechsmp.util.Messages;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -114,7 +115,7 @@ public class HeartCoreItem extends Item {
         }
         stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 
-        ChatHandler.sendMessage(player, Component.literal("Your Heart Core has granted you " + rarity.name() + " rewards!").withStyle(ChatFormatting.GOLD));
+        Messages.HeartCoreGrantedRewards.send(player);
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BELL_RESONATE, SoundSource.PLAYERS);
     }
 
@@ -139,13 +140,13 @@ public class HeartCoreItem extends Item {
             if (!(PhaseHandler.getPhase() instanceof DeathmatchPhase))
                 stack.setCount(0);
 
-            if (entity instanceof Player) {
+            if (entity instanceof Player player) {
                 var tag = getTag(stack);
                 tag.putInt("charge_progress", tag.getInt("charge_progress") + tag.getInt("charge_speed"));
 
                 if (tryIncreaseRarity(tag)) {
-                    ChatHandler.sendMessage(entity.getUUID(), Component.literal("Your Heart Core has reached a higher rarity!").withStyle(ChatFormatting.GOLD));
-                    entity.level().playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.BEACON_POWER_SELECT, SoundSource.PLAYERS);
+                    Messages.HeartCoreIncreasedRarity.send(player.getUUID());
+                    entity.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BEACON_POWER_SELECT, SoundSource.PLAYERS);
                 }
 
                 stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
@@ -251,7 +252,7 @@ public class HeartCoreItem extends Item {
 
         entity.kill();
 
-        ChatHandler.sendMessage(player, Component.literal("You have picked up a Heart Core, It has combined with yours!").withStyle(ChatFormatting.GOLD));
+        Messages.HeartCoreCombined.send(player);
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.NOTE_BLOCK_CHIME.value(), SoundSource.PLAYERS);
     }
 

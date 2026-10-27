@@ -5,19 +5,16 @@ import de.chaos_cash.aerotechsmp.block.entity.ModBlockEntities;
 import de.chaos_cash.aerotechsmp.phases.PeacefulPhase;
 import de.chaos_cash.aerotechsmp.phases.PhaseHandler;
 import de.chaos_cash.aerotechsmp.team.Team;
-import de.chaos_cash.aerotechsmp.util.ChatHandler;
 import de.chaos_cash.aerotechsmp.util.EventHandler;
+import de.chaos_cash.aerotechsmp.util.Messages;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
-
-import java.awt.*;
 
 
 public class TeamCoreBlockEntity extends ModBlockEntity {
@@ -49,27 +46,27 @@ public class TeamCoreBlockEntity extends ModBlockEntity {
             return;
         }
         if (!PhaseHandler.getPhase().allowsTeamModifications()){
-            ChatHandler.sendError(placer.getUUID(),"You can not place a Team Core in this Phase!");
+            Messages.TeamModificationsNotAllowedInPhase.send(placer);
             level.destroyBlock(getBlockPos(), true);
             return;
         }
 
         if (!level.dimensionType().equals(AerotechSMP.getServer().overworld().dimensionType())) {
-            ChatHandler.sendError(placer.getUUID(),"A Team Core can only be placed in the overworld!");
+            Messages.TeamCoreForbiddenOutsideOverworld.send(placer);
             level.destroyBlock(getBlockPos(), true);
             return;
         }
 
         var team = Team.get(placer);
         if (team.isEmpty()) {
-            ChatHandler.sendError(placer.getUUID(),"You need to be part of a team to place a Team Core!");
+            Messages.ActionRequiresTeam.send(placer);
             level.destroyBlock(getBlockPos(), true);
             return;
         }
 
         setTeam(team.get());
         if (this.team == null)
-            ChatHandler.sendError(placer.getUUID(),"Your Team already has a Team Core!");
+            Messages.TeamCoreAlreadyPresent.send(placer);
     }
 
 
@@ -94,13 +91,13 @@ public class TeamCoreBlockEntity extends ModBlockEntity {
 
         if (playerTeam.isEmpty() || playerTeam.get() != team){
             level.playSound(null, getBlockPos(), SoundEvents.VAULT_INSERT_ITEM_FAIL, SoundSource.BLOCKS, 2, 1);
-            ChatHandler.sendMessage(player, Component.literal("This team Core is not owned by Your Team!").withColor(Color.red.getRGB()));
+            Messages.TeamCoreNotOwned.send(player);
             return;
         }
 
         if (!(PhaseHandler.getPhase() instanceof PeacefulPhase)){
             level.playSound(null, getBlockPos(), SoundEvents.VAULT_INSERT_ITEM_FAIL, SoundSource.BLOCKS, 2, 1);
-            ChatHandler.sendMessage(player, Component.literal("You can only withdraw Rewards in times of peace!").withColor(Color.red.getRGB()));
+            Messages.RewardsInaccessibleInPhase.send(player);
             return;
         }
 
@@ -115,6 +112,7 @@ public class TeamCoreBlockEntity extends ModBlockEntity {
 
         EventHandler.scheduleTask(40, () -> dropReward(team));
     }
+
 
     void dropReward(Team team){
         if (this.level == null) return;
@@ -147,6 +145,7 @@ public class TeamCoreBlockEntity extends ModBlockEntity {
         else
             EventHandler.scheduleTask(40, this::finishGivingRewards);
     }
+
 
     void finishGivingRewards(){
         isGivingRewards = false;
