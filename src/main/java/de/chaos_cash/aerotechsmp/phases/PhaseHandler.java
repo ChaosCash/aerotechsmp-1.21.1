@@ -30,7 +30,7 @@ public class PhaseHandler {
 
 
     public static int schedulePVPPhaseStartCommand() {
-        Messages.PVPImpeding.broadcast();
+        Messages.PvpImpeding.broadcast();
 
         createBackup("Pre PVP-Phase Backup ");
 

@@ -13,17 +13,15 @@ import java.util.UUID;
 public enum Messages {
     ActionRequiresTeam(Types.Error),
     ActionRequiresDominationPhase(Types.Error),
-    ClaimLimitExceeded(Types.Error),
-    ClaimLimitExceededLong(Types.Error),
-    ForceLoadLimitExceeded(Types.Error),
-    ForceLoadLimitExceededLong(Types.Error),
     TeamCoreNotOwned(Types.Error),
     RewardsInaccessibleInPhase(Types.Error),
     TeamModificationsNotAllowedInPhase(Types.Error),
     TeamCoreForbiddenOutsideOverworld(Types.Error),
     TeamCoreAlreadyPresent(Types.Error),
+    HardMaxClaimLimitReached(Types.Error),
+    HardMaxForceLoadLimitReached(Types.Error),
 
-    PVPImpeding(Types.Warning),
+    PvpImpeding(Types.Warning),
     OwnTeamCoreDestroyed(Types.Warning),
 
     TeamInvitation(Types.Info),
@@ -37,6 +35,14 @@ public enum Messages {
     TeamCoreDestructionRewardsGranted(Types.Congratulation),
     TeamCoreGuardedRewardsGranted(Types.Congratulation),
     UnclaimedRewardsMessage(Types.Congratulation),
+
+    ClaimShardUsed(Types.Congratulation),
+    ClaimCapsuleUsed(Types.Congratulation),
+    ClaimEssenceUsed(Types.Congratulation),
+
+    ForceLoadShardUsed(Types.Congratulation),
+    ForceLoadCapsuleUsed(Types.Congratulation),
+    ForceLoadEssenceUsed(Types.Congratulation),
     ;
 
 

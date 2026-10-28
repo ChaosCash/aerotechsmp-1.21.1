@@ -1,6 +1,7 @@
 package de.chaos_cash.aerotechsmp.datagen;
 
 import de.chaos_cash.aerotechsmp.AerotechSMP;
+import de.chaos_cash.aerotechsmp.item.ModItems;
 import net.minecraft.data.PackOutput;
 
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
@@ -16,7 +17,13 @@ public class ModItemModelProvider extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
-        //basicItem(ModItems.HEART_CORE.get());
+        basicItem(ModItems.CLAIM_SHARD.get());
+        basicItem(ModItems.CLAIM_CAPSULE.get());
+        basicItem(ModItems.CLAIM_ESSENCE.get());
+
+        basicItem(ModItems.FORCE_LOAD_SHARD.get());
+        basicItem(ModItems.FORCE_LOAD_CAPSULE.get());
+        basicItem(ModItems.FORCE_LOAD_ESSENCE.get());
     }
 
 }

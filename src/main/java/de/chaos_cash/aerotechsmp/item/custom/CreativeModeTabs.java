@@ -43,6 +43,14 @@ public class CreativeModeTabs {
                     .displayItems((itemDisplayParameters, output) -> {
                         output.accept(ModBlocks.TEAM_CORE);
                         output.accept(ModItems.HEART_CORE);
+
+                        output.accept(ModItems.CLAIM_SHARD);
+                        output.accept(ModItems.CLAIM_CAPSULE);
+                        output.accept(ModItems.CLAIM_ESSENCE);
+
+                        output.accept(ModItems.FORCE_LOAD_SHARD);
+                        output.accept(ModItems.FORCE_LOAD_CAPSULE);
+                        output.accept(ModItems.FORCE_LOAD_ESSENCE);
                     }).build()
             );
 

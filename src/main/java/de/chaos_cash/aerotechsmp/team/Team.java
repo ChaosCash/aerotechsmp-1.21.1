@@ -6,10 +6,10 @@ import de.chaos_cash.aerotechsmp.block.entity.custom.TeamCoreBlockEntity;
 import de.chaos_cash.aerotechsmp.phases.PhaseHandler;
 import de.chaos_cash.aerotechsmp.util.ChatHandler;
 import de.chaos_cash.aerotechsmp.util.Messages;
-import dev.architectury.event.CompoundEventResult;
-import dev.ftb.mods.ftbchunks.api.ClaimResult;
-import dev.ftb.mods.ftbchunks.api.ClaimedChunk;
-import dev.ftb.mods.ftbchunks.api.event.ClaimedChunkEvent;
+import dev.ftb.mods.ftbchunks.FTBChunksAPIImpl;
+import dev.ftb.mods.ftbchunks.FTBChunksWorldConfig;
+import dev.ftb.mods.ftbchunks.data.ChunkTeamDataImpl;
+import dev.ftb.mods.ftbchunks.data.PartyLimitMode;
 import dev.ftb.mods.ftbteams.FTBTeamsAPIImpl;
 import dev.ftb.mods.ftbteams.api.TeamRank;
 import dev.ftb.mods.ftbteams.api.property.BooleanProperty;
@@ -26,15 +26,21 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.util.*;
 import java.util.List;
 
 
+
 @EventBusSubscriber(modid = AerotechSMP.MOD_ID)
 public class Team {
     public static final int maxSize = 2;
+    public static final int defaultMaxClaims = 9;
+    public static final int defaultMaxForceLoads = 0;
+    public static final int hardMaxClaims = 500;
+    public static final int hardMaxForceLoads = 16;
     private static final Map<UUID, Team> teams = new HashMap<>();
     private static final Map<UUID, Team> invites = new HashMap<>();
 
@@ -43,20 +49,14 @@ public class Team {
     private static final IntProperty corePosXPropertyType = new IntProperty(ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID, "core_pos_x"), null);
     private static final IntProperty corePosYPropertyType = new IntProperty(ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID, "core_pos_y"), null);
     private static final IntProperty corePosZPropertyType = new IntProperty(ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID, "core_pos_z"), null);
-    private static final IntProperty maxClaimsPropertyType = new IntProperty(ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID, "max_claims"), 9);
-    private static final IntProperty maxForceLoadsPropertyType = new IntProperty(ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID, "max_force_loads"), 0);
-    private static final IntProperty forceLoadCountPropertyType = new IntProperty(ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID, "force_load_count"), 0);
-    private static final IntProperty claimCountPropertyType = new IntProperty(ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID, "claim_count"), 0);
     private static final StringListProperty rewardsPropertyType = new StringListProperty(ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID, "rewards"), () -> null);
 
 
-    private final PartyTeam ftbTeam;
+    @NotNull private final PartyTeam ftbTeam;
     private final List<Reward> rewards = new ArrayList<>();
     private BlockPos corePos = null;
-    private int maxClaims;
-    private int maxForceLoads;
-    private int claimCount;
-    private int forceLoadCount;
+    private final ChunkTeamDataImpl chunkTeamData;
+    private final ChunkTeamDataImpl ownerData = FTBChunksAPIImpl.INSTANCE.getManager().getPersonalData(getOwner());
 
 
 
@@ -71,10 +71,7 @@ public class Team {
         loadRewards();
         loadCore();
 
-        maxClaims = ftbTeam.getProperty(maxClaimsPropertyType);
-        maxForceLoads = ftbTeam.getProperty(maxForceLoadsPropertyType);
-        claimCount = ftbTeam.getProperty(claimCountPropertyType);
-        forceLoadCount = ftbTeam.getProperty(forceLoadCountPropertyType);
+        chunkTeamData = FTBChunksAPIImpl.INSTANCE.getManager().getOrCreateData(ftbTeam);
     }
 
 
@@ -172,16 +169,16 @@ public class Team {
         return ftbTeam.getOnlineMembers();
     }
 
-    public int getMaxClaims() {return maxClaims;}
+    public int getMaxClaims() {return chunkTeamData.getMaxClaimChunks();}
 
-    public int getMaxForceLoads() {return maxForceLoads;}
+    public int getMaxForceLoads() {return chunkTeamData.getMaxForceLoadChunks();}
 
     public int getClaimCount() {
-        return claimCount;
+        return chunkTeamData.getClaimedChunks().size();
     }
 
     public int getForceLoadCount() {
-        return forceLoadCount;
+        return chunkTeamData.getForceLoadedChunks().size();
     }
 
 
@@ -190,7 +187,6 @@ public class Team {
     public boolean isOwner(ServerPlayer player){
         return ftbTeam.isOwner(player.getUUID());
     }
-
 
     public boolean setCore(TeamCoreBlockEntity teamCoreBlockEntity) {
         if (hasCore()) return false;
@@ -234,23 +230,22 @@ public class Team {
 
 
     public void increaseMaxClaims(int increase) {
-        maxClaims += increase;
-        ftbTeam.setProperty(maxClaimsPropertyType, maxClaims);
+        ownerData.setExtraClaimChunks(ownerData.getExtraClaimChunks() + increase);
+        ownerData.updateLimits();
+        ownerData.saveNow();
+
+        chunkTeamData.updateLimits();
+        chunkTeamData.saveNow();
     }
 
     public void increaseMaxForceLoads(int increase) {
-        maxForceLoads += increase;
-        ftbTeam.setProperty(maxForceLoadsPropertyType, maxForceLoads);
-    }
+        ownerData.setExtraForceLoadChunks(ownerData.getExtraForceLoadChunks() + increase);
+        ownerData.saveNow();
+        ownerData.updateLimits();
 
-    private void setClaimCount(int count) {
-        claimCount = Math.max(count, 0);
-        ftbTeam.setProperty(claimCountPropertyType, claimCount);
-    }
-
-    private void setForceLoadCount(int count) {
-        forceLoadCount = Math.max(count, 0);
-        ftbTeam.setProperty(forceLoadCountPropertyType, forceLoadCount);
+        var teamData = FTBChunksAPIImpl.INSTANCE.getManager().getOrCreateData(ftbTeam);
+        teamData.updateLimits();
+        teamData.saveNow();
     }
 
 
@@ -346,74 +341,16 @@ public class Team {
 
 
 
+
     @SubscribeEvent
     static void onServerStartup(ServerStartingEvent event) {
-        ClaimedChunkEvent.BEFORE_CLAIM.register(Team::onBeforeClaim);
-        ClaimedChunkEvent.AFTER_CLAIM.register(Team::onAfterClaim);
-        ClaimedChunkEvent.AFTER_UNCLAIM.register(Team::onAfterUnclaim);
+        FTBChunksWorldConfig.PARTY_LIMIT_MODE.set(PartyLimitMode.OWNER);
+        FTBChunksWorldConfig.MAX_CLAIMED_CHUNKS.set(defaultMaxClaims);
+        FTBChunksWorldConfig.MAX_FORCE_LOADED_CHUNKS.set(defaultMaxForceLoads);
+        FTBChunksWorldConfig.HARD_TEAM_CLAIM_LIMIT.set(hardMaxClaims);
+        FTBChunksWorldConfig.HARD_TEAM_FORCE_LIMIT.set(hardMaxForceLoads);
 
-        ClaimedChunkEvent.BEFORE_LOAD.register(Team::onBeforeLoad);
-        ClaimedChunkEvent.AFTER_LOAD.register(Team::onAfterLoad);
-        ClaimedChunkEvent.AFTER_UNLOAD.register(Team::onAfterUnload);
-
-    }
-
-    private static void onAfterUnload(CommandSourceStack stack, ClaimedChunk claimedChunk) {
-        var optTeam = Team.get(claimedChunk.getTeamData().getTeam().getTeamId());
-        if (optTeam.isEmpty()) return;
-        Team team = optTeam.get();
-
-        team.setForceLoadCount(team.getForceLoadCount() + 1);
-    }
-
-    private static void onAfterLoad(CommandSourceStack stack, ClaimedChunk claimedChunk) {
-        var optTeam = Team.get(claimedChunk.getTeamData().getTeam().getTeamId());
-        if (optTeam.isEmpty()) return;
-        Team team = optTeam.get();
-
-        team.setForceLoadCount(team.getForceLoadCount() - 1);
-    }
-
-    private static CompoundEventResult<ClaimResult> onBeforeLoad(CommandSourceStack stack, ClaimedChunk claimedChunk) {
-        var optTeam = Team.get(claimedChunk.getTeamData().getTeam().getTeamId());
-        if (optTeam.isEmpty()) return CompoundEventResult.interruptTrue(ClaimResult.customProblem(Messages.ActionRequiresTeam.key));
-
-        Team team = optTeam.get();
-        if (team.getForceLoadCount() >= team.getMaxForceLoads()) {
-            Messages.ForceLoadLimitExceededLong.send(stack.getPlayer());
-            return CompoundEventResult.interruptTrue(ClaimResult.customProblem(Messages.ForceLoadLimitExceeded.key));
-        }
-        else
-            return CompoundEventResult.pass();
-    }
-
-    private static CompoundEventResult<ClaimResult> onBeforeClaim(CommandSourceStack stack, ClaimedChunk claimedChunk) {
-        var optTeam = Team.get(claimedChunk.getTeamData().getTeam().getTeamId());
-        if (optTeam.isEmpty()) return CompoundEventResult.interruptTrue(ClaimResult.customProblem(Messages.ActionRequiresTeam.key));
-
-        Team team = optTeam.get();
-        if (team.getClaimCount() >= team.getMaxClaims()) {
-            Messages.ClaimLimitExceededLong.send(stack.getPlayer());
-            return CompoundEventResult.interruptTrue(ClaimResult.customProblem(Messages.ClaimLimitExceeded.key));
-        }
-        else
-            return CompoundEventResult.pass();
-    }
-
-    private static void onAfterUnclaim(CommandSourceStack commandSourceStack, ClaimedChunk claimedChunk) {
-        var optTeam = Team.get(claimedChunk.getTeamData().getTeam().getTeamId());
-        if (optTeam.isEmpty()) return;
-        Team team = optTeam.get();
-
-        team.setClaimCount(team.getClaimCount() - 1);
-    }
-
-    private static void onAfterClaim(CommandSourceStack commandSourceStack, ClaimedChunk claimedChunk) {
-        var optTeam = Team.get(claimedChunk.getTeamData().getTeam().getTeamId());
-        if (optTeam.isEmpty()) return;
-
-        Team team = optTeam.get();
-        team.setClaimCount(team.getClaimCount() + 1);
+        FTBChunksWorldConfig.onConfigChanged(true);
     }
 
 
