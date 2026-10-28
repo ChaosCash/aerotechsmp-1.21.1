@@ -52,11 +52,11 @@ public class Team {
     private static final StringListProperty rewardsPropertyType = new StringListProperty(ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID, "rewards"), () -> null);
 
 
-    @NotNull private final PartyTeam ftbTeam;
+    private final @NotNull PartyTeam ftbTeam;
     private final List<Reward> rewards = new ArrayList<>();
     private BlockPos corePos = null;
     private final ChunkTeamDataImpl chunkTeamData;
-    private final ChunkTeamDataImpl ownerData = FTBChunksAPIImpl.INSTANCE.getManager().getPersonalData(getOwner());
+    private final ChunkTeamDataImpl ownerData;
 
 
 
@@ -72,6 +72,7 @@ public class Team {
         loadCore();
 
         chunkTeamData = FTBChunksAPIImpl.INSTANCE.getManager().getOrCreateData(ftbTeam);
+        ownerData = FTBChunksAPIImpl.INSTANCE.getManager().getPersonalData(getOwner());
     }
 
 
@@ -172,14 +173,6 @@ public class Team {
     public int getMaxClaims() {return chunkTeamData.getMaxClaimChunks();}
 
     public int getMaxForceLoads() {return chunkTeamData.getMaxForceLoadChunks();}
-
-    public int getClaimCount() {
-        return chunkTeamData.getClaimedChunks().size();
-    }
-
-    public int getForceLoadCount() {
-        return chunkTeamData.getForceLoadedChunks().size();
-    }
 
 
     public boolean isFull() {return getTeamSize() >= maxSize;}
