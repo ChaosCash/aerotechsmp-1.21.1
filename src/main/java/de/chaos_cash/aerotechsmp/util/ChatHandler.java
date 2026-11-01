@@ -31,7 +31,6 @@ public class ChatHandler {
     public static int ticksPerSecond = 20;
 
 
-
     @SubscribeEvent
     public static void onRegisterCommands(RegisterCommandsEvent event) {
         CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
