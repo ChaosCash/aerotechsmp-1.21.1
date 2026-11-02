@@ -1,9 +1,11 @@
-package de.chaos_cash.aerotechsmp.datagen;
+package de.chaos_cash.aerotechsmp.datagen.Recipe;
 
 
 import de.chaos_cash.aerotechsmp.AerotechSMP;
 import de.chaos_cash.aerotechsmp.block.custom.ArmorBlocks;
+import de.chaos_cash.aerotechsmp.item.ModItems;
 import de.chaos_cash.aerotechsmp.util.ModTags;
+import de.chaos_cash.aerotechsmp.util.Rarity;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
@@ -14,8 +16,11 @@ import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.StairBlock;
 import net.neoforged.neoforge.common.conditions.IConditionBuilder;
 import org.jetbrains.annotations.NotNull;
+import rearth.oritech.api.recipe.AssemblerRecipeBuilder;
+import rearth.oritech.api.recipe.ParticleCollisionRecipeBuilder;
 
 import java.util.concurrent.CompletableFuture;
+
 
 public class ModRecipeProvider extends RecipeProvider implements IConditionBuilder {
     public ModRecipeProvider(PackOutput pOutput, CompletableFuture<HolderLookup.Provider> pRegistries) {
@@ -25,7 +30,9 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
     @Override
     protected void buildRecipes(@NotNull RecipeOutput recipeOutput) {
         addArmorRecipes(recipeOutput);
+        addComponentRecipes(recipeOutput);
     }
+
 
 
     private void addArmorRecipes(@NotNull RecipeOutput recipeOutput) {
@@ -190,6 +197,30 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
             )
             .unlockedBy("has_compressed_armor_slab", has(ModTags.Items.ARMOR_SLAB_COMPRESSED))
             .save(recipeOutput, ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID,ArmorBlocks.getName(ArmorBlocks.Tier.Compressed, color, ArmorBlocks.BlockType.Slab) + "_from_slab"));
+        }
+    }
+
+
+    private void addComponentRecipes(@NotNull RecipeOutput recipeOutput) {
+        for (var rarity : Rarity.values()) {
+            var componentBase = ModItems.COMPONENT_BASES.get(rarity);
+
+            if (rarity != Rarity.Common)
+                ParticleCollisionRecipeBuilder.build()
+                        .time((int) (500 * Math.pow(2, rarity.toInt() - 1)))
+                        .input(componentBase)
+                        .input(componentBase)
+                        .result(ModItems.COMPONENT_BASES.get(rarity.tryDecrease()).get(), 7)
+                        .export(recipeOutput, ModItems.COMPONENT_BASES.get(rarity.tryDecrease()).getId().getPath());
+
+            if (rarity != Rarity.Legendary)
+                AssemblerRecipeBuilder.build()
+                        .input(componentBase)
+                        .input(componentBase)
+                        .input(componentBase)
+                        .input(componentBase)
+                        .result(ModItems.COMPONENT_BASES.get(rarity.tryIncrease()).get())
+                        .export(recipeOutput, ModItems.COMPONENT_BASES.get(rarity.tryIncrease()).getId().getPath());
         }
     }
 }

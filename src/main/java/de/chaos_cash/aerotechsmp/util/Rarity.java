@@ -1,6 +1,7 @@
 package de.chaos_cash.aerotechsmp.util;
 
 import net.minecraft.ChatFormatting;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public enum Rarity {
@@ -85,7 +86,22 @@ public enum Rarity {
         };
     }
 
+
+    public static Rarity tryDecrease(@NotNull Rarity rarity) {
+        return switch (rarity) {
+            case Common, Uncommon -> Common;
+            case Rare -> Uncommon;
+            case Epic -> Rare;
+            case Legendary -> Epic;
+        };
+    }
+
     public Rarity tryIncrease() {
         return tryIncrease(this);
     }
+
+    public Rarity tryDecrease() {
+        return tryDecrease(this);
+    }
+
 }

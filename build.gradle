@@ -133,6 +133,12 @@ dependencies {
     implementation "curse.maven:CreateBigCannons-646668:8303106"
     implementation "curse.maven:RPLib-1279407:7587771"
     implementation "curse.maven:Numismatics-889722:7948018"
+    implementation "curse.maven:Oritech-1030830:9070323"
+    implementation "curse.maven:Athena-841890:8061947"
+    compileOnly "curse.maven:OracleIndex-1206582:8882169"
+    implementation "curse.maven:GeckoLib-388172:8893490"
+    implementation "curse.maven:JEI-238222:9205121"
+    implementation "curse.maven:MezzConfig-1689768:9374030"
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

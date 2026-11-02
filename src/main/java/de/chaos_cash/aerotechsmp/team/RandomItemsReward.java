@@ -5,6 +5,7 @@ import de.chaos_cash.aerotechsmp.item.ModItems;
 import de.chaos_cash.aerotechsmp.util.Rarity;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import rearth.oritech.init.BlockContent;
 
 import java.util.List;
 
@@ -63,6 +64,7 @@ public class RandomItemsReward extends Reward {
     static final PoolGenerator<ItemStack> legendaryItemsPool = new PoolGenerator<ItemStack>()
             .withEntry(100, ModItems.COMPONENT_BASES.get(Rarity.Legendary)::toStack)
             .withEntry(20, () -> ModItems.COMPONENT_BASES.get(Rarity.Legendary).toStack(2))
+            .withEntry(5, () -> BlockContent.BLACK_HOLE_BLOCK.asItem().getDefaultInstance())
             ;
 
 
