@@ -6,10 +6,10 @@ import de.chaos_cash.aerotechsmp.phases.DeathmatchPhase;
 import de.chaos_cash.aerotechsmp.phases.PhaseHandler;
 import de.chaos_cash.aerotechsmp.team.MoneyReward;
 import de.chaos_cash.aerotechsmp.team.RandomItemsReward;
-import de.chaos_cash.aerotechsmp.team.Reward;
 import de.chaos_cash.aerotechsmp.team.Team;
 import de.chaos_cash.aerotechsmp.util.ChatHandler;
 import de.chaos_cash.aerotechsmp.util.Messages;
+import de.chaos_cash.aerotechsmp.util.Rarity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -95,9 +95,9 @@ public class HeartCoreItem extends Item {
 
     private static void grantRewards(Player player, ItemStack stack) {
         var tag = getTag(stack);
-        var rarity = Reward.Rarity.fromInt(tag.getInt("rarity"));
+        var rarity = Rarity.fromInt(tag.getInt("rarity"));
 
-        if (rarity == Reward.Rarity.None)
+        if (rarity == null)
             return;
 
         var optTeam = Team.get(player);
@@ -160,7 +160,7 @@ public class HeartCoreItem extends Item {
         if (curRarity >= 5) return false;
 
         int curProgress = tag.getInt("charge_progress");
-        int chargeToNextRarity = (int) (baseChargeDuration * Reward.Rarity.fromInt(curRarity + 1).getMultiplier());
+        int chargeToNextRarity = (int) (baseChargeDuration * Rarity.getMultiplier(Rarity.fromInt(curRarity + 1)));
 
         if (curProgress >= chargeToNextRarity) {
             curProgress -= chargeToNextRarity;
@@ -204,17 +204,20 @@ public class HeartCoreItem extends Item {
 
 
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context, List<Component> tooltipComponents, @NotNull TooltipFlag tooltipFlag) {
+    public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context, @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag tooltipFlag) {
         var tag = getTag(stack);
-        var rarity = Reward.Rarity.fromInt(tag.getInt("rarity"));
+        var rarity = Rarity.fromInt(tag.getInt("rarity"));
 
 
-        tooltipComponents.add(Component.literal(rarity.name()).withStyle(rarity.color));
+        if (rarity == null)
+            tooltipComponents.add(Component.literal("None").withStyle(ChatFormatting.WHITE));
+        else
+            tooltipComponents.add(Component.literal(rarity.name()).withStyle(rarity.color));
         tooltipComponents.add(Component.literal(""));
-        if (rarity != Reward.Rarity.Legendary) {
+        if (rarity != Rarity.Legendary) {
             int chargeSpeed = tag.getInt("charge_speed");
             var chargeProgress = tag.getInt("charge_progress");
-            int chargeTime = (int) (baseChargeDuration * Reward.Rarity.fromInt(rarity.toInt() + 1).getMultiplier());
+            int chargeTime = (int) (baseChargeDuration * Rarity.tryIncrease(rarity).getMultiplier());
             double chargePercent = (double) chargeProgress / chargeTime;
             int finishedBars = (int) (chargePercent * tooltipProgressBarCount);
 
@@ -243,7 +246,7 @@ public class HeartCoreItem extends Item {
     private static void combine(@NotNull ItemStack stack, @NotNull ItemEntity entity, Player player) {
         var stackTag = getTag(stack);
         var otherTag = getTag(entity.getItem());
-        Reward.Rarity otherRarity = Reward.Rarity.fromInt(otherTag.getInt("rarity"));
+        Rarity otherRarity = Rarity.fromInt(otherTag.getInt("rarity"));
         int otherProgress = otherTag.getInt("charge_progress") + getAccumulatedProgress(otherRarity);
 
         stackTag.putInt("charge_progress", stackTag.getInt("charge_progress") + otherProgress);
@@ -257,11 +260,11 @@ public class HeartCoreItem extends Item {
     }
 
 
-    static int getAccumulatedProgress(Reward.Rarity rarity) {
+    static int getAccumulatedProgress(Rarity rarity) {
         int accumulatedProgress = 0;
 
-        for (var curRarity : Reward.Rarity.values()){
-            if (rarity != Reward.Rarity.Common)
+        for (var curRarity : Rarity.values()){
+            if (rarity != Rarity.Common)
                 accumulatedProgress += (int) (baseChargeDuration * curRarity.getMultiplier());
 
             if (rarity.equals(curRarity))

@@ -5,7 +5,6 @@ import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import de.chaos_cash.aerotechsmp.AerotechSMP;
 import de.chaos_cash.aerotechsmp.phases.TimedPhase;
-import de.chaos_cash.aerotechsmp.team.RandomItemsReward;
 import de.chaos_cash.aerotechsmp.team.Reward;
 import de.chaos_cash.aerotechsmp.team.Team;
 import de.chaos_cash.aerotechsmp.phases.PhaseHandler;
@@ -211,7 +210,7 @@ public class ChatHandler {
                 .requires(stack -> stack.hasPermission(Commands.LEVEL_ADMINS))
                 .then(Commands.argument("Player", EntityArgument.player())
                     .then(Commands.literal(rewardType.getTypeName())
-                        .then(Commands.argument("rarity", EnumArgument.enumArgument(RandomItemsReward.Rarity.class))
+                        .then(Commands.argument("rarity", EnumArgument.enumArgument(Rarity.class))
                             .executes((context) -> {
                                 var source = context.getSource();
                                 var player = source.getPlayer();
@@ -223,7 +222,7 @@ public class ChatHandler {
                                     return 0;
                                 }
 
-                                var rarity = context.getArgument("rarity", RandomItemsReward.Rarity.class);
+                                var rarity = context.getArgument("rarity", Rarity.class);
                                 team.get().addReward(rewardType.create(rarity));
 
                                 source.sendSuccess(() -> Component.literal("Successfully gave the team of the Player '" + player.getDisplayName().getString() + "' a random item reward of the rarity '" + rarity + "'."), false);

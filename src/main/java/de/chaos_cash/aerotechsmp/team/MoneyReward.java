@@ -1,5 +1,6 @@
 package de.chaos_cash.aerotechsmp.team;
 
+import de.chaos_cash.aerotechsmp.util.Rarity;
 import dev.ithundxr.createnumismatics.Numismatics;
 import dev.ithundxr.createnumismatics.content.backend.BankAccount;
 import net.minecraft.network.chat.Component;

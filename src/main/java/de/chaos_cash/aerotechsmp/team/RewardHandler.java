@@ -3,13 +3,14 @@ package de.chaos_cash.aerotechsmp.team;
 import de.chaos_cash.aerotechsmp.phases.PVPPhase;
 import de.chaos_cash.aerotechsmp.phases.PhaseHandler;
 import de.chaos_cash.aerotechsmp.util.Messages;
+import de.chaos_cash.aerotechsmp.util.Rarity;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class RewardHandler {
 
     static Reward[] getTeamCoreRewards() {
-        return new Reward[]{new RandomItemsReward(RandomItemsReward.Rarity.Legendary)};
+        return new Reward[]{new RandomItemsReward(Rarity.Legendary)};
     }
 
     public static void onTeamCoreBreak(@NotNull Player breakingPlayer, @NotNull Team team) {

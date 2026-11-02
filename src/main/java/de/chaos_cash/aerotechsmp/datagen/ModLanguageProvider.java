@@ -5,6 +5,7 @@ import de.chaos_cash.aerotechsmp.block.ModBlocks;
 import de.chaos_cash.aerotechsmp.block.custom.ArmorBlocks;
 import de.chaos_cash.aerotechsmp.item.ModItems;
 import de.chaos_cash.aerotechsmp.util.Messages;
+import de.chaos_cash.aerotechsmp.util.Rarity;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 
@@ -26,14 +27,22 @@ public class ModLanguageProvider extends LanguageProvider {
         add(ModItems.FORCE_LOAD_CAPSULE.get(), "Force Load Capsule");
         add(ModItems.FORCE_LOAD_ESSENCE.get(), "Force Load Essence");
 
-        for (ArmorBlocks.Color color : ArmorBlocks.Color.values()) {
+        for (ArmorBlocks.Color color : ArmorBlocks.Color.values())
             for (ArmorBlocks.Tier tier : ArmorBlocks.Tier.values()) {
                 add(ArmorBlocks.getBlock(tier, color).get(), ArmorBlocks.getDisplayName(tier, color, ArmorBlocks.BlockType.Block));
                 add(ArmorBlocks.getStair(tier, color).get(), ArmorBlocks.getDisplayName(tier, color, ArmorBlocks.BlockType.Stairs));
                 add(ArmorBlocks.getSlab(tier, color).get(), ArmorBlocks.getDisplayName(tier, color, ArmorBlocks.BlockType.Slab));
             }
 
+
+        for (var rarity : Rarity.values()) {
+            add(ModItems.COMPONENT_BASES.get(rarity).get(), rarity.name() + " Component Base");
+
+            add(ModItems.KINETIC_COMPONENTS.get(rarity).get(), rarity.name() + " Kinetic Component");
+            add(ModItems.ELECTRIC_COMPONENTS.get(rarity).get(), rarity.name() + " Electric Component");
+            add(ModItems.SPATIAL_COMPONENTS.get(rarity).get(), rarity.name() + " Spatial Component");
         }
+
 
 
         // errors

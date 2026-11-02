@@ -7,7 +7,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.neoforge.registries.DeferredBlock;
 
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.BiFunction;
 
@@ -90,9 +90,9 @@ public class ArmorBlocks {
 
 
     static <T extends Block> Map<Tier, Map<Color, DeferredBlock<T>>> registerBlocksOfType(BlockType type, BiFunction<Tier, Color, T> newBlockFunction){
-        Map<Tier, Map<Color, DeferredBlock<T>>> blocks = new HashMap<>();
+        Map<Tier, Map<Color, DeferredBlock<T>>> blocks = new EnumMap<>(Tier.class);
         for (Tier tier : Tier.values()) {
-            blocks.put(tier, new HashMap<>());
+            blocks.put(tier, new EnumMap<>(Color.class));
             for (Color color : Color.values()) {
                 blocks.get(tier).put(
                     color,

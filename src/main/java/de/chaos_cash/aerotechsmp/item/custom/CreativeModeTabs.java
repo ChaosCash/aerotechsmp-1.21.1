@@ -51,6 +51,16 @@ public class CreativeModeTabs {
                         output.accept(ModItems.FORCE_LOAD_SHARD);
                         output.accept(ModItems.FORCE_LOAD_CAPSULE);
                         output.accept(ModItems.FORCE_LOAD_ESSENCE);
+
+                        for (var componentBase : ModItems.COMPONENT_BASES.values())
+                            output.accept(componentBase);
+
+                        for (var component : ModItems.KINETIC_COMPONENTS.values())
+                            output.accept(component);
+                        for (var component : ModItems.ELECTRIC_COMPONENTS.values())
+                            output.accept(component);
+                        for (var component : ModItems.SPATIAL_COMPONENTS.values())
+                            output.accept(component);
                     }).build()
             );
 

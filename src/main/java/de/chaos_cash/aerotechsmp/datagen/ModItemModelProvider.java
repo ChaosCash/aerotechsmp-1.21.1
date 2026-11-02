@@ -2,6 +2,7 @@ package de.chaos_cash.aerotechsmp.datagen;
 
 import de.chaos_cash.aerotechsmp.AerotechSMP;
 import de.chaos_cash.aerotechsmp.item.ModItems;
+import de.chaos_cash.aerotechsmp.util.Rarity;
 import net.minecraft.data.PackOutput;
 
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
@@ -24,6 +25,14 @@ public class ModItemModelProvider extends ItemModelProvider {
         basicItem(ModItems.FORCE_LOAD_SHARD.get());
         basicItem(ModItems.FORCE_LOAD_CAPSULE.get());
         basicItem(ModItems.FORCE_LOAD_ESSENCE.get());
+
+        for (var rarity : Rarity.values()) {
+            basicItem(ModItems.COMPONENT_BASES.get(rarity).get());
+
+            basicItem(ModItems.KINETIC_COMPONENTS.get(rarity).get());
+            basicItem(ModItems.ELECTRIC_COMPONENTS.get(rarity).get());
+            basicItem(ModItems.SPATIAL_COMPONENTS.get(rarity).get());
+        }
     }
 
 }
