@@ -203,24 +203,30 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
 
     private void addComponentRecipes(@NotNull RecipeOutput recipeOutput) {
         for (var rarity : Rarity.values()) {
-            var componentBase = ModItems.COMPONENT_BASES.get(rarity);
+            if (rarity != Rarity.Legendary) {
+                var componentBase = ModItems.COMPONENT_BASES.get(rarity);
+                
+                var collisionBuilder = ParticleCollisionRecipeBuilder.build() // particle collision combination
+                        .time((int) (500 * Math.pow(2, rarity.toInt())))
+                        .result(ModItems.COMPONENT_BOARDS.get(rarity.tryIncrease()).get())
+                if (rarity == Rarity.Common)
+                    collisionBuilder.input(Items.NETHER_STAR)
+                        .input(Items.NETHER_STAR);
+                else {
+                    collisionBuilder.input(componentBase)
+                        .input(componentBase);
+                    
+                    AssemblerRecipeBuilder.build() // assembler combination
+                            .input(componentBase)
+                            .input(componentBase)
+                            .input(componentBase)
+                            .input(componentBase)
+                            .result(ModItems.COMPONENT_BOARDS.get(rarity.tryIncrease()).get())
+                            .export(recipeOutput, ModItems.COMPONENT_BASES.get(rarity.tryIncrease()).getId().getPath());
+                }
 
-            if (rarity != Rarity.Common)
-                ParticleCollisionRecipeBuilder.build()
-                        .time((int) (500 * Math.pow(2, rarity.toInt() - 1)))
-                        .input(componentBase)
-                        .input(componentBase)
-                        .result(ModItems.COMPONENT_BASES.get(rarity.tryDecrease()).get(), 7)
-                        .export(recipeOutput, ModItems.COMPONENT_BASES.get(rarity.tryDecrease()).getId().getPath());
-
-            if (rarity != Rarity.Legendary)
-                AssemblerRecipeBuilder.build()
-                        .input(componentBase)
-                        .input(componentBase)
-                        .input(componentBase)
-                        .input(componentBase)
-                        .result(ModItems.COMPONENT_BASES.get(rarity.tryIncrease()).get())
-                        .export(recipeOutput, ModItems.COMPONENT_BASES.get(rarity.tryIncrease()).getId().getPath());
+                collisionBuilder.export(recipeOutput, ModItems.COMPONENT_BASES.get(rarity.tryDecrease()).getId().getPath());
+            }
         }
     }
 }
