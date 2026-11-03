@@ -38,6 +38,8 @@ public class ModItems {
     public static final Map<Rarity, DeferredItem<Item>> ELECTRIC_COMPONENTS = registerItemsWithTypes("electric_component", Rarity.class, () -> new Item(new Item.Properties()));
     public static final Map<Rarity, DeferredItem<Item>> SPATIAL_COMPONENTS = registerItemsWithTypes("spatial_component", Rarity.class, () -> new Item(new Item.Properties()));
 
+    public static final Map<Rarity, DeferredItem<Item>> COMPONENT_BOARDS = registerItemsWithTypes("component_board", Rarity.class, () -> new Item(new Item.Properties()));
+    
 
 
     public static void register(IEventBus eventBus)
