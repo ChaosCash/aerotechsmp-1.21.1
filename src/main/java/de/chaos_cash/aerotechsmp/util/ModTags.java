@@ -28,17 +28,25 @@ public class ModTags {
     }
 
     public static class Items {
-        public static final TagKey<Item> ARMOR_BLOCK_BASIC = createTag("armor_block_basic");
-        public static final TagKey<Item> ARMOR_BLOCK_HARDENED = createTag("armor_block_hardened");
-        public static final TagKey<Item> ARMOR_BLOCK_COMPRESSED = createTag("armor_block_compressed");
+        public static class Armor {
+            public static class Block {
+                public static final TagKey<Item> LIGHT = createTag("armor/basic/block");
+                public static final TagKey<Item> HARDENED = createTag("armor/hardened/block");
+                public static final TagKey<Item> COMPRESSED = createTag("armor/compressed/block");
+            }
 
-        public static final TagKey<Item> ARMOR_STAIR_BASIC = createTag("armor_stair_basic");
-        public static final TagKey<Item> ARMOR_STAIR_HARDENED = createTag("armor_stair_hardened");
-        public static final TagKey<Item> ARMOR_STAIR_COMPRESSED = createTag("armor_stair_compressed");
+            public static class Stair {
+                public static final TagKey<Item> LIGHT = createTag("armor/basic/stair");
+                public static final TagKey<Item> HARDENED = createTag("armor/hardened/stair");
+                public static final TagKey<Item> COMPRESSED = createTag("armor/compressed/stair");
+            }
 
-        public static final TagKey<Item> ARMOR_SLAB_BASIC = createTag("armor_slab_basic");
-        public static final TagKey<Item> ARMOR_SLAB_HARDENED = createTag("armor_slab_hardened");
-        public static final TagKey<Item> ARMOR_SLAB_COMPRESSED = createTag("armor_slab_compressed");
+            public static class Slab {
+                public static final TagKey<Item> LIGHT = createTag("armor/basic/slab");
+                public static final TagKey<Item> HARDENED = createTag("armor/hardened/slab");
+                public static final TagKey<Item> COMPRESSED = createTag("armor/compressed/slab");
+            }
+        }
 
 
 

@@ -24,33 +24,33 @@ public class ModItemTagProvider extends ItemTagsProvider {
     protected void addTags(HolderLookup.@NotNull Provider pProvider) {
         for (ArmorBlocks.Color color : ArmorBlocks.Color.values())
         {
-            tag(ModTags.Items.ARMOR_BLOCK_BASIC)
+            tag(ModTags.Items.Armor.Block.LIGHT)
                     .add(ArmorBlocks.getBlock(ArmorBlocks.Tier.Light, color).asItem());
 
-            tag(ModTags.Items.ARMOR_BLOCK_HARDENED)
+            tag(ModTags.Items.Armor.Block.HARDENED)
                     .add(ArmorBlocks.getBlock(ArmorBlocks.Tier.Hardened, color).asItem());
 
-            tag(ModTags.Items.ARMOR_BLOCK_COMPRESSED)
+            tag(ModTags.Items.Armor.Block.COMPRESSED)
                     .add(ArmorBlocks.getBlock(ArmorBlocks.Tier.Compressed, color).asItem());
 
 
-            tag(ModTags.Items.ARMOR_STAIR_BASIC)
+            tag(ModTags.Items.Armor.Stair.LIGHT)
                     .add(ArmorBlocks.getStair(ArmorBlocks.Tier.Light, color).asItem());
 
-            tag(ModTags.Items.ARMOR_STAIR_HARDENED)
+            tag(ModTags.Items.Armor.Stair.HARDENED)
                     .add(ArmorBlocks.getStair(ArmorBlocks.Tier.Hardened, color).asItem());
 
-            tag(ModTags.Items.ARMOR_STAIR_COMPRESSED)
+            tag(ModTags.Items.Armor.Stair.COMPRESSED)
                     .add(ArmorBlocks.getStair(ArmorBlocks.Tier.Compressed, color).asItem());
 
 
-            tag(ModTags.Items.ARMOR_SLAB_BASIC)
+            tag(ModTags.Items.Armor.Slab.LIGHT)
                     .add(ArmorBlocks.getSlab(ArmorBlocks.Tier.Light, color).asItem());
 
-            tag(ModTags.Items.ARMOR_SLAB_HARDENED)
+            tag(ModTags.Items.Armor.Slab.HARDENED)
                     .add(ArmorBlocks.getSlab(ArmorBlocks.Tier.Hardened, color).asItem());
 
-            tag(ModTags.Items.ARMOR_SLAB_COMPRESSED)
+            tag(ModTags.Items.Armor.Slab.COMPRESSED)
                     .add(ArmorBlocks.getSlab(ArmorBlocks.Tier.Compressed, color).asItem());
         }
     }
