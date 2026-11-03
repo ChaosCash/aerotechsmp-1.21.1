@@ -208,7 +208,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 
                 var collisionBuilder = ParticleCollisionRecipeBuilder.build() // particle collision combination
                         .time((int) (500 * Math.pow(2, rarity.toInt())))
-                        .result(ModItems.COMPONENT_BOARDS.get(rarity.tryIncrease()).get())
+                        .result(ModItems.COMPONENT_BOARDS.get(rarity.tryIncrease()).get());
                 if (rarity == Rarity.Common)
                     collisionBuilder.input(Items.NETHER_STAR)
                         .input(Items.NETHER_STAR);
