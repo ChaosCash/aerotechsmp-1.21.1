@@ -27,7 +27,8 @@ public class ModItemModelProvider extends ItemModelProvider {
         basicItem(ModItems.FORCE_LOAD_ESSENCE.get());
 
         for (var rarity : Rarity.values()) {
-            basicItem(ModItems.COMPONENT_BASES.get(rarity).get());
+            basicItem(ModItems.CIRCUIT_BOARDS.get(rarity).get());
+            basicItem(ModItems.CIRCUIT_BASES.get(rarity).get());
 
             basicItem(ModItems.KINETIC_COMPONENTS.get(rarity).get());
             basicItem(ModItems.ELECTRIC_COMPONENTS.get(rarity).get());

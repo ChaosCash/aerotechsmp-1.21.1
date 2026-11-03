@@ -32,14 +32,15 @@ public class ModItems {
     public static final DeferredItem<ForceLoadGrantingItem> FORCE_LOAD_CAPSULE = registerItem("force_load_capsule", () -> new ForceLoadGrantingItem(Messages.ForceLoadCapsuleUsed, 3));
     public static final DeferredItem<ForceLoadGrantingItem> FORCE_LOAD_ESSENCE = registerItem("force_load_essence", () -> new ForceLoadGrantingItem(Messages.ForceLoadEssenceUsed, 9));
 
-    public static final Map<Rarity, DeferredItem<Item>> COMPONENT_BASES = registerItemsWithTypes("component_base", Rarity.class, () -> new Item(new Item.Properties()));
+    public static final Map<Rarity, DeferredItem<Item>> CIRCUIT_BOARDS = registerItemsWithTypes("circuit_board", Rarity.class, () -> new Item(new Item.Properties()));
+
+    public static final Map<Rarity, DeferredItem<Item>> CIRCUIT_BASES = registerItemsWithTypes("circuit_base", Rarity.class, () -> new Item(new Item.Properties()));
 
     public static final Map<Rarity, DeferredItem<Item>> KINETIC_COMPONENTS = registerItemsWithTypes("kinetic_component", Rarity.class, () -> new Item(new Item.Properties()));
     public static final Map<Rarity, DeferredItem<Item>> ELECTRIC_COMPONENTS = registerItemsWithTypes("electric_component", Rarity.class, () -> new Item(new Item.Properties()));
     public static final Map<Rarity, DeferredItem<Item>> SPATIAL_COMPONENTS = registerItemsWithTypes("spatial_component", Rarity.class, () -> new Item(new Item.Properties()));
 
-    public static final Map<Rarity, DeferredItem<Item>> COMPONENT_BOARDS = registerItemsWithTypes("component_board", Rarity.class, () -> new Item(new Item.Properties()));
-    
+
 
 
     public static void register(IEventBus eventBus)

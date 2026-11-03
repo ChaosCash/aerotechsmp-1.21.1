@@ -2,6 +2,7 @@ package de.chaos_cash.aerotechsmp.datagen;
 
 import de.chaos_cash.aerotechsmp.AerotechSMP;
 import de.chaos_cash.aerotechsmp.datagen.Recipe.AerotechCuttingRecipeGen;
+import de.chaos_cash.aerotechsmp.datagen.Recipe.AerotechPressingRecipeGen;
 import de.chaos_cash.aerotechsmp.datagen.Recipe.ModRecipeProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;

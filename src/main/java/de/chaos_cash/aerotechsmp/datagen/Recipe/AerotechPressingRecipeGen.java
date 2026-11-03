@@ -2,14 +2,14 @@ package de.chaos_cash.aerotechsmp.datagen.Recipe;
 
 import java.util.concurrent.CompletableFuture;
 
+import com.simibubi.create.api.data.recipe.PressingRecipeGen;
+import de.chaos_cash.aerotechsmp.AerotechSMP;
+import de.chaos_cash.aerotechsmp.item.ModItems;
+import de.chaos_cash.aerotechsmp.util.Rarity;
 import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.data.PackOutput;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.level.block.Blocks;
 
 
-@SuppressWarnings("unused")
 public final class AerotechPressingRecipeGen extends PressingRecipeGen {
 
 	public AerotechPressingRecipeGen(PackOutput output, CompletableFuture<Provider> registries) {
@@ -21,9 +21,9 @@ public final class AerotechPressingRecipeGen extends PressingRecipeGen {
     void createRecipes() {
         for (var rarity : Rarity.values()) {
               create(
-                  () -> ModItems.COMPONENT_BOARDS.get(rarity),
+                  () -> ModItems.CIRCUIT_BASES.get(rarity),
                   builder ->
-                      builder.output(0.5f, ModItems.COMPONENT_BASES.get(rarity));
+                      builder.output(0.5f, ModItems.CIRCUIT_BOARDS.get(rarity))
               );
         }
     }

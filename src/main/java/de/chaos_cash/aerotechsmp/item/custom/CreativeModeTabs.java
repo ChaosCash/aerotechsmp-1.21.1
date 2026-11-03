@@ -16,6 +16,7 @@ public class CreativeModeTabs {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS =
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, AerotechSMP.MOD_ID);
 
+    @SuppressWarnings("unused")
     public static final Supplier<CreativeModeTab> ARMOR_BLOCKS_TAB = CREATIVE_MODE_TABS.register(
             "armor_blocks_tab",
             () -> CreativeModeTab.builder()
@@ -34,7 +35,7 @@ public class CreativeModeTabs {
                     }).build()
             );
 
-
+    @SuppressWarnings("unused")
     public static final Supplier<CreativeModeTab> AEROTECH_TAB = CREATIVE_MODE_TABS.register(
             "aerotech_tab",
             () -> CreativeModeTab.builder()
@@ -52,8 +53,10 @@ public class CreativeModeTabs {
                         output.accept(ModItems.FORCE_LOAD_CAPSULE);
                         output.accept(ModItems.FORCE_LOAD_ESSENCE);
 
-                        for (var componentBase : ModItems.COMPONENT_BASES.values())
+                        for (var componentBase : ModItems.CIRCUIT_BOARDS.values())
                             output.accept(componentBase);
+                        for (var componentBoard : ModItems.CIRCUIT_BASES.values())
+                            output.accept(componentBoard);
 
                         for (var component : ModItems.KINETIC_COMPONENTS.values())
                             output.accept(component);

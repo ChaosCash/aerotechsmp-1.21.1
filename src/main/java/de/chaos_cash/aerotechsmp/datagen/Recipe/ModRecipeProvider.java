@@ -10,6 +10,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SlabBlock;
@@ -203,30 +204,32 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
 
     private void addComponentRecipes(@NotNull RecipeOutput recipeOutput) {
         for (var rarity : Rarity.values()) {
-            if (rarity != Rarity.Legendary) {
-                var componentBase = ModItems.COMPONENT_BASES.get(rarity);
-                
-                var collisionBuilder = ParticleCollisionRecipeBuilder.build() // particle collision combination
-                        .time((int) (500 * Math.pow(2, rarity.toInt())))
-                        .result(ModItems.COMPONENT_BOARDS.get(rarity.tryIncrease()).get());
-                if (rarity == Rarity.Common)
-                    collisionBuilder.input(Items.NETHER_STAR)
-                        .input(Items.NETHER_STAR);
-                else {
-                    collisionBuilder.input(componentBase)
-                        .input(componentBase);
-                    
-                    AssemblerRecipeBuilder.build() // assembler combination
-                            .input(componentBase)
-                            .input(componentBase)
-                            .input(componentBase)
-                            .input(componentBase)
-                            .result(ModItems.COMPONENT_BOARDS.get(rarity.tryIncrease()).get())
-                            .export(recipeOutput, ModItems.COMPONENT_BASES.get(rarity.tryIncrease()).getId().getPath());
+                if (rarity == Rarity.Common) {
+                    var circuitBase = ModItems.CIRCUIT_BASES.get(rarity);
+                    ParticleCollisionRecipeBuilder.build().time(5000)
+                            .result(circuitBase.get())
+                            .input(Items.NETHER_STAR)
+                            .input(Items.NETHER_STAR)
+                            .export(recipeOutput, circuitBase.getId().getPath());
                 }
+                else {
+                    var circuitBoard = ModItems.CIRCUIT_BOARDS.get(rarity.tryDecrease());
+                    var circuitBase = ModItems.CIRCUIT_BASES.get(rarity);
 
-                collisionBuilder.export(recipeOutput, ModItems.COMPONENT_BASES.get(rarity.tryDecrease()).getId().getPath());
-            }
+                    ParticleCollisionRecipeBuilder.build().time((int) (500 * Math.pow(2, rarity.toInt())))
+                            .result(circuitBase.get())
+                            .input(circuitBoard)
+                            .input(circuitBoard)
+                            .export(recipeOutput, circuitBase.getId().getPath());
+
+                    AssemblerRecipeBuilder.build() // assembler combination
+                            .input(circuitBoard)
+                            .input(circuitBoard)
+                            .input(circuitBoard)
+                            .input(circuitBoard)
+                            .result(circuitBase.get())
+                            .export(recipeOutput, circuitBase.getId().getPath());
+                }
         }
     }
 }

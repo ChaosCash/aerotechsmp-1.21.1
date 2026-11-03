@@ -20,11 +20,11 @@ public final class AerotechCuttingRecipeGen extends CuttingRecipeGen {
         for (var rarity : Rarity.values()) {
             if (rarity != Rarity.Common) {
                 create(
-                    () -> ModItems.COMPONENT_BASES.get(rarity),
+                    () -> ModItems.CIRCUIT_BOARDS.get(rarity),
                     builder ->
                         builder.duration(60)
-                            .output(ModItems.COMPONENT_BASES.get(rarity.tryDecrease()).toStack(2))
-                            .output(0.5f, ModItems.COMPONENT_BASES.get(rarity.tryDecrease()))
+                            .output(ModItems.CIRCUIT_BOARDS.get(rarity.tryDecrease()).toStack(2))
+                            .output(0.5f, ModItems.CIRCUIT_BOARDS.get(rarity.tryDecrease()))
                 );
             }
         }

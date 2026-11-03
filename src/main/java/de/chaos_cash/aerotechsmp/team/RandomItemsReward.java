@@ -25,8 +25,8 @@ public class RandomItemsReward extends Reward {
             .withEntry(5, ModItems.FORCE_LOAD_SHARD::toStack)
             .withEntry(45, ArmorBlocks.getBlock(ArmorBlocks.Tier.Hardened, ArmorBlocks.Color.Default).toStack(64 * 3))
             .withEntry(25, ArmorBlocks.getBlock(ArmorBlocks.Tier.Compressed, ArmorBlocks.Color.Default).toStack(64))
-            .withEntry(100, ModItems.COMPONENT_BASES.get(Rarity.Common)::toStack)
-            .withEntry(20, ModItems.COMPONENT_BASES.get(Rarity.Uncommon)::toStack)
+            .withEntry(100, ModItems.CIRCUIT_BOARDS.get(Rarity.Common)::toStack)
+            .withEntry(20, ModItems.CIRCUIT_BOARDS.get(Rarity.Uncommon)::toStack)
             ;
 
 
@@ -37,8 +37,8 @@ public class RandomItemsReward extends Reward {
             .withEntry(40, ModItems.FORCE_LOAD_SHARD::toStack)
             .withEntry(5, ModItems.FORCE_LOAD_CAPSULE::toStack)
             .withEntry(40, ArmorBlocks.getBlock(ArmorBlocks.Tier.Compressed, ArmorBlocks.Color.Default).toStack(64 * 3))
-            .withEntry(100, ModItems.COMPONENT_BASES.get(Rarity.Uncommon)::toStack)
-            .withEntry(20, ModItems.COMPONENT_BASES.get(Rarity.Rare)::toStack)
+            .withEntry(100, ModItems.CIRCUIT_BOARDS.get(Rarity.Uncommon)::toStack)
+            .withEntry(20, ModItems.CIRCUIT_BOARDS.get(Rarity.Rare)::toStack)
             ;
 
 
@@ -48,22 +48,22 @@ public class RandomItemsReward extends Reward {
             .withEntry(40, ModItems.FORCE_LOAD_CAPSULE::toStack)
             .withEntry(5, ModItems.FORCE_LOAD_ESSENCE::toStack)
             .withEntry(20, ArmorBlocks.getBlock(ArmorBlocks.Tier.Compressed, ArmorBlocks.Color.Default).toStack(64 * 9))
-            .withEntry(100, ModItems.COMPONENT_BASES.get(Rarity.Rare)::toStack)
-            .withEntry(20, ModItems.COMPONENT_BASES.get(Rarity.Epic)::toStack)
+            .withEntry(100, ModItems.CIRCUIT_BOARDS.get(Rarity.Rare)::toStack)
+            .withEntry(20, ModItems.CIRCUIT_BOARDS.get(Rarity.Epic)::toStack)
             ;
 
 
     static final PoolGenerator<ItemStack> epicItemsPool = new PoolGenerator<ItemStack>()
             .withEntry(75, ModItems.FORCE_LOAD_ESSENCE::toStack)
             .withEntry(20, () -> ModItems.CLAIM_ESSENCE.toStack(4))
-            .withEntry(100, ModItems.COMPONENT_BASES.get(Rarity.Epic)::toStack)
-            .withEntry(20, ModItems.COMPONENT_BASES.get(Rarity.Legendary)::toStack)
+            .withEntry(100, ModItems.CIRCUIT_BOARDS.get(Rarity.Epic)::toStack)
+            .withEntry(20, ModItems.CIRCUIT_BOARDS.get(Rarity.Legendary)::toStack)
             ;
 
 
     static final PoolGenerator<ItemStack> legendaryItemsPool = new PoolGenerator<ItemStack>()
-            .withEntry(100, ModItems.COMPONENT_BASES.get(Rarity.Legendary)::toStack)
-            .withEntry(20, () -> ModItems.COMPONENT_BASES.get(Rarity.Legendary).toStack(2))
+            .withEntry(100, ModItems.CIRCUIT_BOARDS.get(Rarity.Legendary)::toStack)
+            .withEntry(20, () -> ModItems.CIRCUIT_BOARDS.get(Rarity.Legendary).toStack(2))
             .withEntry(5, () -> BlockContent.BLACK_HOLE_BLOCK.asItem().getDefaultInstance())
             ;
 
