@@ -38,6 +38,8 @@ public class ModLanguageProvider extends LanguageProvider {
         for (var rarity : Rarity.values()) {
             add(ModItems.COMPONENT_BASES.get(rarity).get(), rarity.name() + " Component Base");
 
+            add(ModItems.COMPONENT_BOARDS.get(rarity).get(), rarity.name() + " Component Board");
+
             add(ModItems.KINETIC_COMPONENTS.get(rarity).get(), rarity.name() + " Kinetic Component");
             add(ModItems.ELECTRIC_COMPONENTS.get(rarity).get(), rarity.name() + " Electric Component");
             add(ModItems.SPATIAL_COMPONENTS.get(rarity).get(), rarity.name() + " Spatial Component");
