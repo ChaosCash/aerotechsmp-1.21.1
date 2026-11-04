@@ -10,11 +10,13 @@ import org.jetbrains.annotations.Nullable;
 
 public class ForceLoadGrantingItem extends ConsumableItem {
     public final int forceLoadIncreaseCount;
+    public final int forceLoadLimit;
 
-    public ForceLoadGrantingItem(@Nullable Messages successMessage, int forceLoadGrantCount) {
-        super(new Properties(), 10, successMessage, Messages.HardMaxForceLoadLimitReached);
+    public ForceLoadGrantingItem(@Nullable Messages successMessage, int forceLoadGrantCount, int forceLoadLimit) {
+        super(new Properties(), 10, successMessage, Messages.ForceLoadGrantingLimitReached);
 
         this.forceLoadIncreaseCount = forceLoadGrantCount;
+        this.forceLoadLimit = forceLoadLimit;
     }
 
     @Override
@@ -27,7 +29,7 @@ public class ForceLoadGrantingItem extends ConsumableItem {
         }
 
         var team = optTeam.get();
-        if (team.getMaxForceLoads() < Team.hardMaxForceLoads) {
+        if (team.getMaxForceLoads() < forceLoadLimit) {
             if (!level.isClientSide())
                 optTeam.get().increaseMaxForceLoads(forceLoadIncreaseCount);
             return true;

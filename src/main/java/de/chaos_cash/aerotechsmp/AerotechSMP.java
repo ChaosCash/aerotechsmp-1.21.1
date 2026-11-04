@@ -1,11 +1,8 @@
 package de.chaos_cash.aerotechsmp;
 
 import de.chaos_cash.aerotechsmp.block.ModBlocks;
-import de.chaos_cash.aerotechsmp.block.entity.ModBlockEntities;
 import de.chaos_cash.aerotechsmp.item.ModItems;
 import de.chaos_cash.aerotechsmp.item.custom.CreativeModeTabs;
-import de.chaos_cash.aerotechsmp.screen.ModMenuTypes;
-import dev.ftb.mods.ftbteams.FTBTeamsAPIImpl;
 import net.minecraft.server.MinecraftServer;
 
 import org.slf4j.Logger;
@@ -54,9 +51,6 @@ public class AerotechSMP {
 
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
-        ModBlockEntities.register(modEventBus);
-
-        ModMenuTypes.register(modEventBus);
 
 
         // Register the item to a creative tab
@@ -64,10 +58,6 @@ public class AerotechSMP {
 
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
-
-
-
-        FTBTeamsAPIImpl.INSTANCE.setPartyCreationFromAPIOnly(true);
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {

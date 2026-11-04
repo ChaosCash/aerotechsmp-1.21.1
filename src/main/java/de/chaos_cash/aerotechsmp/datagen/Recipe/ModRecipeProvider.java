@@ -3,9 +3,7 @@ package de.chaos_cash.aerotechsmp.datagen.Recipe;
 
 import de.chaos_cash.aerotechsmp.AerotechSMP;
 import de.chaos_cash.aerotechsmp.block.custom.ArmorBlocks;
-import de.chaos_cash.aerotechsmp.item.ModItems;
 import de.chaos_cash.aerotechsmp.util.ModTags;
-import de.chaos_cash.aerotechsmp.util.Rarity;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
@@ -17,7 +15,6 @@ import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.StairBlock;
 import net.neoforged.neoforge.common.conditions.IConditionBuilder;
 import org.jetbrains.annotations.NotNull;
-import rearth.oritech.api.recipe.AssemblerRecipeBuilder;
 import rearth.oritech.api.recipe.AtomicForgeRecipeBuilder;
 import rearth.oritech.api.recipe.ParticleCollisionRecipeBuilder;
 import rearth.oritech.init.ItemContent;
@@ -33,7 +30,6 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
     @Override
     protected void buildRecipes(@NotNull RecipeOutput recipeOutput) {
         addArmorRecipes(recipeOutput);
-        addComponentRecipes(recipeOutput);
     }
 
 
@@ -224,47 +220,4 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
         }
     }
 
-
-    private void addComponentRecipes(@NotNull RecipeOutput recipeOutput) {
-        for (var rarity : Rarity.values()) {
-
-            AssemblerRecipeBuilder.build() // electric component
-                    .timeInSeconds(10)
-                    .result(ModItems.ELECTRIC_COMPONENTS.get(rarity).get())
-                    .input(ModItems.CIRCUIT_BOARDS.get(rarity))
-                    .input(ItemContent.FLUX_GATE)
-                    .input(ItemContent.REINFORCED_CARBON_SHEET)
-                    .input(ItemContent.OVERCHARGED_CRYSTAL)
-                    .export(recipeOutput, ModItems.ELECTRIC_COMPONENTS.get(rarity).getId().getPath());
-
-
-            if (rarity == Rarity.Common) {
-                var circuitBase = ModItems.CIRCUIT_BASES.get(rarity);
-                ParticleCollisionRecipeBuilder.build().time(5000)
-                        .result(circuitBase.get())
-                        .input(Items.NETHER_STAR)
-                        .input(Items.NETHER_STAR)
-                        .export(recipeOutput, circuitBase.getId().getPath());
-            }
-            else {
-                var circuitBase = ModItems.CIRCUIT_BASES.get(rarity);
-                var circuitBoard = ModItems.CIRCUIT_BOARDS.get(rarity.tryDecrease());
-
-                ParticleCollisionRecipeBuilder.build().time((int) (500 * Math.pow(2, rarity.toInt())))
-                        .result(circuitBase.get())
-                        .input(circuitBoard)
-                        .input(circuitBoard)
-                        .export(recipeOutput, circuitBase.getId().getPath());
-
-                AssemblerRecipeBuilder.build() // assembler combination
-                        .timeInSeconds(30)
-                        .input(circuitBoard)
-                        .input(circuitBoard)
-                        .input(circuitBoard)
-                        .input(circuitBoard)
-                        .result(circuitBase.get())
-                        .export(recipeOutput, circuitBase.getId().getPath());
-            }
-        }
-    }
 }

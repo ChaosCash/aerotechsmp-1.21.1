@@ -2,8 +2,6 @@ package de.chaos_cash.aerotechsmp.team;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import de.chaos_cash.aerotechsmp.AerotechSMP;
-import de.chaos_cash.aerotechsmp.block.entity.custom.TeamCoreBlockEntity;
-import de.chaos_cash.aerotechsmp.phases.PhaseHandler;
 import de.chaos_cash.aerotechsmp.util.ChatHandler;
 import de.chaos_cash.aerotechsmp.util.Messages;
 import dev.ftb.mods.ftbchunks.FTBChunksAPIImpl;
@@ -11,16 +9,8 @@ import dev.ftb.mods.ftbchunks.FTBChunksWorldConfig;
 import dev.ftb.mods.ftbchunks.data.ChunkTeamDataImpl;
 import dev.ftb.mods.ftbchunks.data.PartyLimitMode;
 import dev.ftb.mods.ftbteams.FTBTeamsAPIImpl;
-import dev.ftb.mods.ftbteams.api.TeamRank;
-import dev.ftb.mods.ftbteams.api.property.BooleanProperty;
-import dev.ftb.mods.ftbteams.api.property.IntProperty;
-import dev.ftb.mods.ftbteams.api.property.StringListProperty;
+import dev.ftb.mods.ftbteams.api.event.PlayerJoinedPartyTeamEvent;
 import dev.ftb.mods.ftbteams.data.PartyTeam;
-import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.TagParser;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -28,7 +18,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
 import java.util.*;
 import java.util.List;
 
@@ -36,25 +25,14 @@ import java.util.List;
 
 @EventBusSubscriber(modid = AerotechSMP.MOD_ID)
 public class Team {
-    public static final int maxSize = 2;
+    public static final int maxPartySize = 2;
     public static final int defaultMaxClaims = 9;
     public static final int defaultMaxForceLoads = 0;
     public static final int hardMaxClaims = 500;
     public static final int hardMaxForceLoads = 16;
     private static final Map<UUID, Team> teams = new HashMap<>();
-    private static final Map<UUID, Team> invites = new HashMap<>();
-
-
-    private static final BooleanProperty hasCorePropertyType = new BooleanProperty(ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID, "has_core"), false);
-    private static final IntProperty corePosXPropertyType = new IntProperty(ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID, "core_pos_x"), null);
-    private static final IntProperty corePosYPropertyType = new IntProperty(ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID, "core_pos_y"), null);
-    private static final IntProperty corePosZPropertyType = new IntProperty(ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID, "core_pos_z"), null);
-    private static final StringListProperty rewardsPropertyType = new StringListProperty(ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID, "rewards"), () -> null);
-
 
     private final @NotNull PartyTeam ftbTeam;
-    private final List<Reward> rewards = new ArrayList<>();
-    private BlockPos corePos = null;
     private final ChunkTeamDataImpl chunkTeamData;
     private final ChunkTeamDataImpl ownerData;
 
@@ -68,43 +46,10 @@ public class Team {
 
         teams.put(ftbTeam.getTeamId(), this);
 
-        loadRewards();
-        loadCore();
-
         chunkTeamData = FTBChunksAPIImpl.INSTANCE.getManager().getOrCreateData(ftbTeam);
         ownerData = FTBChunksAPIImpl.INSTANCE.getManager().getPersonalData(getOwner());
     }
 
-
-    private void loadCore() {
-        boolean hasCore = ftbTeam.getProperty(hasCorePropertyType);
-        if (!hasCore) return;
-
-        var position = new BlockPos(
-            ftbTeam.getProperty(corePosXPropertyType),
-            ftbTeam.getProperty(corePosYPropertyType),
-            ftbTeam.getProperty(corePosZPropertyType)
-        );
-
-        if (AerotechSMP.getServer().overworld().getBlockEntity(position) instanceof TeamCoreBlockEntity) {
-            corePos = position;
-        }
-    }
-
-    private void loadRewards(){
-        var rewards = ftbTeam.getProperty(rewardsPropertyType);
-        if (rewards == null) {
-            return;
-        }
-
-        for (var reward : rewards){
-            try {
-                addReward(Reward.getInstance(TagParser.parseTag(reward)));
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
 
 
     public static Optional<Team> get(ServerPlayer player){
@@ -158,69 +103,9 @@ public class Team {
         return ftbTeam.getOwner();
     }
 
-    public String getDisplayName() {
-        return ftbTeam.getDisplayName();
-    }
-
-    public int getTeamSize() {return ftbTeam.getPlayersByRank(TeamRank.ALLY).size();}
-
-    public int getMaxTeamSize() {return maxSize;}
-
-    public List<ServerPlayer> getOnlinePlayers(){
-        return ftbTeam.getOnlineMembers();
-    }
-
     public int getMaxClaims() {return chunkTeamData.getMaxClaimChunks();}
 
     public int getMaxForceLoads() {return chunkTeamData.getMaxForceLoadChunks();}
-
-
-    public boolean isFull() {return getTeamSize() >= maxSize;}
-
-    public boolean isOwner(ServerPlayer player){
-        return ftbTeam.isOwner(player.getUUID());
-    }
-
-    public boolean setCore(TeamCoreBlockEntity teamCoreBlockEntity) {
-        if (hasCore()) return false;
-
-        corePos = teamCoreBlockEntity.getBlockPos();
-        ftbTeam.setProperty(hasCorePropertyType, true);
-        ftbTeam.setProperty(corePosXPropertyType, corePos.getX());
-        ftbTeam.setProperty(corePosYPropertyType, corePos.getY());
-        ftbTeam.setProperty(corePosZPropertyType, corePos.getZ());
-        return true;
-    }
-
-    public void removeCore() {
-        if (corePos != null)
-            if (AerotechSMP.getServer().overworld().getBlockEntity(corePos) instanceof TeamCoreBlockEntity)
-                AerotechSMP.getServer().overworld().destroyBlock(corePos, true);
-
-        corePos = null;
-        ftbTeam.setProperty(hasCorePropertyType, false);
-        ftbTeam.setProperty(corePosXPropertyType, 0);
-        ftbTeam.setProperty(corePosYPropertyType, 0);
-        ftbTeam.setProperty(corePosZPropertyType, 0);
-    }
-
-    public boolean hasCore() {
-        if (corePos == null) return false;
-        if (!(AerotechSMP.getServer().overworld().getBlockEntity(corePos) instanceof TeamCoreBlockEntity)){
-            removeCore();
-            return false;
-        }
-
-        return true;
-    }
-
-    public void onCoreBrokeByPlayer(Player player) {
-        if (!ftbTeam.isMember(player.getUUID()) || PhaseHandler.getPhase().allowsTeamModifications())
-            sendTeamMessage(Messages.OwnTeamCoreDestroyed.getTranslation().append(player.getDisplayName().getString()));
-
-        RewardHandler.onTeamCoreBreak(player, this);
-    }
-
 
     public void increaseMaxClaims(int increase) {
         ownerData.setExtraClaimChunks(ownerData.getExtraClaimChunks() + increase);
@@ -241,96 +126,8 @@ public class Team {
         teamData.saveNow();
     }
 
-
-    public boolean hasRewards() {return !rewards.isEmpty();}
-
-    public void addReward(Reward reward){
-        if (AerotechSMP.getServer().overworld().isClientSide()) {
-            return;
-        }
-
-        rewards.add(reward);
-
-        List<String> rewardsProperty = ftbTeam.getProperty(rewardsPropertyType);
-        if (rewardsProperty == null)
-            rewardsProperty = new ArrayList<>();
-        rewardsProperty.add(reward.save().toString());
-        ftbTeam.setProperty(rewardsPropertyType, rewardsProperty);
-    }
-
-    public void removeReward(Reward reward){
-        int index = rewards.indexOf(reward);
-        rewards.remove(index);
-
-        var rewardsProperty = ftbTeam.getProperty(rewardsPropertyType);
-        rewardsProperty.remove(index);
-        ftbTeam.setProperty(rewardsPropertyType, rewardsProperty);
-    }
-
-    public Reward getFirstReward() {return rewards.getFirst();}
-
-    public void sendTeamMessage(Component message) {
-        for (var player : getOnlinePlayers())
-            ChatHandler.sendMessage(player, message);
-    }
-
-    public void sendUnclaimedRewardsMessage(UUID playerId){
-        Messages.UnclaimedRewardsMessage.send(playerId);
-    }
-
     //</editor-fold>
 
-
-
-    //<editor-fold desc="Commands">
-
-    public void join(ServerPlayer player) throws CommandSyntaxException {
-        ftbTeam.join(player);
-        ChatHandler.updateCommands(player);
-    }
-
-    public void leave(ServerPlayer player) throws CommandSyntaxException {
-        ftbTeam.leave(player.getUUID());
-        ChatHandler.updateCommands(player);
-    }
-
-    public void delete(CommandSourceStack from) throws CommandSyntaxException {
-        for (var player : getOnlinePlayers())
-            ChatHandler.updateCommands(player);
-        if (hasCore())
-            removeCore();
-        ftbTeam.forceDisband(from);
-    }
-
-    public void sendInvite(ServerPlayer player){
-        if (invites.containsKey(player.getUUID()))
-            invites.replace(player.getUUID(), this);
-        else
-            invites.put(player.getUUID(), this);
-
-        ChatHandler.sendMessage(player, Messages.TeamInvitation.getTranslation().append(ftbTeam.getName()));
-    }
-
-    public static AcceptReturn acceptInvite(ServerPlayer player){
-        if (!invites.containsKey(player.getUUID()))
-            return AcceptReturn.NoInvite;
-        if (get(player).isPresent())
-            return AcceptReturn.AlreadyInTeam;
-
-        var team = invites.get(player.getUUID());
-        if(team.isFull())
-            return AcceptReturn.TeamIsFull;
-
-        try {
-            team.join(player);
-        } catch (CommandSyntaxException e) {
-            return AcceptReturn.FailedForUnknownReason;
-        }
-
-        return AcceptReturn.Success;
-    }
-
-    //</editor-fold>
 
 
 
@@ -344,14 +141,19 @@ public class Team {
         FTBChunksWorldConfig.HARD_TEAM_FORCE_LIMIT.set(hardMaxForceLoads);
 
         FTBChunksWorldConfig.onConfigChanged(true);
-    }
 
 
-    public enum AcceptReturn {
-        Success,
-        AlreadyInTeam,
-        NoInvite,
-        TeamIsFull,
-        FailedForUnknownReason
+        PlayerJoinedPartyTeamEvent.PLAYER_JOINED_PARTY.register(Team::onPartyJoined);
     }
+
+    private static void onPartyJoined(PlayerJoinedPartyTeamEvent event) {
+        var team = event.getTeam();
+        var player = event.getPlayer();
+        if (team instanceof PartyTeam partyTeam)
+            if (partyTeam.getMembers().size() > maxPartySize)
+                partyTeam.removeMember(player.getUUID());
+
+        Messages.TeamAlreadyFull.send(player);
+    }
+
 }

@@ -40,11 +40,8 @@ public class CreativeModeTabs {
             "aerotech_tab",
             () -> CreativeModeTab.builder()
                     .title(Component.literal("AeroTech"))
-                    .icon(ModBlocks.TEAM_CORE::toStack)
+                    .icon(ModItems.CLAIM_CAPSULE::toStack)
                     .displayItems((itemDisplayParameters, output) -> {
-                        output.accept(ModBlocks.TEAM_CORE);
-                        output.accept(ModItems.HEART_CORE);
-
                         output.accept(ModItems.CLAIM_SHARD);
                         output.accept(ModItems.CLAIM_CAPSULE);
                         output.accept(ModItems.CLAIM_ESSENCE);
@@ -52,18 +49,6 @@ public class CreativeModeTabs {
                         output.accept(ModItems.FORCE_LOAD_SHARD);
                         output.accept(ModItems.FORCE_LOAD_CAPSULE);
                         output.accept(ModItems.FORCE_LOAD_ESSENCE);
-
-                        for (var componentBase : ModItems.CIRCUIT_BOARDS.values())
-                            output.accept(componentBase);
-                        for (var componentBoard : ModItems.CIRCUIT_BASES.values())
-                            output.accept(componentBoard);
-
-                        for (var component : ModItems.KINETIC_COMPONENTS.values())
-                            output.accept(component);
-                        for (var component : ModItems.ELECTRIC_COMPONENTS.values())
-                            output.accept(component);
-                        for (var component : ModItems.SPATIAL_COMPONENTS.values())
-                            output.accept(component);
                     }).build()
             );
 

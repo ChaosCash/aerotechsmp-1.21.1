@@ -12,29 +12,15 @@ import java.util.UUID;
 
 public enum Messages {
     ActionRequiresTeam(Types.Error),
-    ActionRequiresDominationPhase(Types.Error),
-    TeamCoreNotOwned(Types.Error),
-    RewardsInaccessibleInPhase(Types.Error),
     TeamModificationsNotAllowedInPhase(Types.Error),
-    TeamCoreForbiddenOutsideOverworld(Types.Error),
-    TeamCoreAlreadyPresent(Types.Error),
-    HardMaxClaimLimitReached(Types.Error),
-    HardMaxForceLoadLimitReached(Types.Error),
+    TeamAlreadyFull(Types.Error),
+    ClaimGrantingLimitReached(Types.Error),
+    ForceLoadGrantingLimitReached(Types.Error),
 
     PvpImpeding(Types.Warning),
-    OwnTeamCoreDestroyed(Types.Warning),
 
-    TeamInvitation(Types.Info),
-    AllClaimsDeleted(Types.Info),
     PhaseLengthened(Types.Info),
     StartingPhase(Types.Info),
-
-    HeartCoreGrantedRewards(Types.Congratulation),
-    HeartCoreIncreasedRarity(Types.Congratulation),
-    HeartCoreCombined(Types.Congratulation),
-    TeamCoreDestructionRewardsGranted(Types.Congratulation),
-    TeamCoreGuardedRewardsGranted(Types.Congratulation),
-    UnclaimedRewardsMessage(Types.Congratulation),
 
     ClaimShardUsed(Types.Congratulation),
     ClaimCapsuleUsed(Types.Congratulation),

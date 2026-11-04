@@ -132,7 +132,6 @@ dependencies {
     implementation "curse.maven:Create-328085:7963363"
     implementation "curse.maven:CreateBigCannons-646668:8303106"
     implementation "curse.maven:RPLib-1279407:7587771"
-    implementation "curse.maven:Numismatics-889722:7948018"
     implementation "curse.maven:Oritech-1030830:9070323"
     implementation "curse.maven:Athena-841890:8061947"
     compileOnly "curse.maven:OracleIndex-1206582:8882169"

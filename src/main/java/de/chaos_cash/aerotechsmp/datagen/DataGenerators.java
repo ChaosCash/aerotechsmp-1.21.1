@@ -32,8 +32,6 @@ public class DataGenerators {
                 List.of(new LootTableProvider.SubProviderEntry(ModBlockLootTableProvider::new, LootContextParamSets.BLOCK)), lookupProvider));
 
         generator.addProvider(event.includeServer(), new ModRecipeProvider(packOutput, lookupProvider));
-        generator.addProvider(event.includeServer(), new AerotechCuttingRecipeGen(packOutput, lookupProvider));
-        generator.addProvider(event.includeServer(), new AerotechPressingRecipeGen(packOutput, lookupProvider));
         generator.addProvider(event.includeServer(), new AerotechCompactingRecipeGen(packOutput, lookupProvider));
         generator.addProvider(event.includeServer(), new AerotechMechanicalCraftingRecipeGen(packOutput, lookupProvider));
 

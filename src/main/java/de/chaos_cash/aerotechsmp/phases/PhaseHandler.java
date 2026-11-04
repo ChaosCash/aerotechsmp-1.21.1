@@ -37,7 +37,7 @@ public class PhaseHandler {
         setPhase(
             new IntermissionPhase(
                 1200,
-                new DominationPhase(),
+                new PVPPhase(60 * 60 * 20, new BreakPhase(10 * 60 * 20, new PVPPhase(60 * 60 * 20, new PeacefulPhase()))),
                 BackupHandler::isRunning,
                 400,
                 "the Backup is not finished yet."

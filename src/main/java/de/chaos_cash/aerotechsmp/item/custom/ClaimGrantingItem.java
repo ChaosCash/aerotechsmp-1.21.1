@@ -10,10 +10,12 @@ import org.jetbrains.annotations.Nullable;
 
 public class ClaimGrantingItem extends ConsumableItem {
     public final int claimIncreaseCount;
+    private final int claimLimit;
 
-    public ClaimGrantingItem(@Nullable Messages successMessage, int claimIncreaseCount) {
-        super(new Properties(), 10, successMessage, Messages.HardMaxClaimLimitReached);
+    public ClaimGrantingItem(@Nullable Messages successMessage, int claimIncreaseCount, int claimLimit) {
+        super(new Properties(), 10, successMessage, Messages.ClaimGrantingLimitReached);
         this.claimIncreaseCount = claimIncreaseCount;
+        this.claimLimit = claimLimit;
     }
 
 
@@ -27,7 +29,7 @@ public class ClaimGrantingItem extends ConsumableItem {
         }
 
         var team = optTeam.get();
-        if (team.getMaxClaims() < Team.hardMaxClaims) {
+        if (team.getMaxClaims() < claimLimit) {
             if (!level.isClientSide())
                 optTeam.get().increaseMaxClaims(claimIncreaseCount);
             return true;
