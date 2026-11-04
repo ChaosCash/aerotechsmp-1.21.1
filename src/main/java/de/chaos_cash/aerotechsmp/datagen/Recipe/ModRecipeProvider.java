@@ -3,6 +3,7 @@ package de.chaos_cash.aerotechsmp.datagen.Recipe;
 
 import de.chaos_cash.aerotechsmp.AerotechSMP;
 import de.chaos_cash.aerotechsmp.block.custom.ArmorBlocks;
+import de.chaos_cash.aerotechsmp.item.ModItems;
 import de.chaos_cash.aerotechsmp.util.ModTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -15,6 +16,7 @@ import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.StairBlock;
 import net.neoforged.neoforge.common.conditions.IConditionBuilder;
 import org.jetbrains.annotations.NotNull;
+import rearth.oritech.api.recipe.AssemblerRecipeBuilder;
 import rearth.oritech.api.recipe.AtomicForgeRecipeBuilder;
 import rearth.oritech.api.recipe.ParticleCollisionRecipeBuilder;
 import rearth.oritech.init.ItemContent;
@@ -30,6 +32,8 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
     @Override
     protected void buildRecipes(@NotNull RecipeOutput recipeOutput) {
         addArmorRecipes(recipeOutput);
+        addParticleCollisionRecipes(recipeOutput);
+        addAssemblerRecipes(recipeOutput);
     }
 
 
@@ -219,5 +223,45 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
             .save(recipeOutput, ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID,ArmorBlocks.getName(ArmorBlocks.Tier.Compressed, color, ArmorBlocks.BlockType.Slab) + "_from_slab"));
         }
     }
+
+
+    private void addParticleCollisionRecipes(@NotNull RecipeOutput recipeOutput) {
+        ParticleCollisionRecipeBuilder.build()
+                .time(1500)
+                .input(ModItems.CLAIM_CAPSULE)
+                .input(ModItems.CLAIM_CAPSULE)
+                .result(ModItems.CLAIM_ESSENCE.get())
+                .export(recipeOutput ,ModItems.CLAIM_ESSENCE.getId().getPath());
+
+        ParticleCollisionRecipeBuilder.build()
+                .time(3000)
+                .input(ModItems.FORCE_LOAD_CAPSULE)
+                .input(ModItems.FORCE_LOAD_CAPSULE)
+                .result(ModItems.FORCE_LOAD_ESSENCE.get())
+                .export(recipeOutput ,ModItems.FORCE_LOAD_ESSENCE.getId().getPath());
+    }
+
+
+    private void addAssemblerRecipes(@NotNull RecipeOutput recipeOutput) {
+        AssemblerRecipeBuilder.build()
+                .timeInSeconds(30)
+                .input(Items.DIAMOND)
+                .input(Items.AMETHYST_SHARD)
+                .input(Items.PRISMARINE_SHARD)
+                .input(Items.LAPIS_LAZULI)
+                .result(ModItems.CLAIM_SHARD.get())
+                .export(recipeOutput ,ModItems.CLAIM_SHARD.getId().getPath());
+
+        AssemblerRecipeBuilder.build()
+                .timeInSeconds(60)
+                .input(Items.GOLD_BLOCK)
+                .input(Items.ECHO_SHARD)
+                .input(Items.AMETHYST_SHARD)
+                .input(Items.BLAZE_POWDER)
+                .result(ModItems.FORCE_LOAD_SHARD.get())
+                .export(recipeOutput ,ModItems.FORCE_LOAD_SHARD.getId().getPath());
+    }
+
+
 
 }

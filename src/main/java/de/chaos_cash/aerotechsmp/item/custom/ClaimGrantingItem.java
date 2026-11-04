@@ -2,6 +2,7 @@ package de.chaos_cash.aerotechsmp.item.custom;
 
 import de.chaos_cash.aerotechsmp.team.Team;
 import de.chaos_cash.aerotechsmp.util.Messages;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -10,10 +11,10 @@ import org.jetbrains.annotations.Nullable;
 
 public class ClaimGrantingItem extends ConsumableItem {
     public final int claimIncreaseCount;
-    private final int claimLimit;
+    public final int claimLimit;
 
-    public ClaimGrantingItem(@Nullable Messages successMessage, int claimIncreaseCount, int claimLimit) {
-        super(new Properties(), 10, successMessage, Messages.ClaimGrantingLimitReached);
+    public ClaimGrantingItem(@Nullable Messages successMessage, int claimIncreaseCount, int claimLimit, Component toolTip) {
+        super(new Properties(), 10, successMessage, Messages.ClaimGrantingLimitReached, toolTip);
         this.claimIncreaseCount = claimIncreaseCount;
         this.claimLimit = claimLimit;
     }
