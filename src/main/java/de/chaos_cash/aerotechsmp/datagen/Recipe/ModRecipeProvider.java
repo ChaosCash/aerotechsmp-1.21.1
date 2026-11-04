@@ -227,32 +227,44 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
 
     private void addComponentRecipes(@NotNull RecipeOutput recipeOutput) {
         for (var rarity : Rarity.values()) {
-                if (rarity == Rarity.Common) {
-                    var circuitBase = ModItems.CIRCUIT_BASES.get(rarity);
-                    ParticleCollisionRecipeBuilder.build().time(5000)
-                            .result(circuitBase.get())
-                            .input(Items.NETHER_STAR)
-                            .input(Items.NETHER_STAR)
-                            .export(recipeOutput, circuitBase.getId().getPath());
-                }
-                else {
-                    var circuitBoard = ModItems.CIRCUIT_BOARDS.get(rarity.tryDecrease());
-                    var circuitBase = ModItems.CIRCUIT_BASES.get(rarity);
 
-                    ParticleCollisionRecipeBuilder.build().time((int) (500 * Math.pow(2, rarity.toInt())))
-                            .result(circuitBase.get())
-                            .input(circuitBoard)
-                            .input(circuitBoard)
-                            .export(recipeOutput, circuitBase.getId().getPath());
+            AssemblerRecipeBuilder.build() // electric component
+                    .timeInSeconds(10)
+                    .result(ModItems.ELECTRIC_COMPONENTS.get(rarity).get())
+                    .input(ModItems.CIRCUIT_BOARDS.get(rarity))
+                    .input(ItemContent.FLUX_GATE)
+                    .input(ItemContent.REINFORCED_CARBON_SHEET)
+                    .input(ItemContent.OVERCHARGED_CRYSTAL)
+                    .export(recipeOutput, ModItems.ELECTRIC_COMPONENTS.get(rarity).getId().getPath());
 
-                    AssemblerRecipeBuilder.build() // assembler combination
-                            .input(circuitBoard)
-                            .input(circuitBoard)
-                            .input(circuitBoard)
-                            .input(circuitBoard)
-                            .result(circuitBase.get())
-                            .export(recipeOutput, circuitBase.getId().getPath());
-                }
+
+            if (rarity == Rarity.Common) {
+                var circuitBase = ModItems.CIRCUIT_BASES.get(rarity);
+                ParticleCollisionRecipeBuilder.build().time(5000)
+                        .result(circuitBase.get())
+                        .input(Items.NETHER_STAR)
+                        .input(Items.NETHER_STAR)
+                        .export(recipeOutput, circuitBase.getId().getPath());
+            }
+            else {
+                var circuitBase = ModItems.CIRCUIT_BASES.get(rarity);
+                var circuitBoard = ModItems.CIRCUIT_BOARDS.get(rarity.tryDecrease());
+
+                ParticleCollisionRecipeBuilder.build().time((int) (500 * Math.pow(2, rarity.toInt())))
+                        .result(circuitBase.get())
+                        .input(circuitBoard)
+                        .input(circuitBoard)
+                        .export(recipeOutput, circuitBase.getId().getPath());
+
+                AssemblerRecipeBuilder.build() // assembler combination
+                        .timeInSeconds(30)
+                        .input(circuitBoard)
+                        .input(circuitBoard)
+                        .input(circuitBoard)
+                        .input(circuitBoard)
+                        .result(circuitBase.get())
+                        .export(recipeOutput, circuitBase.getId().getPath());
+            }
         }
     }
 }
