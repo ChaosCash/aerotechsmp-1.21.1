@@ -1,6 +1,7 @@
 package de.chaos_cash.aerotechsmp.datagen;
 
 import de.chaos_cash.aerotechsmp.AerotechSMP;
+import de.chaos_cash.aerotechsmp.block.ModBlocks;
 import de.chaos_cash.aerotechsmp.block.custom.ArmorBlocks;
 import de.chaos_cash.aerotechsmp.util.ModTags;
 import net.minecraft.core.HolderLookup;
@@ -23,6 +24,12 @@ public class ModBlockTagProvider extends BlockTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.@NotNull Provider pProvider) {
+        var teamCore = ModBlocks.TEAM_CORE.get();
+        tag(BlockTags.MINEABLE_WITH_PICKAXE)
+                .add(teamCore);
+        tag(BlockTags.NEEDS_IRON_TOOL)
+                .add(teamCore);
+
         for (ArmorBlocks.Color color : ArmorBlocks.Color.values())
         {
             Block basicArmorBlock = ArmorBlocks.getBlock(ArmorBlocks.Tier.Light, color).get();

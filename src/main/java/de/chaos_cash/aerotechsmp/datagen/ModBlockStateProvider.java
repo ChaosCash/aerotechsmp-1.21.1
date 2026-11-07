@@ -2,6 +2,7 @@ package de.chaos_cash.aerotechsmp.datagen;
 
 
 import de.chaos_cash.aerotechsmp.AerotechSMP;
+import de.chaos_cash.aerotechsmp.block.ModBlocks;
 import de.chaos_cash.aerotechsmp.block.custom.ArmorBlocks;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
@@ -21,6 +22,8 @@ public class ModBlockStateProvider extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
+        blockWithItem(ModBlocks.TEAM_CORE);
+
         for (ArmorBlocks.Color color : ArmorBlocks.Color.values())
         {
             for (ArmorBlocks.Tier tier : ArmorBlocks.Tier.values())

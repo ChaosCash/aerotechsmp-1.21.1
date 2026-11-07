@@ -49,6 +49,9 @@ public class CreativeModeTabs {
                         output.accept(ModItems.FORCE_LOAD_SHARD);
                         output.accept(ModItems.FORCE_LOAD_CAPSULE);
                         output.accept(ModItems.FORCE_LOAD_ESSENCE);
+
+                        output.accept(ModBlocks.TEAM_CORE);
+                        output.accept(ModItems.MYSTERIOUS_SHARD);
                     }).build()
             );
 

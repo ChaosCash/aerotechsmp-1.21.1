@@ -1,15 +1,12 @@
-package de.chaos_cash.aerotechsmp.datagen;
+package de.chaos_cash.aerotechsmp.datagen.Language;
 
 import de.chaos_cash.aerotechsmp.AerotechSMP;
+import de.chaos_cash.aerotechsmp.block.ModBlocks;
 import de.chaos_cash.aerotechsmp.block.custom.ArmorBlocks;
 import de.chaos_cash.aerotechsmp.item.ModItems;
-import de.chaos_cash.aerotechsmp.item.custom.ClaimGrantingItem;
-import de.chaos_cash.aerotechsmp.item.custom.ForceLoadGrantingItem;
-import de.chaos_cash.aerotechsmp.util.Messages;
+import de.chaos_cash.aerotechsmp.item.custom.ModItem;
 import net.minecraft.data.PackOutput;
-import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.common.data.LanguageProvider;
-import net.neoforged.neoforge.registries.DeferredItem;
 
 public class ModLanguageProvider extends LanguageProvider {
     public ModLanguageProvider(PackOutput output) {
@@ -18,14 +15,15 @@ public class ModLanguageProvider extends LanguageProvider {
 
     @Override
     protected void addTranslations() {
-        addClaimGrantingTooltip(ModItems.CLAIM_SHARD);
-        addClaimGrantingTooltip(ModItems.CLAIM_CAPSULE);
-        addClaimGrantingTooltip(ModItems.CLAIM_ESSENCE);
+        addNames();
+        addMessages();
+        addTooltips();
+    }
 
-        addForceLoadGrantingTooltip(ModItems.FORCE_LOAD_SHARD);
-        addForceLoadGrantingTooltip(ModItems.FORCE_LOAD_CAPSULE);
-        addForceLoadGrantingTooltip(ModItems.FORCE_LOAD_ESSENCE);
 
+    protected void addNames() {
+        add(ModItems.MYSTERIOUS_SHARD.get(), "Mysterious Shard");
+        add(ModBlocks.TEAM_CORE.get(), "Team Core");
 
         add(ModItems.CLAIM_SHARD.get(), "Claim Shard");
         add(ModItems.CLAIM_CAPSULE.get(), "Claim Capsule");
@@ -41,8 +39,9 @@ public class ModLanguageProvider extends LanguageProvider {
                 add(ArmorBlocks.getStair(tier, color).get(), ArmorBlocks.getDisplayName(tier, color, ArmorBlocks.BlockType.Stairs));
                 add(ArmorBlocks.getSlab(tier, color).get(), ArmorBlocks.getDisplayName(tier, color, ArmorBlocks.BlockType.Slab));
             }
+    }
 
-
+    protected void addMessages() {
         // errors
         add(Messages.ActionRequiresTeam.key, "This action requires a Team");
         add(Messages.TeamModificationsNotAllowedInPhase.key, "You cant modify your Team in this Phase");
@@ -55,6 +54,9 @@ public class ModLanguageProvider extends LanguageProvider {
         add(Messages.ForceLoadEssenceUsed.key, "+" + ModItems.FORCE_LOAD_ESSENCE.get().forceLoadIncreaseCount + " force load");
         add(Messages.ClaimGrantingLimitReached.key, "This item can't grant any more claims");
         add(Messages.ForceLoadGrantingLimitReached.key, "This item can't grant any more force loads");
+        add(Messages.TeamCoreNeedsClaimedChunk.key, "Team Cores can only be placed in claimed chunks");
+        add(Messages.TeamAlreadyHasCore.key, "This Team already has a core");
+        add(Messages.TeamCoreUnplaceableOutsideOverworld.key, "Team Cores are only placeable in the overworld");
 
         // warnings
         add(Messages.PvpImpeding.key, "PVP-Phase will start shortly");
@@ -64,20 +66,35 @@ public class ModLanguageProvider extends LanguageProvider {
         add(Messages.StartingPhase.key, "Starting ");
     }
 
+    protected void addTooltips() {
+        addTooltip(ModItems.MYSTERIOUS_SHARD.get(), "Dropped by breaking enemy Team Cores in the PVP-Phase");
 
-    void addClaimGrantingTooltip(DeferredItem<ClaimGrantingItem> item) {
-        add(getTooltipKey(item), "This item increases the claim limit of your team by +" + item.get().claimIncreaseCount + " (max " + item.get().claimLimit + ")");
+        var claimTooltip = "Grants +%s claim%s (max %s)";
+        var claimShard = ModItems.CLAIM_SHARD.get();
+        var claimCapsule = ModItems.CLAIM_CAPSULE.get();
+        var claimEssence = ModItems.CLAIM_ESSENCE.get();
+        addTooltip(claimShard, claimTooltip.formatted(claimShard.claimIncreaseCount, claimShard.claimIncreaseCount == 1 ? "" : "s", claimShard.claimLimit));
+        addTooltip(claimCapsule, claimTooltip.formatted(claimCapsule.claimIncreaseCount, claimCapsule.claimIncreaseCount == 1 ? "" : "s", claimCapsule.claimLimit));
+        addTooltip(claimEssence, claimTooltip.formatted(claimEssence.claimIncreaseCount, claimEssence.claimIncreaseCount == 1 ? "" : "s", claimEssence.claimLimit));
+
+        var forceLoadTooltip = "Grants +%s force load%s (max %s)";
+        var forceLoadShard = ModItems.FORCE_LOAD_SHARD.get();
+        var forceLoadCapsule = ModItems.FORCE_LOAD_CAPSULE.get();
+        var forceLoadEssence = ModItems.FORCE_LOAD_ESSENCE.get();
+        addTooltip(forceLoadShard, forceLoadTooltip.formatted(forceLoadShard.forceLoadIncreaseCount, forceLoadShard.forceLoadIncreaseCount == 1 ? "" : "s", forceLoadShard.forceLoadLimit));
+        addTooltip(forceLoadCapsule, forceLoadTooltip.formatted(forceLoadCapsule.forceLoadIncreaseCount, forceLoadCapsule.forceLoadIncreaseCount == 1 ? "" : "s", forceLoadCapsule.forceLoadLimit));
+        addTooltip(forceLoadEssence, forceLoadTooltip.formatted(forceLoadEssence.forceLoadIncreaseCount, forceLoadEssence.forceLoadIncreaseCount == 1 ? "" : "s", forceLoadEssence.forceLoadLimit));
+
     }
 
-    void addForceLoadGrantingTooltip(DeferredItem<ForceLoadGrantingItem> item) {
-        add(getTooltipKey(item), "This item increases the force load limit of your team by +" + item.get().forceLoadIncreaseCount + " (max " + item.get().forceLoadLimit + ")");
+
+
+    void addTooltip(ModItem<?> item, String translation) {
+        add(getTooltipKey(item), translation);
     }
 
-    public static String getTooltipKey(DeferredItem<? extends Item> item) {
-        return getTooltipKey(item.getId().getPath());
-    }
 
-    public static String getTooltipKey(String itemId) {
-        return "tooltip." + AerotechSMP.MOD_ID + "." + itemId;
+    public static String getTooltipKey(ModItem<?> item) {
+        return "tooltip." + AerotechSMP.MOD_ID + "." + item.getId();
     }
 }

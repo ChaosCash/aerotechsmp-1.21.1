@@ -1,6 +1,7 @@
 package de.chaos_cash.aerotechsmp.datagen;
 
 import de.chaos_cash.aerotechsmp.AerotechSMP;
+import de.chaos_cash.aerotechsmp.datagen.Language.ModLanguageProvider;
 import de.chaos_cash.aerotechsmp.datagen.Recipe.*;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;

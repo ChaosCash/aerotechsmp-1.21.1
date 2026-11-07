@@ -1,20 +1,19 @@
 package de.chaos_cash.aerotechsmp.item.custom;
 
 import de.chaos_cash.aerotechsmp.team.Team;
-import de.chaos_cash.aerotechsmp.util.Messages;
-import net.minecraft.network.chat.Component;
+import de.chaos_cash.aerotechsmp.datagen.Language.Messages;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ForceLoadGrantingItem extends ConsumableItem {
+public class ForceLoadGrantingItem extends ConsumableItem<ForceLoadGrantingItem> {
     public final int forceLoadIncreaseCount;
     public final int forceLoadLimit;
 
-    public ForceLoadGrantingItem(@Nullable Messages successMessage, int forceLoadGrantCount, int forceLoadLimit, Component toolTip) {
-        super(new Properties(), 10, successMessage, Messages.ForceLoadGrantingLimitReached, toolTip);
+    public ForceLoadGrantingItem(@Nullable Messages successMessage, int forceLoadGrantCount, int forceLoadLimit) {
+        super(new Properties(), 10, successMessage, Messages.ForceLoadGrantingLimitReached);
 
         this.forceLoadIncreaseCount = forceLoadGrantCount;
         this.forceLoadLimit = forceLoadLimit;

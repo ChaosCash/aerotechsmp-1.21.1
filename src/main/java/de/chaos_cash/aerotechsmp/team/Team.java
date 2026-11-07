@@ -1,16 +1,16 @@
 package de.chaos_cash.aerotechsmp.team;
 
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import de.chaos_cash.aerotechsmp.AerotechSMP;
-import de.chaos_cash.aerotechsmp.util.ChatHandler;
-import de.chaos_cash.aerotechsmp.util.Messages;
+import de.chaos_cash.aerotechsmp.datagen.Language.Messages;
 import dev.ftb.mods.ftbchunks.FTBChunksAPIImpl;
 import dev.ftb.mods.ftbchunks.FTBChunksWorldConfig;
 import dev.ftb.mods.ftbchunks.data.ChunkTeamDataImpl;
 import dev.ftb.mods.ftbchunks.data.PartyLimitMode;
 import dev.ftb.mods.ftbteams.FTBTeamsAPIImpl;
 import dev.ftb.mods.ftbteams.api.event.PlayerJoinedPartyTeamEvent;
+import dev.ftb.mods.ftbteams.api.property.BooleanProperty;
 import dev.ftb.mods.ftbteams.data.PartyTeam;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -32,9 +32,12 @@ public class Team {
     public static final int hardMaxForceLoads = 16;
     private static final Map<UUID, Team> teams = new HashMap<>();
 
+    private static final BooleanProperty hasCorePropertyType = new BooleanProperty(ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID, "has_core"), false);
+
     private final @NotNull PartyTeam ftbTeam;
     private final ChunkTeamDataImpl chunkTeamData;
     private final ChunkTeamDataImpl ownerData;
+    private boolean hasCore;
 
 
 
@@ -48,6 +51,7 @@ public class Team {
 
         chunkTeamData = FTBChunksAPIImpl.INSTANCE.getManager().getOrCreateData(ftbTeam);
         ownerData = FTBChunksAPIImpl.INSTANCE.getManager().getPersonalData(getOwner());
+        hasCore = ftbTeam.getProperty(hasCorePropertyType);
     }
 
 
@@ -67,7 +71,6 @@ public class Team {
             return Optional.ofNullable(teams.get(teamID));
 
         var optTeam = FTBTeamsAPIImpl.INSTANCE.getManager().getTeamByID(teamID);
-
         if (optTeam.isPresent() && optTeam.get() instanceof PartyTeam party)
             return Optional.of(new Team(party));
         else
@@ -81,14 +84,6 @@ public class Team {
             get(ftbTeam.getTeamId()).ifPresent(teams::add);
 
         return teams;
-    }
-
-
-
-    public static void create(ServerPlayer player, String name) throws CommandSyntaxException {
-        PartyTeam ftbTeam = FTBTeamsAPIImpl.INSTANCE.getManager().createParty(player, name);
-        new Team(ftbTeam);
-        ChatHandler.updateCommands(player);
     }
 
     //</editor-fold>
@@ -126,6 +121,17 @@ public class Team {
         teamData.saveNow();
     }
 
+    public void setHasCore(boolean hasCore) {
+        if (this.hasCore != hasCore) {
+            ftbTeam.setProperty(hasCorePropertyType, hasCore);
+            this.hasCore = hasCore;
+        }
+    }
+
+    public boolean hasCore() {
+        return hasCore;
+    }
+
     //</editor-fold>
 
 
@@ -150,10 +156,10 @@ public class Team {
         var team = event.getTeam();
         var player = event.getPlayer();
         if (team instanceof PartyTeam partyTeam)
-            if (partyTeam.getMembers().size() > maxPartySize)
+            if (partyTeam.getMembers().size() > maxPartySize) {
                 partyTeam.removeMember(player.getUUID());
-
-        Messages.TeamAlreadyFull.send(player);
+                Messages.TeamAlreadyFull.send(player);
+            }
     }
 
 }

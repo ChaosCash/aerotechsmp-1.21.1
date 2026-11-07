@@ -128,7 +128,7 @@ public class ChatHandler {
     }
 
 
-    public static void sendMessage(Player player, Component message) {sendMessage(player.getUUID(), message);}
+    public static void sendMessage(Player player, Component message) {if (player != null) sendMessage(player.getUUID(), message);}
 
 
     public static void sendMessage(UUID playerId, Component message) {
@@ -137,8 +137,9 @@ public class ChatHandler {
 
 
     public static void sendMessage(ServerPlayer player, Component message) {
-        player.sendSystemMessage(
-            message
-        );
+        if (player != null)
+            player.sendSystemMessage(
+                message
+            );
     }
 }

@@ -1,8 +1,8 @@
-package de.chaos_cash.aerotechsmp.util;
+package de.chaos_cash.aerotechsmp.datagen.Language;
 
 import de.chaos_cash.aerotechsmp.AerotechSMP;
+import de.chaos_cash.aerotechsmp.util.ChatHandler;
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -10,17 +10,21 @@ import net.minecraft.world.entity.player.Player;
 import java.util.UUID;
 
 
-public enum Messages {
+public enum Messages implements ITranslation{
     ActionRequiresTeam(Types.Error),
     TeamModificationsNotAllowedInPhase(Types.Error),
     TeamAlreadyFull(Types.Error),
     ClaimGrantingLimitReached(Types.Error),
     ForceLoadGrantingLimitReached(Types.Error),
+    TeamCoreUnplaceableOutsideOverworld(Types.Error),
+    TeamAlreadyHasCore(Types.Error),
+    TeamCoreNeedsClaimedChunk(Types.Error),
 
     PvpImpeding(Types.Warning),
 
     PhaseLengthened(Types.Info),
     StartingPhase(Types.Info),
+    TeamCoreBrokenDueToUnclaiming(Types.Info),
 
     ClaimShardUsed(Types.Congratulation),
     ClaimCapsuleUsed(Types.Congratulation),
@@ -30,8 +34,6 @@ public enum Messages {
     ForceLoadCapsuleUsed(Types.Congratulation),
     ForceLoadEssenceUsed(Types.Congratulation),
     ;
-
-
 
     public final String key;
     public final Types type;
@@ -63,10 +65,15 @@ public enum Messages {
     }
 
 
-    public MutableComponent getTranslation() {
-        return Component.translatable(key).withStyle(type.formatting);
+    @Override
+    public String getKey() {
+        return key;
     }
 
+    @Override
+    public MutableComponent getTranslation() {
+        return ITranslation.super.getTranslation().withStyle(type.formatting);
+    }
 
     public void broadcast() {
         ChatHandler.broadcast(getTranslation());

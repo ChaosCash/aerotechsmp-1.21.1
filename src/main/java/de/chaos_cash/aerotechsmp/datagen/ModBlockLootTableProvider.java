@@ -17,6 +17,8 @@ public class ModBlockLootTableProvider extends BlockLootSubProvider {
 
     @Override
     protected void generate() {
+        dropSelf(ModBlocks.TEAM_CORE.get());
+
         for (ArmorBlocks.Color color : ArmorBlocks.Color.values())
         {
             for (ArmorBlocks.Tier tier : ArmorBlocks.Tier.values())
