@@ -34,6 +34,8 @@ repositories {
             includeGroup "curse.maven"
         }
     }
+    maven { url = "https://maven.createmod.net" }
+    maven { url = "https://maven.ithundxr.dev/snapshots" }
 }
 
 base {
@@ -122,6 +124,12 @@ configurations {
 }
 
 dependencies {
+    implementation("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
+    implementation("net.createmod.ponder:ponder-neoforge:${ponder_version}+mc${minecraft_version}")
+    compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraft_version}:${flywheel_version}")
+    runtimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${minecraft_version}:${flywheel_version}")
+    implementation("com.tterrag.registrate:Registrate:${registrate_version}")
+
     implementation "curse.maven:FTBLibrary-404465:9008089"
     implementation "curse.maven:FTBTeams-404468:8724782"
     implementation "curse.maven:FTBChunks-314906:8791113"
@@ -129,7 +137,6 @@ dependencies {
     implementation "curse.maven:Sable-1312371:9043865"
     implementation "curse.maven:FTBBackups-622737:5501351"
     implementation "curse.maven:PolyLib-576589:7140477"
-    implementation "curse.maven:Create-328085:7963363"
     implementation "curse.maven:CreateBigCannons-646668:8303106"
     implementation "curse.maven:RPLib-1279407:7587771"
     implementation "curse.maven:Oritech-1030830:9070323"
@@ -138,6 +145,9 @@ dependencies {
     implementation "curse.maven:GeckoLib-388172:8893490"
     implementation "curse.maven:JEI-238222:9205121"
     implementation "curse.maven:MezzConfig-1689768:9374030"
+    implementation "curse.maven:EnchantmentIndustry-688768:8241347"
+    implementation "curse.maven:DragonsPlus-1216624:8900055"
+
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

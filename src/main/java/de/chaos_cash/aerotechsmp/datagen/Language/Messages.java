@@ -7,11 +7,10 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
-import java.util.UUID;
-
 
 public enum Messages implements ITranslation{
     ActionRequiresTeam(Types.Error),
+    ActionRequiresPvpPhase(Types.Error),
     TeamModificationsNotAllowedInPhase(Types.Error),
     TeamAlreadyFull(Types.Error),
     ClaimGrantingLimitReached(Types.Error),
@@ -21,6 +20,7 @@ public enum Messages implements ITranslation{
     TeamCoreNeedsClaimedChunk(Types.Error),
 
     PvpImpeding(Types.Warning),
+    OwnTeamCoreDestroyed(Types.Warning),
 
     PhaseLengthened(Types.Info),
     StartingPhase(Types.Info),
@@ -29,10 +29,12 @@ public enum Messages implements ITranslation{
     ClaimShardUsed(Types.Congratulation),
     ClaimCapsuleUsed(Types.Congratulation),
     ClaimEssenceUsed(Types.Congratulation),
-
     ForceLoadShardUsed(Types.Congratulation),
     ForceLoadCapsuleUsed(Types.Congratulation),
     ForceLoadEssenceUsed(Types.Congratulation),
+    EnemyTeamCoreDestroyed(Types.Congratulation),
+    TeamCoreSurvived(Types.Congratulation),
+
     ;
 
     public final String key;
@@ -79,9 +81,6 @@ public enum Messages implements ITranslation{
         ChatHandler.broadcast(getTranslation());
     }
 
-    public void send(UUID playerId) {
-        ChatHandler.sendMessage(playerId, getTranslation());
-    }
 
     public void send(Player player) {
         ChatHandler.sendMessage(player, getTranslation());
@@ -89,6 +88,16 @@ public enum Messages implements ITranslation{
 
     public void send(ServerPlayer player) {
         ChatHandler.sendMessage(player, getTranslation());
+    }
+
+
+    public void notify(Player player) {
+        ChatHandler.notify(player, getTranslation());
+    }
+
+    @SuppressWarnings("unused")
+    public void notify(ServerPlayer player) {
+        ChatHandler.notify(player, getTranslation());
     }
 
 

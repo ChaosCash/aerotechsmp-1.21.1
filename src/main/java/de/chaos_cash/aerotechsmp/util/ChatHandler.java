@@ -29,8 +29,9 @@ public class ChatHandler {
     public static void onRegisterCommands(RegisterCommandsEvent event) {
         CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
 
-
         var aeroCommand = Commands.literal("AeroTech");
+        var testCommand = Commands.literal("test")
+                .executes(context -> 1);
 
         // Phase command
         aeroCommand.then(Commands.literal("phase")
@@ -63,6 +64,7 @@ public class ChatHandler {
 
 
         dispatcher.register(aeroCommand);
+        dispatcher.register(testCommand);
     }
 
 
@@ -73,6 +75,11 @@ public class ChatHandler {
 
     public static void broadcast(Component message) {
         AerotechSMP.getServer().getPlayerList().broadcastSystemMessage(message, false);
+    }
+
+    @SuppressWarnings("unused")
+    public static void broadcast(String message) {
+        broadcast(Component.literal(message));
     }
 
 
@@ -141,5 +148,24 @@ public class ChatHandler {
             player.sendSystemMessage(
                 message
             );
+    }
+
+
+    public static void notify(ServerPlayer player, Component message) {
+        if (player != null)
+            player.sendSystemMessage(
+                message,
+                true
+            );
+    }
+
+    public static void notify(Player player, Component message) {
+        if (player != null) {
+            var serverPlayer = Objects.requireNonNull(AerotechSMP.getServer().getPlayerList().getPlayer(player.getUUID()));
+            serverPlayer.sendSystemMessage(
+                    message,
+                    true
+            );
+        }
     }
 }

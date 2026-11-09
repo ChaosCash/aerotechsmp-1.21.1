@@ -35,6 +35,7 @@ public class DataGenerators {
         generator.addProvider(event.includeServer(), new ModRecipeProvider(packOutput, lookupProvider));
         generator.addProvider(event.includeServer(), new AerotechCompactingRecipeGen(packOutput, lookupProvider));
         generator.addProvider(event.includeServer(), new AerotechMechanicalCraftingRecipeGen(packOutput, lookupProvider));
+        generator.addProvider(event.includeServer(), new AerotechMixingRecipeGen(packOutput, lookupProvider));
 
         BlockTagsProvider blockTagsProvider = new ModBlockTagProvider(packOutput, lookupProvider, existingFileHelper);
         generator.addProvider(event.includeServer(), blockTagsProvider);

@@ -24,6 +24,8 @@ public class ModItemModelProvider extends ItemModelProvider {
         basicItem(ModItems.FORCE_LOAD_SHARD.get());
         basicItem(ModItems.FORCE_LOAD_CAPSULE.get());
         basicItem(ModItems.FORCE_LOAD_ESSENCE.get());
+
+        basicItem(ModItems.MYSTERIOUS_SHARD.get());
     }
 
 }

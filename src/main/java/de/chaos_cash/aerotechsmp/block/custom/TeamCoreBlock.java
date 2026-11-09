@@ -4,7 +4,6 @@ import com.mojang.serialization.MapCodec;
 import de.chaos_cash.aerotechsmp.block.ModBlocks;
 import de.chaos_cash.aerotechsmp.block.entity.custom.TeamCoreBlockEntity;
 import de.chaos_cash.aerotechsmp.datagen.Language.Messages;
-import de.chaos_cash.aerotechsmp.item.ModItems;
 import de.chaos_cash.aerotechsmp.phases.PVPPhase;
 import de.chaos_cash.aerotechsmp.phases.PhaseHandler;
 import de.chaos_cash.aerotechsmp.team.Team;
@@ -32,27 +31,36 @@ public class TeamCoreBlock extends BaseEntityBlock {
 
     @Override
     public boolean onDestroyedByPlayer(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, boolean willHarvest, @NotNull FluidState fluid) {
-        boolean dropShard = false;
-        if (!level.isClientSide()) {
-            var optTeam = Team.get(player);
-            if (optTeam.isEmpty())
+        boolean destroyedByEnemy = false;
+        var optTeam = Team.get(player);
+        if (optTeam.isEmpty()) {
+            if (level.isClientSide)
+                Messages.ActionRequiresTeam.notify(player);
+            return false;
+        }
+
+        if (isOwnTeam(level, pos, optTeam.get())) {
+            if (!PhaseHandler.getPhase().allowsTeamModifications()) {
+                if (!level.isClientSide)
+                    Messages.TeamModificationsNotAllowedInPhase.notify(player);
                 return false;
-            if (isOwnTeam(level, pos, optTeam.get())) {
-                if (!PhaseHandler.getPhase().allowsTeamModifications()) {
-                    return false;
-                }
             }
-            else {
-                if (!(PhaseHandler.getPhase() instanceof PVPPhase))
-                    return false;
-                dropShard = true;
+        }
+        else {
+            if (!(PhaseHandler.getPhase() instanceof PVPPhase)) {
+                if (!level.isClientSide)
+                    Messages.ActionRequiresPvpPhase.notify(player);
+                return false;
             }
+            destroyedByEnemy = true;
         }
 
         if (super.onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid)) {
             if (!level.isClientSide()) {
-                if (dropShard)
-                    Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), ModItems.MYSTERIOUS_SHARD.toStack(2));
+                if (destroyedByEnemy && PhaseHandler.getPhase() instanceof PVPPhase pvpPhase) {
+                    var coreTeam = getTeam(level, pos);
+                    if (coreTeam != null)
+                        pvpPhase.onTeamCoreDestruction(coreTeam, optTeam.get());}
                 else
                     Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), ModBlocks.TEAM_CORE.toStack());
             }
@@ -85,14 +93,6 @@ public class TeamCoreBlock extends BaseEntityBlock {
         return team == getTeam(level, pos);
     }
 
-    @Override
-    protected void onPlace(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState oldState, boolean movedByPiston) {
-        super.onPlace(state, level, pos, oldState, movedByPiston);
-        var team = getTeam(level, pos);
-        if (team != null)
-            team.setHasCore(true);
-    }
-
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
@@ -102,23 +102,23 @@ public class TeamCoreBlock extends BaseEntityBlock {
 
         if (!PhaseHandler.getPhase().allowsTeamModifications()){
             if (!level.isClientSide())
-                Messages.TeamModificationsNotAllowedInPhase.send(context.getPlayer());
+                Messages.TeamModificationsNotAllowedInPhase.notify(context.getPlayer());
             return null;
         }
         if (context.getLevel().dimension() != Level.OVERWORLD) {
             if (level.isClientSide())
-                Messages.TeamCoreUnplaceableOutsideOverworld.send(context.getPlayer());
+                Messages.TeamCoreUnplaceableOutsideOverworld.notify(context.getPlayer());
             return null;
         }
         var team = TeamCoreBlockEntity.getTeam(pos);
         if (team == null){
             if (level.isClientSide())
-                Messages.TeamCoreNeedsClaimedChunk.send(context.getPlayer());
+                Messages.TeamCoreNeedsClaimedChunk.notify(context.getPlayer());
             return null;
         }
         if (team.hasCore()) {
             if (!level.isClientSide())
-                Messages.TeamAlreadyHasCore.send(context.getPlayer());
+                Messages.TeamAlreadyHasCore.notify(context.getPlayer());
             return null;
         }
         return this.defaultBlockState();

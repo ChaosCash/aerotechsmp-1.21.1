@@ -5,6 +5,8 @@ import com.simibubi.create.api.data.recipe.MechanicalCraftingRecipeGen;
 import de.chaos_cash.aerotechsmp.item.ModItems;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
+import net.minecraft.world.item.Items;
+import rearth.oritech.init.BlockContent;
 import rearth.oritech.init.ItemContent;
 
 import java.util.concurrent.CompletableFuture;
@@ -35,6 +37,16 @@ public final class AerotechMechanicalCraftingRecipeGen extends MechanicalCraftin
                         .patternLine(" S ")
                         .patternLine("SCS")
                         .patternLine(" S ")
+                        .disallowMirrored());
+
+
+        create(Items.SPAWNER::asItem)
+                .recipe(b -> b
+                        .key('S', ModItems.MYSTERIOUS_SHARD)
+                        .key('C', BlockContent.SPAWNER_CAGE_BLOCK)
+                        .patternLine("CCC")
+                        .patternLine("CSC")
+                        .patternLine("CCC")
                         .disallowMirrored());
     }
 }

@@ -19,13 +19,13 @@ public abstract class TimedPhase extends Phase {
     protected ServerBossEvent bossEvent;
     protected int length;
     protected int activeDuration;
-    private final Phase nextPhase;
+    protected Phase nextPhase;
     private Supplier<Boolean> lengtheningCondition;
     private int lengthIncrease = 0;
     private String lengtheningReason = null;
 
 
-    public TimedPhase(int length, @NotNull Phase nextPhase) {
+    public TimedPhase(int length, Phase nextPhase) {
         this.length = length;
         this.nextPhase = nextPhase;
     }

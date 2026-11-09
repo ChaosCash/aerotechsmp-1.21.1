@@ -8,6 +8,7 @@ import dev.ftb.mods.ftbchunks.data.ChunkTeamDataImpl;
 import dev.ftb.mods.ftbchunks.data.PartyLimitMode;
 import dev.ftb.mods.ftbteams.FTBTeamsAPIImpl;
 import dev.ftb.mods.ftbteams.api.event.PlayerJoinedPartyTeamEvent;
+import dev.ftb.mods.ftbteams.api.property.BigIntegerProperty;
 import dev.ftb.mods.ftbteams.api.property.BooleanProperty;
 import dev.ftb.mods.ftbteams.data.PartyTeam;
 import net.minecraft.resources.ResourceLocation;
@@ -18,6 +19,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.math.BigInteger;
 import java.util.*;
 import java.util.List;
 
@@ -33,6 +35,7 @@ public class Team {
     private static final Map<UUID, Team> teams = new HashMap<>();
 
     private static final BooleanProperty hasCorePropertyType = new BooleanProperty(ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID, "has_core"), false);
+    private static final BigIntegerProperty coreRewardCount = new BigIntegerProperty(ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID, "core_reward_count"), BigInteger.ZERO);
 
     private final @NotNull PartyTeam ftbTeam;
     private final ChunkTeamDataImpl chunkTeamData;
@@ -80,8 +83,9 @@ public class Team {
     public static List<Team> list() {
         var teams = new ArrayList<Team>();
 
-        for (var ftbTeam : FTBTeamsAPIImpl.INSTANCE.getManager().getTeams())
+        for (var ftbTeam : FTBTeamsAPIImpl.INSTANCE.getManager().getTeams()) {
             get(ftbTeam.getTeamId()).ifPresent(teams::add);
+        }
 
         return teams;
     }
@@ -132,6 +136,19 @@ public class Team {
         return hasCore;
     }
 
+    public void sendTeamMessage(Messages message) {
+        for (var player : ftbTeam.getOnlineMembers()) {
+            message.send(player);
+        }
+    }
+
+    public void grantCoreReward() {
+        ftbTeam.setProperty(
+                coreRewardCount,
+                ftbTeam.getProperty(coreRewardCount).add(BigInteger.ONE)
+        );
+    }
+
     //</editor-fold>
 
 
@@ -161,5 +178,4 @@ public class Team {
                 Messages.TeamAlreadyFull.send(player);
             }
     }
-
 }

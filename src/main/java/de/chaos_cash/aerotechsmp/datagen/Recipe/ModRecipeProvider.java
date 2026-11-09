@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import rearth.oritech.api.recipe.AssemblerRecipeBuilder;
 import rearth.oritech.api.recipe.AtomicForgeRecipeBuilder;
 import rearth.oritech.api.recipe.ParticleCollisionRecipeBuilder;
+import rearth.oritech.init.BlockContent;
 import rearth.oritech.init.ItemContent;
 
 import java.util.concurrent.CompletableFuture;
@@ -35,8 +36,6 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
         addParticleCollisionRecipes(recipeOutput);
         addAssemblerRecipes(recipeOutput);
     }
-
-
 
     private void addArmorRecipes(@NotNull RecipeOutput recipeOutput) {
         for (ArmorBlocks.Color color : ArmorBlocks.Color.values()) {
@@ -239,6 +238,13 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .input(ModItems.FORCE_LOAD_CAPSULE)
                 .result(ModItems.FORCE_LOAD_ESSENCE.get())
                 .export(recipeOutput ,ModItems.FORCE_LOAD_ESSENCE.getId().getPath());
+
+        ParticleCollisionRecipeBuilder.build()
+                .time(15000)
+                .input(ModItems.MYSTERIOUS_SHARD)
+                .input(Items.NETHER_STAR)
+                .result(BlockContent.BLACK_HOLE_BLOCK.asItem())
+                .export(recipeOutput, "black_hole");
     }
 
 
@@ -250,7 +256,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .input(Items.PRISMARINE_SHARD)
                 .input(Items.LAPIS_LAZULI)
                 .result(ModItems.CLAIM_SHARD.get())
-                .export(recipeOutput ,ModItems.CLAIM_SHARD.getId().getPath());
+                .export(recipeOutput, ModItems.CLAIM_SHARD.getId().getPath());
 
         AssemblerRecipeBuilder.build()
                 .timeInSeconds(60)
@@ -259,9 +265,15 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .input(Items.AMETHYST_SHARD)
                 .input(Items.BLAZE_POWDER)
                 .result(ModItems.FORCE_LOAD_SHARD.get())
-                .export(recipeOutput ,ModItems.FORCE_LOAD_SHARD.getId().getPath());
+                .export(recipeOutput, ModItems.FORCE_LOAD_SHARD.getId().getPath());
+
+        AssemblerRecipeBuilder.build()
+                .timeInSeconds(60)
+                .input(ModItems.MYSTERIOUS_SHARD)
+                .input(ItemContent.OVERCHARGED_CRYSTAL)
+                .input(ItemContent.OVERCHARGED_CRYSTAL)
+                .input(ItemContent.HEISENBERG_COMPENSATOR)
+                .result(ItemContent.PROMETHEUM_INGOT)
+                .export(recipeOutput, "prometheum_ingot");
     }
-
-
-
 }

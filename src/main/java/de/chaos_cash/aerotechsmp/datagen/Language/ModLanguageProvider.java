@@ -44,14 +44,9 @@ public class ModLanguageProvider extends LanguageProvider {
     protected void addMessages() {
         // errors
         add(Messages.ActionRequiresTeam.key, "This action requires a Team");
+        add(Messages.ActionRequiresPvpPhase.key, "This action is only allowed in the PVP-Phase");
         add(Messages.TeamModificationsNotAllowedInPhase.key, "You cant modify your Team in this Phase");
         add(Messages.TeamAlreadyFull.key, "This team is already full");
-        add(Messages.ClaimShardUsed.key, "+" + ModItems.CLAIM_SHARD.get().claimIncreaseCount + " claim");
-        add(Messages.ClaimCapsuleUsed.key, "+" + ModItems.CLAIM_CAPSULE.get().claimIncreaseCount + " claims");
-        add(Messages.ClaimEssenceUsed.key, "+" + ModItems.CLAIM_ESSENCE.get().claimIncreaseCount + " claims");
-        add(Messages.ForceLoadShardUsed.key, "+" + ModItems.FORCE_LOAD_SHARD.get().forceLoadIncreaseCount + " force load");
-        add(Messages.ForceLoadCapsuleUsed.key, "+" + ModItems.FORCE_LOAD_CAPSULE.get().forceLoadIncreaseCount + " force load");
-        add(Messages.ForceLoadEssenceUsed.key, "+" + ModItems.FORCE_LOAD_ESSENCE.get().forceLoadIncreaseCount + " force load");
         add(Messages.ClaimGrantingLimitReached.key, "This item can't grant any more claims");
         add(Messages.ForceLoadGrantingLimitReached.key, "This item can't grant any more force loads");
         add(Messages.TeamCoreNeedsClaimedChunk.key, "Team Cores can only be placed in claimed chunks");
@@ -60,14 +55,25 @@ public class ModLanguageProvider extends LanguageProvider {
 
         // warnings
         add(Messages.PvpImpeding.key, "PVP-Phase will start shortly");
+        add(Messages.OwnTeamCoreDestroyed.key, "Your Team Core has been Destroyed");
 
         // infos
         add(Messages.PhaseLengthened.key, "The Phase has been lengthened, because ");
         add(Messages.StartingPhase.key, "Starting ");
+
+        // rewards
+        add(Messages.ClaimShardUsed.key, "+" + ModItems.CLAIM_SHARD.get().claimIncreaseCount + " claim");
+        add(Messages.ClaimCapsuleUsed.key, "+" + ModItems.CLAIM_CAPSULE.get().claimIncreaseCount + " claims");
+        add(Messages.ClaimEssenceUsed.key, "+" + ModItems.CLAIM_ESSENCE.get().claimIncreaseCount + " claims");
+        add(Messages.ForceLoadShardUsed.key, "+" + ModItems.FORCE_LOAD_SHARD.get().forceLoadIncreaseCount + " force load");
+        add(Messages.ForceLoadCapsuleUsed.key, "+" + ModItems.FORCE_LOAD_CAPSULE.get().forceLoadIncreaseCount + " force load");
+        add(Messages.ForceLoadEssenceUsed.key, "+" + ModItems.FORCE_LOAD_ESSENCE.get().forceLoadIncreaseCount + " force load");
+        add(Messages.EnemyTeamCoreDestroyed.key, "Your Team has broken an enemy Team Core and will receive rewards in the next Peaceful Phase");
+        add(Messages.TeamCoreSurvived.key, "Your Team has survived the PvP-Phase. Your Team has received Rewards");
     }
 
     protected void addTooltips() {
-        addTooltip(ModItems.MYSTERIOUS_SHARD.get(), "Dropped by breaking enemy Team Cores in the PVP-Phase");
+        addTooltip(ModItems.MYSTERIOUS_SHARD.get(), "Received as a reward from breaking enemy Team Cores or protecting your own in the PVP-Phase");
 
         var claimTooltip = "Grants +%s claim%s (max %s)";
         var claimShard = ModItems.CLAIM_SHARD.get();

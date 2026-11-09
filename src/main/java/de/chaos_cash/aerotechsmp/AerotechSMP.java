@@ -6,6 +6,7 @@ import de.chaos_cash.aerotechsmp.item.ModItems;
 import de.chaos_cash.aerotechsmp.item.custom.CreativeModeTabs;
 import net.minecraft.server.MinecraftServer;
 
+import net.minecraft.world.item.crafting.*;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
