@@ -99,7 +99,6 @@ public class TeamCoreBlock extends BaseEntityBlock {
         BlockPos pos = context.getClickedPos();
         var level = context.getLevel();
 
-
         if (!PhaseHandler.getPhase().allowsTeamModifications()){
             if (!level.isClientSide())
                 Messages.TeamModificationsNotAllowedInPhase.notify(context.getPlayer());
