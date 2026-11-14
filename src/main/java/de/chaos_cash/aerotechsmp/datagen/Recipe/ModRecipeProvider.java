@@ -228,15 +228,15 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
         ParticleCollisionRecipeBuilder.build()
                 .time(1500)
                 .input(ModItems.CLAIM_CAPSULE)
-                .input(ModItems.CLAIM_CAPSULE)
-                .result(ModItems.CLAIM_ESSENCE.get())
+                .input(ModItems.MYSTERIOUS_SHARD)
+                .result(ModItems.CLAIM_ESSENCE.get(), 5)
                 .export(recipeOutput ,ModItems.CLAIM_ESSENCE.getId().getPath());
 
         ParticleCollisionRecipeBuilder.build()
                 .time(3000)
                 .input(ModItems.FORCE_LOAD_CAPSULE)
-                .input(ModItems.FORCE_LOAD_CAPSULE)
-                .result(ModItems.FORCE_LOAD_ESSENCE.get())
+                .input(ModItems.MYSTERIOUS_SHARD)
+                .result(ModItems.FORCE_LOAD_ESSENCE.get(), 2)
                 .export(recipeOutput ,ModItems.FORCE_LOAD_ESSENCE.getId().getPath());
 
         ParticleCollisionRecipeBuilder.build()
