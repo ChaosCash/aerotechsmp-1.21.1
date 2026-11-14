@@ -18,8 +18,6 @@ public class ModLanguageProvider extends LanguageProvider {
         addNames();
         addMessages();
         addTooltips();
-
-        add(MenuNames.ShipProtector.getKey(), "Ship Protector");
     }
 
 

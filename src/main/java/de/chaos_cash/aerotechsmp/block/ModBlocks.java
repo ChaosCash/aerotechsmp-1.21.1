@@ -2,7 +2,6 @@ package de.chaos_cash.aerotechsmp.block;
 
 import de.chaos_cash.aerotechsmp.AerotechSMP;
 import de.chaos_cash.aerotechsmp.block.custom.ArmorBlocks;
-import de.chaos_cash.aerotechsmp.block.custom.ShipProtectorBlock;
 import de.chaos_cash.aerotechsmp.block.custom.TeamCoreBlock;
 import de.chaos_cash.aerotechsmp.item.ModItems;
 import net.minecraft.world.item.BlockItem;
@@ -22,7 +21,6 @@ public class ModBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(AerotechSMP.MOD_ID);
 
     public static final  DeferredBlock<TeamCoreBlock> TEAM_CORE = registerBlock("team_core", () -> new TeamCoreBlock(BlockBehaviour.Properties.of()));
-    public static final  DeferredBlock<ShipProtectorBlock> SHIP_PROTECTOR = registerBlock("ship_protector", () -> new ShipProtectorBlock(BlockBehaviour.Properties.of()));
 
     public static final Map<ArmorBlocks.Tier, Map<ArmorBlocks.Color, DeferredBlock<Block>>> ARMOR_BLOCKS = ArmorBlocks.registerBlocks();
     public static final Map<ArmorBlocks.Tier, Map<ArmorBlocks.Color, DeferredBlock<StairBlock>>> ARMOR_STAIRS = ArmorBlocks.registerStairs();

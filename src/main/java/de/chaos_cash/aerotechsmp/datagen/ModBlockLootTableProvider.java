@@ -18,7 +18,6 @@ public class ModBlockLootTableProvider extends BlockLootSubProvider {
     @Override
     protected void generate() {
         dropSelf(ModBlocks.TEAM_CORE.get());
-        dropSelf(ModBlocks.SHIP_PROTECTOR.get());
 
         for (ArmorBlocks.Color color : ArmorBlocks.Color.values())
         {

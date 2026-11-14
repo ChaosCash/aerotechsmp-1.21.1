@@ -1,7 +1,5 @@
 package de.chaos_cash.aerotechsmp;
 
-import de.chaos_cash.aerotechsmp.screen.ModMenuTypes;
-import de.chaos_cash.aerotechsmp.screen.custom.ShipProtectorScreen;
 import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -33,9 +31,4 @@ public class AerotechSMPClient {
         AerotechSMP.LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
     }
 
-
-    @SubscribeEvent
-    public static void registerScreens(RegisterMenuScreensEvent event) {
-        event.register(ModMenuTypes.SHIP_PROTECTOR_MENU.get(), ShipProtectorScreen::new);
-    }
 }

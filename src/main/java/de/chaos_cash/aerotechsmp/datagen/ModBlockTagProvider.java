@@ -25,15 +25,12 @@ public class ModBlockTagProvider extends BlockTagsProvider {
     @Override
     protected void addTags(HolderLookup.@NotNull Provider pProvider) {
         var teamCore = ModBlocks.TEAM_CORE.get();
-        var shipProtector = ModBlocks.SHIP_PROTECTOR.get();
 
         tag(BlockTags.MINEABLE_WITH_PICKAXE)
                 .add(teamCore)
-                .add(shipProtector)
         ;
         tag(BlockTags.NEEDS_IRON_TOOL)
                 .add(teamCore)
-                .add(shipProtector)
         ;
 
 

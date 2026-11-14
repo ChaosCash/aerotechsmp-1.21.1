@@ -4,7 +4,6 @@ import de.chaos_cash.aerotechsmp.block.ModBlocks;
 import de.chaos_cash.aerotechsmp.block.entity.ModBlockEntities;
 import de.chaos_cash.aerotechsmp.item.ModItems;
 import de.chaos_cash.aerotechsmp.item.custom.CreativeModeTabs;
-import de.chaos_cash.aerotechsmp.screen.ModMenuTypes;
 import net.minecraft.server.MinecraftServer;
 
 import net.minecraft.world.item.crafting.*;
@@ -55,7 +54,6 @@ public class AerotechSMP {
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
         ModBlockEntities.register(modEventBus);
-        ModMenuTypes.register(modEventBus);
 
 
         // Register the item to a creative tab

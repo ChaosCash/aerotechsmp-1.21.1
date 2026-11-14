@@ -52,7 +52,6 @@ public class CreativeModeTabs {
 
                         output.accept(ModBlocks.TEAM_CORE);
                         output.accept(ModItems.MYSTERIOUS_SHARD);
-                        output.accept(ModBlocks.SHIP_PROTECTOR);
                     }).build()
             );
 
