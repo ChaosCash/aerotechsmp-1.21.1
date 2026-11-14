@@ -20,6 +20,7 @@ import rearth.oritech.api.recipe.AssemblerRecipeBuilder;
 import rearth.oritech.api.recipe.AtomicForgeRecipeBuilder;
 import rearth.oritech.api.recipe.ParticleCollisionRecipeBuilder;
 import rearth.oritech.init.BlockContent;
+import rearth.oritech.init.FluidContent;
 import rearth.oritech.init.ItemContent;
 
 import java.util.concurrent.CompletableFuture;
@@ -275,5 +276,24 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .input(ItemContent.HEISENBERG_COMPENSATOR)
                 .result(ItemContent.PROMETHEUM_INGOT)
                 .export(recipeOutput, "prometheum_ingot");
+
+        AssemblerRecipeBuilder.build()
+                .timeInSeconds(60)
+                .input(ItemContent.DUBIOS_CONTAINER)
+                .input(BlockContent.SUPERCONDUCTOR)
+                .input(ItemContent.PROMETHEUM_INGOT)
+                .input(FluidContent.STRANGE_MATTER_ATTRIBUTES.getBucketItem())
+                .result(BlockContent.SHRINKER_BLOCK.asItem())
+                .export(recipeOutput, "shrinker_block");
+
+        ShapedRecipeBuilder
+                .shaped(RecipeCategory.REDSTONE, BlockContent.MACHINE_CORE_7, 8)
+                .define('S', ItemContent.PROMETHEUM_INGOT)
+                .define('C', BlockContent.SUPERCONDUCTOR)
+                .pattern("CCC")
+                .pattern("CSC")
+                .pattern("CCC")
+                .unlockedBy("has_mysterious_shard", has(ModItems.MYSTERIOUS_SHARD))
+                .save(recipeOutput);
     }
 }
