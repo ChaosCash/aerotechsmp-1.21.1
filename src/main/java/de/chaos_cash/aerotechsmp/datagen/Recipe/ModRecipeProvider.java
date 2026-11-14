@@ -23,6 +23,7 @@ import rearth.oritech.init.BlockContent;
 import rearth.oritech.init.FluidContent;
 import rearth.oritech.init.ItemContent;
 
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 
@@ -36,6 +37,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
         addArmorRecipes(recipeOutput);
         addParticleCollisionRecipes(recipeOutput);
         addAssemblerRecipes(recipeOutput);
+        addShapedRecipes(recipeOutput);
     }
 
     private void addArmorRecipes(@NotNull RecipeOutput recipeOutput) {
@@ -285,6 +287,21 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .input(FluidContent.STRANGE_MATTER_ATTRIBUTES.getBucketItem())
                 .result(BlockContent.SHRINKER_BLOCK.asItem())
                 .export(recipeOutput, "shrinker_block");
+    }
+
+
+    private void addShapedRecipes(@NotNull RecipeOutput recipeOutput) {
+        ShapedRecipeBuilder
+                .shaped(RecipeCategory.REDSTONE, BlockContent.SHRINKER_BLOCK)
+                .define('D', ItemContent.DUBIOS_CONTAINER)
+                .define('C', BlockContent.SUPERCONDUCTOR)
+                .define('P', ItemContent.PROMETHEUM_INGOT)
+                .define('S', Objects.requireNonNull(FluidContent.STRANGE_MATTER_ATTRIBUTES.getBucketItem()))
+                .pattern("DPD")
+                .pattern("CSC")
+                .pattern("DPD")
+                .unlockedBy("has_mysterious_shard", has(ModItems.MYSTERIOUS_SHARD))
+                .save(recipeOutput);
 
         ShapedRecipeBuilder
                 .shaped(RecipeCategory.REDSTONE, BlockContent.MACHINE_CORE_7, 8)
