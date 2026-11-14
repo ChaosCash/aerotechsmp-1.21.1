@@ -1,19 +1,21 @@
 package de.chaos_cash.aerotechsmp.item.custom;
 
 import de.chaos_cash.aerotechsmp.team.Team;
-import de.chaos_cash.aerotechsmp.util.Messages;
+import de.chaos_cash.aerotechsmp.datagen.Language.Messages;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ClaimGrantingItem extends ConsumableItem {
+public class ClaimGrantingItem extends ConsumableItem<ClaimGrantingItem> {
     public final int claimIncreaseCount;
+    public final int claimLimit;
 
-    public ClaimGrantingItem(@Nullable Messages successMessage, int claimIncreaseCount) {
-        super(new Properties(), 10, successMessage, Messages.HardMaxClaimLimitReached);
+    public ClaimGrantingItem(@Nullable Messages successMessage, int claimIncreaseCount, int claimLimit) {
+        super(new Properties(), 10, successMessage, Messages.ClaimGrantingLimitReached);
         this.claimIncreaseCount = claimIncreaseCount;
+        this.claimLimit = claimLimit;
     }
 
 
@@ -27,7 +29,7 @@ public class ClaimGrantingItem extends ConsumableItem {
         }
 
         var team = optTeam.get();
-        if (team.getMaxClaims() < Team.hardMaxClaims) {
+        if (team.getMaxClaims() < claimLimit) {
             if (!level.isClientSide())
                 optTeam.get().increaseMaxClaims(claimIncreaseCount);
             return true;

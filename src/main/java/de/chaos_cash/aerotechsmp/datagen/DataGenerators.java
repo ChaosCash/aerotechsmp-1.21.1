@@ -1,6 +1,7 @@
 package de.chaos_cash.aerotechsmp.datagen;
 
 import de.chaos_cash.aerotechsmp.AerotechSMP;
+import de.chaos_cash.aerotechsmp.datagen.Language.ModLanguageProvider;
 import de.chaos_cash.aerotechsmp.datagen.Recipe.*;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
@@ -32,10 +33,9 @@ public class DataGenerators {
                 List.of(new LootTableProvider.SubProviderEntry(ModBlockLootTableProvider::new, LootContextParamSets.BLOCK)), lookupProvider));
 
         generator.addProvider(event.includeServer(), new ModRecipeProvider(packOutput, lookupProvider));
-        generator.addProvider(event.includeServer(), new AerotechCuttingRecipeGen(packOutput, lookupProvider));
-        generator.addProvider(event.includeServer(), new AerotechPressingRecipeGen(packOutput, lookupProvider));
         generator.addProvider(event.includeServer(), new AerotechCompactingRecipeGen(packOutput, lookupProvider));
         generator.addProvider(event.includeServer(), new AerotechMechanicalCraftingRecipeGen(packOutput, lookupProvider));
+        generator.addProvider(event.includeServer(), new AerotechMixingRecipeGen(packOutput, lookupProvider));
 
         BlockTagsProvider blockTagsProvider = new ModBlockTagProvider(packOutput, lookupProvider, existingFileHelper);
         generator.addProvider(event.includeServer(), blockTagsProvider);

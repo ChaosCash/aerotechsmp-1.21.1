@@ -24,10 +24,15 @@ public class ModBlockTagProvider extends BlockTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.@NotNull Provider pProvider) {
+        var teamCore = ModBlocks.TEAM_CORE.get();
+
         tag(BlockTags.MINEABLE_WITH_PICKAXE)
-                .add(ModBlocks.TEAM_CORE.get());
+                .add(teamCore)
+        ;
         tag(BlockTags.NEEDS_IRON_TOOL)
-                .add(ModBlocks.TEAM_CORE.get());
+                .add(teamCore)
+        ;
+
 
         for (ArmorBlocks.Color color : ArmorBlocks.Color.values())
         {

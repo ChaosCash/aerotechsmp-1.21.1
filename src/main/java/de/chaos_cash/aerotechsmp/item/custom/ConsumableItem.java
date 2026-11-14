@@ -1,17 +1,16 @@
 package de.chaos_cash.aerotechsmp.item.custom;
 
-import de.chaos_cash.aerotechsmp.util.Messages;
+import de.chaos_cash.aerotechsmp.datagen.Language.Messages;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class ConsumableItem extends Item {
+public abstract class ConsumableItem<T extends ConsumableItem<T>> extends ModItem<T> {
     protected final Messages successMessage;
     protected final Messages failMessage;
     protected final int useDuration;

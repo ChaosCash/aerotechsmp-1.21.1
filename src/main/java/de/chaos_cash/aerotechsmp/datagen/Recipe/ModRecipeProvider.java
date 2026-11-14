@@ -5,7 +5,6 @@ import de.chaos_cash.aerotechsmp.AerotechSMP;
 import de.chaos_cash.aerotechsmp.block.custom.ArmorBlocks;
 import de.chaos_cash.aerotechsmp.item.ModItems;
 import de.chaos_cash.aerotechsmp.util.ModTags;
-import de.chaos_cash.aerotechsmp.util.Rarity;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
@@ -20,8 +19,11 @@ import org.jetbrains.annotations.NotNull;
 import rearth.oritech.api.recipe.AssemblerRecipeBuilder;
 import rearth.oritech.api.recipe.AtomicForgeRecipeBuilder;
 import rearth.oritech.api.recipe.ParticleCollisionRecipeBuilder;
+import rearth.oritech.init.BlockContent;
+import rearth.oritech.init.FluidContent;
 import rearth.oritech.init.ItemContent;
 
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 
@@ -33,10 +35,10 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
     @Override
     protected void buildRecipes(@NotNull RecipeOutput recipeOutput) {
         addArmorRecipes(recipeOutput);
-        addComponentRecipes(recipeOutput);
+        addParticleCollisionRecipes(recipeOutput);
+        addAssemblerRecipes(recipeOutput);
+        addShapedRecipes(recipeOutput);
     }
-
-
 
     private void addArmorRecipes(@NotNull RecipeOutput recipeOutput) {
         for (ArmorBlocks.Color color : ArmorBlocks.Color.values()) {
@@ -225,46 +227,90 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
     }
 
 
-    private void addComponentRecipes(@NotNull RecipeOutput recipeOutput) {
-        for (var rarity : Rarity.values()) {
+    private void addParticleCollisionRecipes(@NotNull RecipeOutput recipeOutput) {
+        ParticleCollisionRecipeBuilder.build()
+                .time(1500)
+                .input(ModItems.CLAIM_CAPSULE)
+                .input(ModItems.MYSTERIOUS_SHARD)
+                .result(ModItems.CLAIM_ESSENCE.get(), 5)
+                .export(recipeOutput ,ModItems.CLAIM_ESSENCE.getId().getPath());
 
-            AssemblerRecipeBuilder.build() // electric component
-                    .timeInSeconds(10)
-                    .result(ModItems.ELECTRIC_COMPONENTS.get(rarity).get())
-                    .input(ModItems.CIRCUIT_BOARDS.get(rarity))
-                    .input(ItemContent.FLUX_GATE)
-                    .input(ItemContent.REINFORCED_CARBON_SHEET)
-                    .input(ItemContent.OVERCHARGED_CRYSTAL)
-                    .export(recipeOutput, ModItems.ELECTRIC_COMPONENTS.get(rarity).getId().getPath());
+        ParticleCollisionRecipeBuilder.build()
+                .time(3000)
+                .input(ModItems.FORCE_LOAD_CAPSULE)
+                .input(ModItems.MYSTERIOUS_SHARD)
+                .result(ModItems.FORCE_LOAD_ESSENCE.get(), 2)
+                .export(recipeOutput ,ModItems.FORCE_LOAD_ESSENCE.getId().getPath());
+
+        ParticleCollisionRecipeBuilder.build()
+                .time(15000)
+                .input(ModItems.MYSTERIOUS_SHARD)
+                .input(Items.NETHER_STAR)
+                .result(BlockContent.BLACK_HOLE_BLOCK.asItem())
+                .export(recipeOutput, "black_hole");
+    }
 
 
-            if (rarity == Rarity.Common) {
-                var circuitBase = ModItems.CIRCUIT_BASES.get(rarity);
-                ParticleCollisionRecipeBuilder.build().time(5000)
-                        .result(circuitBase.get())
-                        .input(Items.NETHER_STAR)
-                        .input(Items.NETHER_STAR)
-                        .export(recipeOutput, circuitBase.getId().getPath());
-            }
-            else {
-                var circuitBase = ModItems.CIRCUIT_BASES.get(rarity);
-                var circuitBoard = ModItems.CIRCUIT_BOARDS.get(rarity.tryDecrease());
+    private void addAssemblerRecipes(@NotNull RecipeOutput recipeOutput) {
+        AssemblerRecipeBuilder.build()
+                .timeInSeconds(30)
+                .input(Items.DIAMOND)
+                .input(Items.AMETHYST_SHARD)
+                .input(Items.PRISMARINE_SHARD)
+                .input(Items.LAPIS_LAZULI)
+                .result(ModItems.CLAIM_SHARD.get())
+                .export(recipeOutput, ModItems.CLAIM_SHARD.getId().getPath());
 
-                ParticleCollisionRecipeBuilder.build().time((int) (500 * Math.pow(2, rarity.toInt())))
-                        .result(circuitBase.get())
-                        .input(circuitBoard)
-                        .input(circuitBoard)
-                        .export(recipeOutput, circuitBase.getId().getPath());
+        AssemblerRecipeBuilder.build()
+                .timeInSeconds(60)
+                .input(Items.GOLD_BLOCK)
+                .input(Items.ECHO_SHARD)
+                .input(Items.AMETHYST_SHARD)
+                .input(Items.BLAZE_POWDER)
+                .result(ModItems.FORCE_LOAD_SHARD.get())
+                .export(recipeOutput, ModItems.FORCE_LOAD_SHARD.getId().getPath());
 
-                AssemblerRecipeBuilder.build() // assembler combination
-                        .timeInSeconds(30)
-                        .input(circuitBoard)
-                        .input(circuitBoard)
-                        .input(circuitBoard)
-                        .input(circuitBoard)
-                        .result(circuitBase.get())
-                        .export(recipeOutput, circuitBase.getId().getPath());
-            }
-        }
+        AssemblerRecipeBuilder.build()
+                .timeInSeconds(60)
+                .input(ModItems.MYSTERIOUS_SHARD)
+                .input(ItemContent.OVERCHARGED_CRYSTAL)
+                .input(ItemContent.OVERCHARGED_CRYSTAL)
+                .input(ItemContent.HEISENBERG_COMPENSATOR)
+                .result(ItemContent.PROMETHEUM_INGOT)
+                .export(recipeOutput, "prometheum_ingot");
+
+        AssemblerRecipeBuilder.build()
+                .timeInSeconds(60)
+                .input(ItemContent.DUBIOS_CONTAINER)
+                .input(BlockContent.SUPERCONDUCTOR)
+                .input(ItemContent.PROMETHEUM_INGOT)
+                .input(FluidContent.STRANGE_MATTER_ATTRIBUTES.getBucketItem())
+                .result(BlockContent.SHRINKER_BLOCK.asItem())
+                .export(recipeOutput, "shrinker_block");
+    }
+
+
+    private void addShapedRecipes(@NotNull RecipeOutput recipeOutput) {
+        ShapedRecipeBuilder
+                .shaped(RecipeCategory.REDSTONE, BlockContent.SHRINKER_BLOCK)
+                .define('D', ItemContent.DUBIOS_CONTAINER)
+                .define('C', BlockContent.SUPERCONDUCTOR)
+                .define('P', ItemContent.PROMETHEUM_INGOT)
+                .define('S', Objects.requireNonNull(FluidContent.STRANGE_MATTER_ATTRIBUTES.getBucketItem()))
+                .pattern("DPD")
+                .pattern("CSC")
+                .pattern("DPD")
+                .unlockedBy("has_mysterious_shard", has(ModItems.MYSTERIOUS_SHARD))
+                .save(recipeOutput);
+
+        ShapedRecipeBuilder
+                .shaped(RecipeCategory.REDSTONE, BlockContent.MACHINE_CORE_7, 8)
+                .define('S', ItemContent.PROMETHEUM_INGOT)
+                .define('C', BlockContent.SUPERCONDUCTOR)
+                .pattern("CCC")
+                .pattern("CSC")
+                .pattern("CCC")
+                .unlockedBy("has_mysterious_shard", has(ModItems.MYSTERIOUS_SHARD))
+                .save(recipeOutput);
     }
 }

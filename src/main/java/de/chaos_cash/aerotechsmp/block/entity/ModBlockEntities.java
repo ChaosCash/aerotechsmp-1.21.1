@@ -15,12 +15,10 @@ public class ModBlockEntities {
             DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, AerotechSMP.MOD_ID);
 
 
-    public static final Supplier<BlockEntityType<TeamCoreBlockEntity>> TEAM_CORE_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
+    public static final Supplier<BlockEntityType<TeamCoreBlockEntity>> TEAM_CORE = BLOCK_ENTITY_TYPES.register(
             "team_core_be",
             () -> BlockEntityType.Builder.of(TeamCoreBlockEntity::new, ModBlocks.TEAM_CORE.get()).build(null)
     );
-
-
 
     public static void register(IEventBus eventBus)
     {
