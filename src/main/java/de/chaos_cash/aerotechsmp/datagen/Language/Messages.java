@@ -1,6 +1,5 @@
 package de.chaos_cash.aerotechsmp.datagen.Language;
 
-import de.chaos_cash.aerotechsmp.AerotechSMP;
 import de.chaos_cash.aerotechsmp.util.ChatHandler;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.MutableComponent;
@@ -47,23 +46,7 @@ public enum Messages implements ITranslation{
 
 
     String getMessageTranslationKey(Types type) {
-        StringBuilder nameBuilder = new StringBuilder();
-        for (char character : this.name().toCharArray()) {
-            if (nameBuilder.isEmpty()) {
-                nameBuilder.append(Character.toLowerCase(character));
-                continue;
-            }
-
-            if (Character.isUpperCase(character))
-                nameBuilder.append("_").append(Character.toLowerCase(character));
-            else
-                nameBuilder.append(character);
-        }
-
-        String name = nameBuilder.toString();
-
-
-        return "message." + type.name().toLowerCase() + "." + AerotechSMP.MOD_ID + "." + name;
+        return ITranslation.getTranslationKey(this.name(), "messages." + type.name());
     }
 
 

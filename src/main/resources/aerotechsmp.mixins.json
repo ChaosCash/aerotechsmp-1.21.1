@@ -2,7 +2,9 @@
   "required": true,
   "package": "de.chaos_cash.aerotechsmp.mixin",
   "compatibilityLevel": "JAVA_21",
-  "mixins": [],
+  "mixins": [
+    "ExplosionDamageCalculatorMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   },

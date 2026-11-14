@@ -18,6 +18,8 @@ public class ModLanguageProvider extends LanguageProvider {
         addNames();
         addMessages();
         addTooltips();
+
+        add(MenuNames.ShipProtector.getKey(), "Ship Protector");
     }
 
 
@@ -71,6 +73,7 @@ public class ModLanguageProvider extends LanguageProvider {
         add(Messages.EnemyTeamCoreDestroyed.key, "Your Team has broken an enemy Team Core and will receive rewards in the next Peaceful Phase");
         add(Messages.TeamCoreSurvived.key, "Your Team has survived the PvP-Phase. Your Team has received Rewards");
     }
+
 
     protected void addTooltips() {
         addTooltip(ModItems.MYSTERIOUS_SHARD.get(), "Received as a reward from breaking enemy Team Cores or protecting your own in the PVP-Phase");

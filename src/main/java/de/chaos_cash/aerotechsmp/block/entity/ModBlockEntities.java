@@ -2,6 +2,7 @@ package de.chaos_cash.aerotechsmp.block.entity;
 
 import de.chaos_cash.aerotechsmp.AerotechSMP;
 import de.chaos_cash.aerotechsmp.block.ModBlocks;
+import de.chaos_cash.aerotechsmp.block.entity.custom.ShipProtectorBlockEntity;
 import de.chaos_cash.aerotechsmp.block.entity.custom.TeamCoreBlockEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -15,9 +16,14 @@ public class ModBlockEntities {
             DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, AerotechSMP.MOD_ID);
 
 
-    public static final Supplier<BlockEntityType<TeamCoreBlockEntity>> TEAM_CORE_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
+    public static final Supplier<BlockEntityType<TeamCoreBlockEntity>> TEAM_CORE = BLOCK_ENTITY_TYPES.register(
             "team_core_be",
             () -> BlockEntityType.Builder.of(TeamCoreBlockEntity::new, ModBlocks.TEAM_CORE.get()).build(null)
+    );
+
+    public static final Supplier<BlockEntityType<ShipProtectorBlockEntity>> SHIP_PROTECTOR = BLOCK_ENTITY_TYPES.register(
+            "ship_protector_be",
+            () -> BlockEntityType.Builder.of(ShipProtectorBlockEntity::new, ModBlocks.SHIP_PROTECTOR.get()).build(null)
     );
 
 

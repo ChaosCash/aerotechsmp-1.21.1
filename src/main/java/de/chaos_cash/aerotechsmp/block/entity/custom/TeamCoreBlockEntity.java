@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class TeamCoreBlockEntity extends ClaimBlockEntity {
     public TeamCoreBlockEntity(BlockPos pos, BlockState blockState) {
-        super(ModBlockEntities.TEAM_CORE_BLOCK_ENTITY.get(), pos, blockState);
+        super(ModBlockEntities.TEAM_CORE.get(), pos, blockState);
     }
 
     @Override

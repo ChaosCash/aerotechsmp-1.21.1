@@ -27,16 +27,6 @@ sourceSets.main.resources {
     exclude("src/generated/**/.cache") // datagen cache files
 }
 
-repositories {
-    maven {
-        url 'https://www.cursemaven.com'
-        content {
-            includeGroup "curse.maven"
-        }
-    }
-    maven { url = "https://maven.createmod.net" }
-    maven { url = "https://maven.ithundxr.dev/snapshots" }
-}
 
 base {
     archivesName = mod_id
@@ -123,8 +113,52 @@ configurations {
     runtimeClasspath.extendsFrom localRuntime
 }
 
+
+
+repositories {
+    maven {
+        url 'https://www.cursemaven.com'
+        content {
+            includeGroup "curse.maven"
+        }
+    }
+    maven { url = "https://maven.createmod.net" }
+    maven { url = "https://maven.ithundxr.dev/snapshots" }
+
+    // Sable
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = "RyanHCode Maven"
+                url = "https://maven.ryanhcode.dev/releases"
+            }
+        }
+        filter {
+            includeGroup("dev.ryanhcode.sable")
+            includeGroup("dev.ryanhcode.sable-companion")
+        }
+    }
+
+    // Needed by Sable's transitive dependencies
+    maven { name = "BlameJared"; url = "https://maven.blamejared.com" }   // foundry.veil
+    maven { name = "Fuzs"; url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/" } // forgeconfigapiport
+}
+
+
+
 dependencies {
-    implementation("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
+    implementation "curse.maven:ArchitecturyAPI-419699:8492726"
+    implementation("com.simibubi.create:create-${minecraft_version}:${create_version}") {
+        // Create's POM declares its optional integrations as hard dependencies.
+        // We don't need them in the dev environment, so skip them.
+        exclude group: "maven.modrinth"          // Farmer's Delight, JourneyMap
+        exclude group: "info.journeymap"
+        exclude group: "cc.tweaked"
+        exclude group: "top.theillusivec4.curios"
+        exclude group: "dev.ftb.mods"            // already pulled via CurseMaven below
+        exclude group: "mezz.jei"                // already pulled via CurseMaven below
+        exclude group: "dev.architectury"        // already pulled via CurseMaven below
+    }
     implementation("net.createmod.ponder:ponder-neoforge:${ponder_version}+mc${minecraft_version}")
     compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraft_version}:${flywheel_version}")
     runtimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${minecraft_version}:${flywheel_version}")
@@ -133,8 +167,6 @@ dependencies {
     implementation "curse.maven:FTBLibrary-404465:9008089"
     implementation "curse.maven:FTBTeams-404468:8724782"
     implementation "curse.maven:FTBChunks-314906:8791113"
-    implementation "curse.maven:ArchitecturyAPI-419699:8492726"
-    implementation "curse.maven:Sable-1312371:9043865"
     implementation "curse.maven:FTBBackups-622737:5501351"
     implementation "curse.maven:PolyLib-576589:7140477"
     implementation "curse.maven:CreateBigCannons-646668:8303106"
@@ -147,7 +179,8 @@ dependencies {
     implementation "curse.maven:MezzConfig-1689768:9374030"
     implementation "curse.maven:EnchantmentIndustry-688768:8241347"
     implementation "curse.maven:DragonsPlus-1216624:8900055"
-
+    implementation "curse.maven:Jade-324717:8591319"
+    api("dev.ryanhcode.sable:sable-neoforge-${project.minecraft_version}:${project.sable_version}")
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

@@ -23,6 +23,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
     @Override
     protected void registerStatesAndModels() {
         blockWithItem(ModBlocks.TEAM_CORE);
+        blockWithItem(ModBlocks.SHIP_PROTECTOR);
 
         for (ArmorBlocks.Color color : ArmorBlocks.Color.values())
         {
