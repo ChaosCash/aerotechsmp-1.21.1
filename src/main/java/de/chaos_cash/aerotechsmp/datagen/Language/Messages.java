@@ -24,6 +24,7 @@ public enum Messages implements ITranslation{
     PhaseLengthened(Types.Info),
     StartingPhase(Types.Info),
     TeamCoreBrokenDueToUnclaiming(Types.Info),
+    GameIsPaused(Types.Info),
 
     ClaimShardUsed(Types.Congratulation),
     ClaimCapsuleUsed(Types.Congratulation),

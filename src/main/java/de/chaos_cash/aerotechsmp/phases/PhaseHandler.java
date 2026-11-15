@@ -26,8 +26,8 @@ public class PhaseHandler {
     public static void setPhase(Phase newPhase) {
         if (phase != null)
             phase.onDeactivation();
+        newPhase.onActivation();
         phase = newPhase;
-        phase.onActivation();
 
         for (var player : AerotechSMP.getServer().getPlayerList().getPlayers())
             ChatHandler.updateCommands(player);

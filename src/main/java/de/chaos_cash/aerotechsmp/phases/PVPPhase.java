@@ -12,12 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PVPPhase extends TimedPhase{
-    private final int breakLength;
     private final List<Team> teamsWithCoreOnStart = new ArrayList<>();
+    private boolean activatedOnce = false;
 
     public PVPPhase(int length, int breakLength) {
         super(length, null);
-        this.breakLength = breakLength;
+        nextPhase = new BreakPhase(breakLength, this);
     }
 
 
@@ -28,6 +28,12 @@ public class PVPPhase extends TimedPhase{
         destroyingTeam.grantCoreReward();
     }
 
+    @Override
+    protected void onTimeUp() {
+        super.onTimeUp();
+
+        activeDuration = 0;
+    }
 
     @Override
     public String getDisplayName() {
@@ -49,21 +55,19 @@ public class PVPPhase extends TimedPhase{
     public void onActivation() {
         super.onActivation();
 
-        activeDuration = 0;
-
         FTBChunksWorldConfig.DISABLE_PROTECTION.set(true);
         FTBChunksWorldConfig.onConfigChanged(true);
 
-        if (nextPhase == null) {
+        if (!activatedOnce) {
             for (var team : Team.list())
-                if (team.hasCore() && !teamsWithCoreOnStart.contains(team)) {
+                if (team.hasCore() && !teamsWithCoreOnStart.contains(team))
                     teamsWithCoreOnStart.add(team);
-                }
-            nextPhase = new BreakPhase(breakLength, this);
+            activatedOnce = true;
         }
-        else
+        else if (PhaseHandler.getPhase() == nextPhase)
             nextPhase = new WaitForRestartPhase();
     }
+
 
     @Override
     public void onDeactivation() {
@@ -72,7 +76,7 @@ public class PVPPhase extends TimedPhase{
         FTBChunksWorldConfig.DISABLE_PROTECTION.set(false);
         FTBChunksWorldConfig.onConfigChanged(true);
 
-        if (nextPhase instanceof PeacefulPhase)
+        if (!(nextPhase instanceof BreakPhase))
             for (var team : teamsWithCoreOnStart) {
                 if (team.hasCore()) {
                     team.grantCoreReward();

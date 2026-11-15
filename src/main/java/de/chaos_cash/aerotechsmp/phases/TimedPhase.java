@@ -41,7 +41,7 @@ public abstract class TimedPhase extends Phase {
 
 
 
-    protected void onTimeUp(){
+    protected void onTimeUp() {
         if (lengtheningCondition != null && lengtheningCondition.get()) {
             if (activeDuration < length)
                 length += lengthIncrease;
@@ -57,8 +57,6 @@ public abstract class TimedPhase extends Phase {
     @Override
     public void onActivation() {
         super.onActivation();
-
-        activeDuration = 0;
 
         bossEvent = new ServerBossEvent(Component.literal(getDisplayName()), getBossBarColor(), getBossBarOverlay());
 
@@ -102,7 +100,7 @@ public abstract class TimedPhase extends Phase {
 
     @Override
     public MutableComponent getActivationMessage() {
-        return super.getActivationMessage().append(" (Estimated length: " + ChatHandler.formatTickTime(length) + ")");
+        return super.getActivationMessage().append(" (Estimated length: " + ChatHandler.formatTickTime(length - activeDuration) + ")");
     }
 
     public void skip(boolean shouldForce) {

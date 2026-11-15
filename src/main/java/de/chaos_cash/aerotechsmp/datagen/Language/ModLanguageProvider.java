@@ -60,6 +60,7 @@ public class ModLanguageProvider extends LanguageProvider {
         // infos
         add(Messages.PhaseLengthened.key, "The Phase has been lengthened, because ");
         add(Messages.StartingPhase.key, "Starting ");
+        add(Messages.GameIsPaused.key, "Game is Paused");
 
         // rewards
         add(Messages.ClaimShardUsed.key, "+" + ModItems.CLAIM_SHARD.get().claimIncreaseCount + " claim");

@@ -2,17 +2,23 @@ package de.chaos_cash.aerotechsmp.util;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import de.chaos_cash.aerotechsmp.AerotechSMP;
+import de.chaos_cash.aerotechsmp.phases.BreakPhase;
 import de.chaos_cash.aerotechsmp.phases.TimedPhase;
 import de.chaos_cash.aerotechsmp.phases.PhaseHandler;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
+import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
+import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -38,7 +44,15 @@ public class ChatHandler {
             .requires((stack) -> stack.hasPermission(Commands.LEVEL_ADMINS))
             .then(Commands.literal("start")
                 .then(Commands.literal("PVP")
-                    .executes(context1 -> PhaseHandler.schedulePVPPhaseStartCommand())
+                    .executes(context -> PhaseHandler.schedulePVPPhaseStartCommand())
+                )
+                .then(Commands.literal("Break")
+                        .then(Commands.argument("Length", IntegerArgumentType.integer(0))
+                                .executes(context -> {
+                                    PhaseHandler.setPhase(new BreakPhase(IntegerArgumentType.getInteger(context, "Length"), PhaseHandler.getPhase()));
+                                    return 1;
+                                })
+                        )
                 )
             )
 
@@ -167,5 +181,12 @@ public class ChatHandler {
                     true
             );
         }
+    }
+
+    public static void showTitle(ServerPlayer player, Component title, @Nullable Component subtitle) {
+        player.connection.send(new ClientboundSetTitlesAnimationPacket(0, 10, 2));
+        if (subtitle != null)
+            player.connection.send(new ClientboundSetSubtitleTextPacket(subtitle));
+        player.connection.send(new ClientboundSetTitleTextPacket(title));
     }
 }
