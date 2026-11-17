@@ -49,9 +49,12 @@ public class ModLanguageProvider extends LanguageProvider {
         add(Messages.TeamAlreadyFull.key, "This team is already full");
         add(Messages.ClaimGrantingLimitReached.key, "This item can't grant any more claims");
         add(Messages.ForceLoadGrantingLimitReached.key, "This item can't grant any more force loads");
-        add(Messages.TeamCoreNeedsClaimedChunk.key, "Team Cores can only be placed in claimed chunks");
+        add(Messages.TeamCoreNeedsClaimedChunk.key, "Team Cores can only be placed a claimed chunk");
+        add(Messages.TeamCoreNeedsForceLoadedChunk.key, "Team Cores can only be placed a Force Loaded chunk");
         add(Messages.TeamAlreadyHasCore.key, "This Team already has a core");
         add(Messages.TeamCoreUnplaceableOutsideOverworld.key, "Team Cores are only placeable in the overworld");
+        add(Messages.PhaseRequiresTeam.key, "This Phase requires a Team");
+        add(Messages.PhaseRequiresTeamCore.key, "This Phase requires a Team Core");
 
         // warnings
         add(Messages.PvpImpeding.key, "PVP-Phase will start shortly");
@@ -61,6 +64,7 @@ public class ModLanguageProvider extends LanguageProvider {
         add(Messages.PhaseLengthened.key, "The Phase has been lengthened, because ");
         add(Messages.StartingPhase.key, "Starting ");
         add(Messages.GameIsPaused.key, "Game is Paused");
+        add(Messages.TeamCoreBrokenDueToUnclaiming.key, "Your Team Core was broken due to claim changes");
 
         // rewards
         add(Messages.ClaimShardUsed.key, "+" + ModItems.CLAIM_SHARD.get().claimIncreaseCount + " claim");

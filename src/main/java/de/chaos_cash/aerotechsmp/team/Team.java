@@ -29,7 +29,7 @@ import java.util.List;
 public class Team {
     public static final int maxPartySize = 2;
     public static final int defaultMaxClaims = 9;
-    public static final int defaultMaxForceLoads = 0;
+    public static final int defaultMaxForceLoads = 1;
     public static final int hardMaxClaims = 500;
     public static final int hardMaxForceLoads = 16;
     private static final Map<UUID, Team> teams = new HashMap<>();

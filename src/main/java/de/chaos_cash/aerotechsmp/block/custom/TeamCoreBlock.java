@@ -7,6 +7,8 @@ import de.chaos_cash.aerotechsmp.datagen.Language.Messages;
 import de.chaos_cash.aerotechsmp.phases.PVPPhase;
 import de.chaos_cash.aerotechsmp.phases.PhaseHandler;
 import de.chaos_cash.aerotechsmp.team.Team;
+import dev.ftb.mods.ftbchunks.FTBChunksAPIImpl;
+import dev.ftb.mods.ftblibrary.math.ChunkDimPos;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Containers;
 import net.minecraft.world.entity.player.Player;
@@ -74,9 +76,11 @@ public class TeamCoreBlock extends BaseEntityBlock {
     protected void onRemove(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState newState, boolean movedByPiston) {
         super.onRemove(state, level, pos, newState, movedByPiston);
 
-        var ownTeam = TeamCoreBlockEntity.getTeam(pos);
-        if (ownTeam != null)
-            ownTeam.setHasCore(false);
+        if (!level.isClientSide) {
+            var ownTeam = TeamCoreBlockEntity.getTeam(pos);
+            if (ownTeam != null)
+                ownTeam.setHasCore(false);
+        }
     }
 
     public static Team getTeam(@NotNull Level level, @NotNull BlockPos pos) {
@@ -99,25 +103,30 @@ public class TeamCoreBlock extends BaseEntityBlock {
         BlockPos pos = context.getClickedPos();
         var level = context.getLevel();
 
+        if (level.isClientSide)
+            return defaultBlockState();
+
         if (!PhaseHandler.getPhase().allowsTeamModifications()){
-            if (!level.isClientSide())
-                Messages.TeamModificationsNotAllowedInPhase.notify(context.getPlayer());
+            Messages.TeamModificationsNotAllowedInPhase.notify(context.getPlayer());
             return null;
         }
         if (context.getLevel().dimension() != Level.OVERWORLD) {
-            if (level.isClientSide())
-                Messages.TeamCoreUnplaceableOutsideOverworld.notify(context.getPlayer());
+            Messages.TeamCoreUnplaceableOutsideOverworld.notify(context.getPlayer());
             return null;
         }
         var team = TeamCoreBlockEntity.getTeam(pos);
         if (team == null){
-            if (level.isClientSide())
-                Messages.TeamCoreNeedsClaimedChunk.notify(context.getPlayer());
+            Messages.TeamCoreNeedsClaimedChunk.notify(context.getPlayer());
+            return null;
+        }
+        var chunk = FTBChunksAPIImpl.INSTANCE.getManager().getChunk(new ChunkDimPos(level, context.getClickedPos()));
+        assert chunk != null;
+        if (!chunk.isForceLoaded()) {
+            Messages.TeamCoreNeedsForceLoadedChunk.notify(context.getPlayer());
             return null;
         }
         if (team.hasCore()) {
-            if (!level.isClientSide())
-                Messages.TeamAlreadyHasCore.notify(context.getPlayer());
+            Messages.TeamAlreadyHasCore.notify(context.getPlayer());
             return null;
         }
         return this.defaultBlockState();

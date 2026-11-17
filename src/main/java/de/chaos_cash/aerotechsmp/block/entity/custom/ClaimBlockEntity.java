@@ -1,5 +1,6 @@
 package de.chaos_cash.aerotechsmp.block.entity.custom;
 
+import de.chaos_cash.aerotechsmp.AerotechSMP;
 import de.chaos_cash.aerotechsmp.team.Team;
 import dev.ftb.mods.ftbchunks.FTBChunksAPIImpl;
 import dev.ftb.mods.ftbchunks.api.ClaimedChunk;
@@ -79,17 +80,17 @@ public class ClaimBlockEntity extends ModBlockEntity {
     @Override
     public void setRemoved() {
         super.setRemoved();
-        unRegisterListeners();
+        AerotechSMP.getServer().execute(this::unRegisterListeners);
     }
 
     @Override
     public void onChunkUnloaded() {
         super.onChunkUnloaded();
-        unRegisterListeners();
+        AerotechSMP.getServer().execute(this::unRegisterListeners);
     }
 
-    void unRegisterListeners() {
-        if (!listenersRegistered) return;
+    protected boolean unRegisterListeners() {
+        if (!listenersRegistered) return false;
         listenersRegistered = false;
 
         Runnable unregister = () -> {
@@ -103,14 +104,18 @@ public class ClaimBlockEntity extends ModBlockEntity {
             server.execute(unregister);
         else
             unregister.run();
+
+        return true;
     }
 
-    void registerListeners() {
-        if (listenersRegistered) return;
+    protected boolean registerListeners() {
+        if (listenersRegistered) return false;
         TeamEvent.DELETED.register(teamDeletedListener);
         ClaimedChunkEvent.AFTER_UNCLAIM.register(unclaimListener);
         ClaimedChunkEvent.AFTER_CLAIM.register(claimListener);
         listenersRegistered = true;
+
+        return true;
     }
 
 

@@ -17,6 +17,9 @@ public enum Messages implements ITranslation{
     TeamCoreUnplaceableOutsideOverworld(Types.Error),
     TeamAlreadyHasCore(Types.Error),
     TeamCoreNeedsClaimedChunk(Types.Error),
+    TeamCoreNeedsForceLoadedChunk(Types.Error),
+    PhaseRequiresTeam(Types.Error),
+    PhaseRequiresTeamCore(Types.Error),
 
     PvpImpeding(Types.Warning),
     OwnTeamCoreDestroyed(Types.Warning),
