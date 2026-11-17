@@ -65,6 +65,7 @@ public class ModLanguageProvider extends LanguageProvider {
         add(Messages.StartingPhase.key, "Starting ");
         add(Messages.GameIsPaused.key, "Game is Paused");
         add(Messages.TeamCoreBrokenDueToUnclaiming.key, "Your Team Core was broken due to claim changes");
+        add(Messages.TeamUnclaimedRewards.key, "Your Team has unclaimed Rewards collect them at your Team Core");
 
         // rewards
         add(Messages.ClaimShardUsed.key, "+" + ModItems.CLAIM_SHARD.get().claimIncreaseCount + " claim");

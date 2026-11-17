@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 import de.chaos_cash.aerotechsmp.block.ModBlocks;
 import de.chaos_cash.aerotechsmp.block.entity.custom.TeamCoreBlockEntity;
 import de.chaos_cash.aerotechsmp.datagen.Language.Messages;
+import de.chaos_cash.aerotechsmp.item.ModItems;
 import de.chaos_cash.aerotechsmp.phases.PVPPhase;
 import de.chaos_cash.aerotechsmp.phases.PhaseHandler;
 import de.chaos_cash.aerotechsmp.team.Team;
@@ -11,6 +12,7 @@ import dev.ftb.mods.ftbchunks.FTBChunksAPIImpl;
 import dev.ftb.mods.ftblibrary.math.ChunkDimPos;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Containers;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
@@ -19,6 +21,7 @@ import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 
 
@@ -30,6 +33,19 @@ public class TeamCoreBlock extends BaseEntityBlock {
         super(properties);
     }
 
+
+    @Override
+    protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
+        if (!level.isClientSide) {
+            var team = getTeam(level, pos);
+            if (team != null) {
+                Containers.dropItemStack(level, pos.getX(), pos.getY() + 1, pos.getZ(), ModItems.MYSTERIOUS_SHARD.toStack(3 * team.getCoreRewardCount()));
+                team.clearRewards();
+            }
+        }
+
+        return InteractionResult.SUCCESS;
+    }
 
     @Override
     public boolean onDestroyedByPlayer(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, boolean willHarvest, @NotNull FluidState fluid) {

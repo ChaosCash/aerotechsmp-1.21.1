@@ -28,6 +28,7 @@ public enum Messages implements ITranslation{
     StartingPhase(Types.Info),
     TeamCoreBrokenDueToUnclaiming(Types.Info),
     GameIsPaused(Types.Info),
+    TeamUnclaimedRewards(Types.Info),
 
     ClaimShardUsed(Types.Congratulation),
     ClaimCapsuleUsed(Types.Congratulation),
@@ -37,7 +38,6 @@ public enum Messages implements ITranslation{
     ForceLoadEssenceUsed(Types.Congratulation),
     EnemyTeamCoreDestroyed(Types.Congratulation),
     TeamCoreSurvived(Types.Congratulation),
-
     ;
 
     public final String key;

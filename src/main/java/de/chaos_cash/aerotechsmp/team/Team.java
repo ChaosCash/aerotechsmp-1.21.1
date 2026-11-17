@@ -8,6 +8,7 @@ import dev.ftb.mods.ftbchunks.data.ChunkTeamDataImpl;
 import dev.ftb.mods.ftbchunks.data.PartyLimitMode;
 import dev.ftb.mods.ftbteams.FTBTeamsAPIImpl;
 import dev.ftb.mods.ftbteams.api.event.PlayerJoinedPartyTeamEvent;
+import dev.ftb.mods.ftbteams.api.event.TeamEvent;
 import dev.ftb.mods.ftbteams.api.property.BigIntegerProperty;
 import dev.ftb.mods.ftbteams.api.property.BooleanProperty;
 import dev.ftb.mods.ftbteams.data.PartyTeam;
@@ -16,6 +17,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,7 +36,7 @@ public class Team {
     public static final int hardMaxForceLoads = 16;
     private static final Map<UUID, Team> teams = new HashMap<>();
 
-    private static final BooleanProperty hasCorePropertyType = new BooleanProperty(ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID, "has_core"), false);
+    private static final BooleanProperty hasCoreProperty = new BooleanProperty(ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID, "has_core"), false);
     private static final BigIntegerProperty coreRewardCount = new BigIntegerProperty(ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID, "core_reward_count"), BigInteger.ZERO);
 
     private final @NotNull PartyTeam ftbTeam;
@@ -54,7 +56,7 @@ public class Team {
 
         chunkTeamData = FTBChunksAPIImpl.INSTANCE.getManager().getOrCreateData(ftbTeam);
         ownerData = FTBChunksAPIImpl.INSTANCE.getManager().getPersonalData(getOwner());
-        hasCore = ftbTeam.getProperty(hasCorePropertyType);
+        hasCore = ftbTeam.getProperty(hasCoreProperty);
     }
 
 
@@ -127,7 +129,7 @@ public class Team {
 
     public void setHasCore(boolean hasCore) {
         if (this.hasCore != hasCore) {
-            ftbTeam.setProperty(hasCorePropertyType, hasCore);
+            ftbTeam.setProperty(hasCoreProperty, hasCore);
             this.hasCore = hasCore;
         }
     }
@@ -149,10 +151,22 @@ public class Team {
         );
     }
 
+    public int getCoreRewardCount() {
+        return ftbTeam.getProperty(coreRewardCount).intValue();
+    }
+
     //</editor-fold>
 
 
 
+
+
+    public static void registerProperties() {
+        TeamEvent.COLLECT_PROPERTIES.register(event -> {
+            event.add(hasCoreProperty);
+            event.add(coreRewardCount);
+        });
+    }
 
 
     @SubscribeEvent
@@ -169,6 +183,14 @@ public class Team {
         PlayerJoinedPartyTeamEvent.PLAYER_JOINED_PARTY.register(Team::onPartyJoined);
     }
 
+    @SubscribeEvent static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
+        var player = event.getEntity();
+        var team = get(player);
+        if (team.isEmpty()) return;
+        if (team.get().getCoreRewardCount() > 0)
+            Messages.TeamUnclaimedRewards.send(player);
+    }
+
     private static void onPartyJoined(PlayerJoinedPartyTeamEvent event) {
         var team = event.getTeam();
         var player = event.getPlayer();
@@ -177,5 +199,12 @@ public class Team {
                 partyTeam.removeMember(player.getUUID());
                 Messages.TeamAlreadyFull.send(player);
             }
+    }
+
+    public void clearRewards() {
+        ftbTeam.setProperty(
+                coreRewardCount,
+                BigInteger.ZERO
+        );
     }
 }
