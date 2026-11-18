@@ -38,6 +38,7 @@ public class Team {
 
     private static final BooleanProperty hasCoreProperty = new BooleanProperty(ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID, "has_core"), false);
     private static final BigIntegerProperty coreRewardCount = new BigIntegerProperty(ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID, "core_reward_count"), BigInteger.ZERO);
+    private static final BigIntegerProperty totalRewardCount = new BigIntegerProperty(ResourceLocation.fromNamespaceAndPath(AerotechSMP.MOD_ID, "total_reward_count"), BigInteger.ZERO);
 
     private final @NotNull PartyTeam ftbTeam;
     private final ChunkTeamDataImpl chunkTeamData;
@@ -149,10 +150,18 @@ public class Team {
                 coreRewardCount,
                 ftbTeam.getProperty(coreRewardCount).add(BigInteger.ONE)
         );
+        ftbTeam.setProperty(
+                totalRewardCount,
+                ftbTeam.getProperty(totalRewardCount).add(BigInteger.ONE)
+        );
     }
 
     public int getCoreRewardCount() {
         return ftbTeam.getProperty(coreRewardCount).intValue();
+    }
+
+    public int getTotalRewardCount() {
+        return ftbTeam.getProperty(totalRewardCount).intValue();
     }
 
     //</editor-fold>
@@ -165,6 +174,7 @@ public class Team {
         TeamEvent.COLLECT_PROPERTIES.register(event -> {
             event.add(hasCoreProperty);
             event.add(coreRewardCount);
+            event.add(totalRewardCount);
         });
     }
 
