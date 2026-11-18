@@ -1,6 +1,7 @@
 package de.chaos_cash.aerotechsmp.block.custom;
 
 import com.mojang.serialization.MapCodec;
+import de.chaos_cash.aerotechsmp.Config;
 import de.chaos_cash.aerotechsmp.block.ModBlocks;
 import de.chaos_cash.aerotechsmp.block.entity.custom.TeamCoreBlockEntity;
 import de.chaos_cash.aerotechsmp.datagen.Language.Messages;
@@ -39,7 +40,15 @@ public class TeamCoreBlock extends BaseEntityBlock {
         if (!level.isClientSide) {
             var team = getTeam(level, pos);
             if (team != null) {
-                Containers.dropItemStack(level, pos.getX(), pos.getY() + 1, pos.getZ(), ModItems.MYSTERIOUS_SHARD.toStack(3 * team.getCoreRewardCount()));
+                Containers.dropItemStack(
+                        level,
+                        pos.getX(),
+                        pos.getY() + 1,
+                        pos.getZ(),
+                        ModItems.MYSTERIOUS_SHARD.toStack(
+                                Config.SHARD_REWARD_COUNT.get() * team.getCoreRewardCount()
+                        )
+                );
                 team.clearRewards();
             }
         }

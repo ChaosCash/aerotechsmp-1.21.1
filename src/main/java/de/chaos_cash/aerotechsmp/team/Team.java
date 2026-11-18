@@ -1,6 +1,7 @@
 package de.chaos_cash.aerotechsmp.team;
 
 import de.chaos_cash.aerotechsmp.AerotechSMP;
+import de.chaos_cash.aerotechsmp.Config;
 import de.chaos_cash.aerotechsmp.datagen.Language.Messages;
 import dev.ftb.mods.ftbchunks.FTBChunksAPIImpl;
 import dev.ftb.mods.ftbchunks.FTBChunksWorldConfig;
@@ -29,7 +30,6 @@ import java.util.List;
 
 @EventBusSubscriber(modid = AerotechSMP.MOD_ID)
 public class Team {
-    public static final int maxPartySize = 2;
     public static final int defaultMaxClaims = 9;
     public static final int defaultMaxForceLoads = 1;
     public static final int hardMaxClaims = 500;
@@ -205,7 +205,7 @@ public class Team {
         var team = event.getTeam();
         var player = event.getPlayer();
         if (team instanceof PartyTeam partyTeam)
-            if (partyTeam.getMembers().size() > maxPartySize) {
+            if (partyTeam.getMembers().size() > Config.MAX_TEAM_SIZE.get()) {
                 partyTeam.removeMember(player.getUUID());
                 Messages.TeamAlreadyFull.send(player);
             }

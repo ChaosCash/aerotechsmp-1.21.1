@@ -12,7 +12,7 @@ import net.creeperhost.ftbbackups.FTBBackups;
 import net.minecraft.commands.CommandSourceStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.server.ServerStartingEvent;
+import net.neoforged.neoforge.event.server.ServerStartedEvent;
 
 @EventBusSubscriber(modid = AerotechSMP.MOD_ID)
 public class PhaseHandler {
@@ -70,7 +70,7 @@ public class PhaseHandler {
 
 
     @SubscribeEvent
-    static void onServerStartup(ServerStartingEvent event) {
+    static void onServerStarted(ServerStartedEvent event) {
         setPhase(new PeacefulPhase());
         ClaimedChunkEvent.BEFORE_CLAIM.register(PhaseHandler::onBeforeClaimChange);
         ClaimedChunkEvent.BEFORE_UNCLAIM.register(PhaseHandler::onBeforeClaimChange);

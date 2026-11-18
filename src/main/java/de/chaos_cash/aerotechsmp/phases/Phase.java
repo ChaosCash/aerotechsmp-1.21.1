@@ -1,6 +1,7 @@
 package de.chaos_cash.aerotechsmp.phases;
 
 import de.chaos_cash.aerotechsmp.AerotechSMP;
+import de.chaos_cash.aerotechsmp.Config;
 import de.chaos_cash.aerotechsmp.util.ChatHandler;
 import de.chaos_cash.aerotechsmp.datagen.Language.Messages;
 import net.minecraft.network.chat.MutableComponent;
@@ -15,6 +16,13 @@ public abstract class Phase {
         if (activationSound != null)
             for (var player : AerotechSMP.getServer().getPlayerList().getPlayers())
                 player.playNotifySound(activationSound, SoundSource.AMBIENT, getActivationSoundVolume(), 1);
+
+        var border = AerotechSMP.getServer().overworld().getWorldBorder();
+        border.setSize(getBorderDiameter());
+    }
+
+    protected int getBorderDiameter() {
+        return Config.BORDER_DIAMETER.get();
     }
 
 
